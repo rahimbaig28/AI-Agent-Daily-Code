@@ -36,3 +36,5 @@
 [2025-11-14T13:26:40.964829Z] Build OK  file=daily-momentum-log.html  kind=html  
 [2025-11-15T13:20:52.829894Z] Prompt OK  seed=76115  theme=finance & budgeting  extras=responsive grid, drag-and-drop, dark/light auto theme  title='Envelope Ledger'  slug=envelope-ledger
 [2025-11-15T13:20:52.829894Z] Build OK  file=envelope-ledger.html  kind=html  
+[2025-11-16T13:20:53.341530Z] Prompt OK  seed=58995  theme=finance & budgeting  extras=export/import JSON, dark/light auto theme, drag-and-drop  title='Smart Splitter: Collaborative Expense Sharing & Budget Balancer'  slug=smart-splitter-collaborative-expense-sharing-budget-balancer
+[2025-11-16T13:20:53.341530Z] Build OK  file=smart-splitter-collaborative-expense-sharing-budget-balancer.html  kind=html  

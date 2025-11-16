@@ -12,3 +12,5 @@ Smart Splitter: Collaborative Expense Sharing & Budget Balancer
 - Include a summary dashboard showing total expenses, per-category spending, and per-person balance in a clear, concise format.
 - Validate user input with inline feedback for required fields and correct numeric formats.
 - Provide a reset option to clear all data with confirmation to prevent accidental loss.
+
+(Generated: 2025-11-16T13:20:53.341530Z, seed=58995, theme=finance & budgeting, extras=export/import JSON, dark/light auto theme, drag-and-drop)
