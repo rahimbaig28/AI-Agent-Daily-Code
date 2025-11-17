@@ -38,3 +38,5 @@
 [2025-11-15T13:20:52.829894Z] Build OK  file=envelope-ledger.html  kind=html  
 [2025-11-16T13:20:53.341530Z] Prompt OK  seed=58995  theme=finance & budgeting  extras=export/import JSON, dark/light auto theme, drag-and-drop  title='Smart Splitter: Collaborative Expense Sharing & Budget Balancer'  slug=smart-splitter-collaborative-expense-sharing-budget-balancer
 [2025-11-16T13:20:53.341530Z] Build OK  file=smart-splitter-collaborative-expense-sharing-budget-balancer.html  kind=html  
+[2025-11-17T13:28:39.163112Z] Prompt OK  seed=82589  theme=small business utilities  extras=offline-first with localStorage, keyboard-first UX, drag-and-drop  title='Invoice Quick'  slug=invoice-quick
+[2025-11-17T13:28:39.163112Z] Build OK  file=invoice-quick.html  kind=html  

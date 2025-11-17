@@ -35,3 +35,5 @@ Invoice Quick
   - localStorage key: "invoices_data" storing array of invoice objects
   - No build step; open file directly in browser
   - Responsive design; works on desktop and tablet
+
+(Generated: 2025-11-17T13:28:39.163112Z, seed=82589, theme=small business utilities, extras=offline-first with localStorage, keyboard-first UX, drag-and-drop)
