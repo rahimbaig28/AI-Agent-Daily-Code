@@ -20,3 +20,5 @@ Vocabulary Builder Pro
 - Import/export: download word lists as JSON file, paste JSON to restore
 - No external libraries, standard browser APIs only
 - Target implementation: ~800–950 lines of code
+
+(Generated: 2025-11-19T13:28:51.193600Z, seed=66679, theme=learning & study tools, extras=responsive grid, ARIA-compliant components, undo/redo)
