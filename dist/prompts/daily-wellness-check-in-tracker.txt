@@ -23,3 +23,5 @@ A single-file web app for logging daily mental and physical wellness metrics wit
 - UI: Minimalist single-page layout with tab/button navigation (Today | Week | History | Print). Use calming color palette (soft blues/greens). Responsive for mobile and desktop.
 
 - Technical: Single HTML file with inline CSS and vanilla JavaScript. Use Chart.js via CDN for trend visualization. No external dependencies beyond Chart.js.
+
+(Generated: 2025-11-20T13:27:11.750535Z, seed=82886, theme=health & wellness, extras=undo/redo, print-friendly view, offline-first with localStorage)
