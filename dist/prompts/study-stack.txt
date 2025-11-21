@@ -11,3 +11,5 @@ Study Stack
 - Accessible: all actions available via keyboard; screen reader friendly.
 - Responsive design: works on mobile and desktop.
 - Testable features: create stack, add/edit/delete cards, switch stacks, undo/redo, share via URL, offline persistence.
+
+(Generated: 2025-11-21T13:24:50.579661Z, seed=74143, theme=learning & study tools, extras=share via URL hash, undo/redo, offline-first with localStorage)

@@ -46,3 +46,5 @@
 [2025-11-19T13:28:51.193600Z] Build OK  file=vocabulary-builder-pro.html  kind=html  
 [2025-11-20T13:27:11.750535Z] Prompt OK  seed=82886  theme=health & wellness  extras=undo/redo, print-friendly view, offline-first with localStorage  title='Daily Wellness Check-In Tracker'  slug=daily-wellness-check-in-tracker
 [2025-11-20T13:27:11.750535Z] Build OK  file=daily-wellness-check-in-tracker.html  kind=html  
+[2025-11-21T13:24:50.579661Z] Prompt OK  seed=74143  theme=learning & study tools  extras=share via URL hash, undo/redo, offline-first with localStorage  title='Study Stack'  slug=study-stack
+[2025-11-21T13:24:50.579661Z] Build OK  file=study-stack.html  kind=html  
