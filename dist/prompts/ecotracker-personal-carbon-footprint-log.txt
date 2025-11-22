@@ -11,3 +11,5 @@ EcoTracker: Personal Carbon Footprint Log
 - Include a reset button to clear all data (with confirmation).
 - Use plain HTML, CSS, and JS; no external libraries.
 - Ensure all UI elements are accessible (ARIA labels, focus management).
+
+(Generated: 2025-11-22T13:20:16.296575Z, seed=25054, theme=environment & sustainability, extras=offline-first with localStorage, keyboard-first UX, drag-and-drop)
