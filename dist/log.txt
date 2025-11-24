@@ -52,3 +52,5 @@
 [2025-11-22T13:20:16.296575Z] Build OK  file=ecotracker-personal-carbon-footprint-log.html  kind=html  
 [2025-11-23T13:20:17.404392Z] Prompt OK  seed=82303  theme=environment & sustainability  extras=responsive grid, keyboard-first UX, ARIA-compliant components  title='EcoGrid: Carbon Footprint Tracker & Green Habit Builder'  slug=ecogrid-carbon-footprint-tracker-green-habit-builder
 [2025-11-23T13:20:17.404392Z] Build OK  file=ecogrid-carbon-footprint-tracker-green-habit-builder.html  kind=html  
+[2025-11-24T13:30:15.033354Z] Prompt OK  seed=51107  theme=learning & study tools  extras=offline-first with localStorage, print-friendly view, undo/redo  title='Study Tracker: Flashcard Review & Progress Log'  slug=study-tracker-flashcard-review-progress-log
+[2025-11-24T13:30:15.033354Z] Build OK  file=study-tracker-flashcard-review-progress-log.html  kind=html  

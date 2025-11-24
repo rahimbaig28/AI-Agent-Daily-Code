@@ -10,3 +10,5 @@ Study Tracker: Flashcard Review & Progress Log
 - Provide a print-friendly view that displays all cards in a clean, readable layout for offline study.
 - Ensure the UI is accessible: use semantic HTML, ARIA labels, and support screen readers.
 - No external libraries; all code must be in one HTML file with inline CSS and JS.
+
+(Generated: 2025-11-24T13:30:15.033354Z, seed=51107, theme=learning & study tools, extras=offline-first with localStorage, print-friendly view, undo/redo)
