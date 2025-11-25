@@ -10,3 +10,5 @@ Accessible Note Taker
 - Style with high-contrast defaults, clear focus outlines, and responsive layout for mobile and desktop.
 - Keep the interface minimal: a form to add/edit notes, a list of notes, and undo/redo buttons.
 - Ensure all interactive elements have appropriate ARIA roles and labels.
+
+(Generated: 2025-11-25T13:30:43.889949Z, seed=37668, theme=accessibility helpers, extras=keyboard-first UX, share via URL hash, undo/redo)
