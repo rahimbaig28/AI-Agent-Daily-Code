@@ -12,11 +12,15 @@ PROMPTS_DIR = DIST / "prompts"
 APPS_DIR = DIST / "apps"
 LATEST_DIR = DIST / "latest"
 LOG_OUT = DIST / "log.txt"
+RUN_STATE_FILE = DIST / "run_state.json"  # <-- new: track per-day run quota
 
 # --- Tunables ---
 PROMPT_TEMPERATURE = 0.8
 BUILD_TEMPERATURE  = 0.3
 MAX_RESPONSE_CHARS = 800_000  # hard cap to avoid runaway responses
+
+# New: daily random run limit
+MAX_RUNS_PER_DAY = 5  # upper bound on builds per day
 
 THEMES = [
     "personal productivity", "learning & study tools", "health & wellness",
@@ -39,12 +43,20 @@ Requirements:
 - The app may be EITHER:
   (a) a SINGLE-FILE web app (one HTML file with inline CSS and JS, no external libraries), OR
   (b) a SINGLE-FILE Python 3 script (no external files; standard library only).
+- HOWEVER, when the user specifies a REQUIRED_KIND ('html' or 'py'), you MUST strictly follow it:
+  - 'html' => a single-file web app spec.
+  - 'py'   => a single-file Python 3 script spec.
 - Include concrete features, accessibility/keyboard support when relevant, and persistence (e.g., localStorage or JSON file for Python).
 - Keep it < 250 lines of text. Avoid vague language.
 - End result must be implementable in under ~1000 lines of code.
 """
 
 USER_PROMPT_GEN_TEMPLATE = """Generate a brand new single-file app specification.
+
+REQUIRED_KIND for this run: {kind}
+- If REQUIRED_KIND is 'html': you MUST design a single-file web app (one HTML file with inline CSS and JS only).
+- If REQUIRED_KIND is 'py': you MUST design a single-file Python 3 script using only the standard library.
+
 Inspiration seed (date/time & randoms):
 - utc_now: {utc}
 - seed: {seed}
@@ -54,7 +66,7 @@ Inspiration seed (date/time & randoms):
 Constraints:
 - Return ONLY the prompt (title then spec). No explanations or markdown fences.
 - Keep it distinct from previous days by varying purpose/features.
-- Include a testable feature set that can be implemented in one file (HTML or Python).
+- Include a testable feature set that can be implemented in one file (HTML or Python, according to REQUIRED_KIND).
 Example titles: "Smart To-Do", "Budget Buddy", "Focus Timer+" (do NOT reuse these).
 """
 
@@ -194,7 +206,7 @@ def validate_html(text: str) -> tuple[bool, str]:
     # Quick sanity: no <script src=...> or <link rel=stylesheet>
     if re.search(r'<script[^>]+src=', lower):
         problems.append("External <script src> found (must be inline).")
-    if re.search(r'<link[^>]+rel=["\']stylesheet', lower):
+    if re.search(r'<link[^>]+rel=[\"\\\']stylesheet', lower):
         problems.append("External <link rel=stylesheet> found (must be inline).")
     return (len(problems) == 0, "; ".join(problems))
 
@@ -275,6 +287,48 @@ def attempt_fix(broken: str, target_kind: str, api_key: str):
         ok, err = validate_python(content)
     return ok, err, content, target_kind
 
+# ---- New helpers for daily random run limit ----
+
+def load_run_state() -> dict:
+    if RUN_STATE_FILE.exists():
+        try:
+            return json.loads(RUN_STATE_FILE.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+def save_run_state(state: dict):
+    RUN_STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    RUN_STATE_FILE.write_text(json.dumps(state), encoding="utf-8")
+
+def should_run_today(now: datetime.datetime) -> bool:
+    """Randomly allow up to MAX_RUNS_PER_DAY builds per calendar day."""
+    today_str = now.date().isoformat()
+    state = load_run_state()
+    if state.get("date") != today_str:
+        # New day: pick a fresh random target between 0 and MAX_RUNS_PER_DAY
+        target = random.randint(0, MAX_RUNS_PER_DAY)
+        state = {"date": today_str, "count": 0, "target": target}
+        save_run_state(state)
+        write_log(f"[{today_str}] New day: target_runs={target}")
+
+    target = int(state.get("target", 0))
+    count = int(state.get("count", 0))
+
+    if target == 0:
+        write_log(f"[{today_str}] Skipping run: target_runs=0 for today.")
+        return False
+
+    if count >= target:
+        write_log(f"[{today_str}] Skipping run: daily quota reached (count={count}, target={target}).")
+        return False
+
+    # We *will* run; increment the count and save
+    state["count"] = count + 1
+    save_run_state(state)
+    write_log(f"[{today_str}] Proceeding with run #{state['count']} of target {target}.")
+    return True
+
 def main():
     api_key = os.getenv("PPLX_API_KEY")
     if not api_key:
@@ -284,14 +338,27 @@ def main():
     now = datetime.datetime.utcnow()
     utc_now = now.isoformat() + "Z"
 
+    # --- NEW: Decide if we should actually run this time (for random <=5/day behavior) ---
+    if not should_run_today(now):
+        # Exit cleanly without error so your scheduler doesn't complain.
+        print("Daily random quota reached or disabled for today; exiting without generating.")
+        return
+
     # Randomization inputs for prompt diversity
     seed = random.randint(10_000, 99_999)
     theme = random.choice(THEMES)
     extras = ", ".join(random.sample(FEATURE_EXTRAS, k=3))
 
+    # NEW: randomly choose whether we want an HTML app or Python script for this run
+    required_kind = random.choice(["html", "py"])
+
     # ----- Stage 1: Generate the prompt -----
     user_prompt_gen = USER_PROMPT_GEN_TEMPLATE.format(
-        utc=utc_now, seed=seed, theme=theme, extras=extras
+        utc=utc_now,
+        seed=seed,
+        theme=theme,
+        extras=extras,
+        kind=required_kind,
     )
 
     try:
@@ -310,10 +377,10 @@ def main():
         title = first_line_title(prompt_text)
         slug = slugify(title)
         prompt_path = unique_path(PROMPTS_DIR / f"{slug}.txt")
-        write_text_atomic(prompt_path, prompt_text + f"\n\n(Generated: {utc_now}, seed={seed}, theme={theme}, extras={extras})\n")
+        write_text_atomic(prompt_path, prompt_text + f"\n\n(Generated: {utc_now}, seed={seed}, theme={theme}, extras={extras}, kind={required_kind})\n")
         write_text_atomic(LATEST_DIR / "prompt.txt", prompt_text)
         print(f"Wrote {prompt_path}")
-        write_log(f"[{utc_now}] Prompt OK  seed={seed}  theme={theme}  extras={extras}  title='{title}'  slug={slug}")
+        write_log(f"[{utc_now}] Prompt OK  seed={seed}  theme={theme}  extras={extras}  title='{title}'  slug={slug}  kind={required_kind}")
     except Exception as e:
         err = f"[{utc_now}] Prompt generation FAILED: {type(e).__name__}: {e}"
         print(err, file=sys.stderr)
@@ -342,7 +409,7 @@ def main():
         save_latest(kind, content)
 
         print(f"Wrote {app_path}")
-        write_log(f"[{utc_now}] Build OK  file={app_path.name}  kind={kind}  {'(after auto-fix)' if tried_fix else ''}")
+        write_log(f"[{utc_now}] Build OK  file={app_path.name}  kind={kind}  required_kind={required_kind}  {'(after auto-fix)' if tried_fix else ''}")
         print(f"Done.\nSaved:\n  - {prompt_path}\n  - {app_path}\nLatest copies updated in {LATEST_DIR}")
     except Exception as e:
         err = f"[{utc_now}] Build FAILED: {type(e).__name__}: {e}"
