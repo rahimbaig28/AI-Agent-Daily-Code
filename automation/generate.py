@@ -307,7 +307,7 @@ def should_run_today(now: datetime.datetime) -> bool:
     state = load_run_state()
     if state.get("date") != today_str:
         # New day: pick a fresh random target between 0 and MAX_RUNS_PER_DAY
-        target = random.randint(0, MAX_RUNS_PER_DAY)
+        target = random.randint(1, MAX_RUNS_PER_DAY)
         state = {"date": today_str, "count": 0, "target": target}
         save_run_state(state)
         write_log(f"[{today_str}] New day: target_runs={target}")
