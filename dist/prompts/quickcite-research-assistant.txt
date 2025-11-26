@@ -10,3 +10,5 @@ QuickCite Research Assistant
 - A "Share" button copies the current URL hash to the clipboard.
 - The UI is clean and accessible, with clear focus states and ARIA labels.
 - All code (HTML, CSS, JS) must be in one file, no external libraries.
+
+(Generated: 2025-11-26T13:31:33.063056Z, seed=47632, theme=research utilities, extras=drag-and-drop, keyboard-first UX, share via URL hash, kind=html)
