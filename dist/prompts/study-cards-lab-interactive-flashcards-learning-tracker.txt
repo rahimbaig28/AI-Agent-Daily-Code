@@ -11,3 +11,5 @@ Study Cards Lab: Interactive Flashcards & Learning Tracker
 - Sticky header with deck controls (add card, print, reset progress) always visible while scrolling.
 - Responsive layout that works well on desktop and mobile.
 - Accessible ARIA roles and keyboard focus management for full keyboard usability.
+
+(Generated: 2025-11-29T13:22:52.640907Z, seed=27351, theme=learning & study tools, extras=keyboard-first UX, drag-and-drop, print-friendly view, kind=html)
