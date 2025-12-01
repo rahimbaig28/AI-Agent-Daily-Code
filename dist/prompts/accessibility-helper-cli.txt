@@ -13,3 +13,5 @@ Accessibility Helper CLI
 - Include a help screen with instructions for keyboard navigation and accessibility features.
 - All interactions must be possible via keyboard only; no mouse required.
 - The app should run in any standard terminal and be compatible with screen readers.
+
+(Generated: 2025-12-01T13:31:51.668045Z, seed=11101, theme=accessibility helpers, extras=keyboard-first UX, dark/light auto theme, print-friendly view, kind=py)
