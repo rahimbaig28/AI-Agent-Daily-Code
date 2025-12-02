@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-02T13:34:31.630898Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>QuickCapture Notes</title>
+  <style>
+    :root {
+      --primary: #4a90e2;
+      --bg: #f9f9f9;
+      --border: #ddd;
+      --text: #333;
+      --hover: #e0e0e0;
+      --danger: #e74c3c;
+      --success: #2ecc71;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 1rem;
+    }
+    h1, h2, h3 {
+      margin-bottom: 0.5rem;
+    }
+    button, input, textarea {
+      font-family: inherit;
+      font-size: 1rem;
+    }
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover {
+      background-color: #357abd;
+    }
+    button:focus {
+      outline: 2px solid #357abd;
+    }
+    button.danger {
+      background-color: var(--danger);
+    }
+    button.danger:hover {
+      background-color: #c0392b;
+    }
+    button.success {
+      background-color: var(--success);
+    }
+    button.success:hover {
+      background-color: #27ae60;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 250px 1fr;
+      }
+    }
+    .notes-list {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .notes-list header {
+      padding: 1rem;
+      background: var(--primary);
+      color: white;
+    }
+    .notes-list ul {
+      list-style: none;
+      max-height: 400px;
+      overflow-y: auto;
+      padding: 0;
+    }
+    .notes-list li {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .notes-list li:hover, .notes-list li.active {
+      background: var(--hover);
+    }
+    .notes-list li:last-child {
+      border-bottom: none;
+    }
+    .notes-list li[aria-selected="true"] {
+      background: var(--hover);
+      font-weight: bold;
+    }
+    .notes-list .note-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .notes-list .note-date {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    .editor {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .editor header {
+      padding: 1rem;
+      background: #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .editor header h2 {
+      margin: 0;
+      font-size: 1.2rem;
+    }
+    .editor header .actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+    .editor .content {
+      flex: 1;
+      padding: 1rem;
+      min-height: 200px;
+      outline: none;
+    }
+    .editor .content[contenteditable="true"] {
+      cursor: text;
+    }
+    .toolbar {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: #f0f0f0;
+      border-top: 1px solid var(--border);
+    }
+    .toolbar button {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.9rem;
+    }
+    .search-box {
+      margin-bottom: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+    .print-mode {
+      display: none;
+    }
+    .print-mode .notes-list, .print-mode .toolbar, .print-mode .search-box, .print-mode .editor header .actions {
+      display: none !important;
+    }
+    .print-mode .editor {
+      border: none;
+      box-shadow: none;
+    }
+    .print-mode .editor .content {
+      padding: 0;
+    }
+    .print-mode .note-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .print-mode .note-date {
+      font-size: 1rem;
+      color: #666;
+    }
+    .print-mode .note-content {
+      margin-top: 1rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      margin: -1px;
+      padding: 0;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      border: 0;
+    }
+    @media print {
+      .print-mode .notes-list, .print-mode .toolbar, .print-mode .search-box, .print-mode .editor header .actions {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="notes-list" role="region" aria-label="Notes list">
+      <header>
+        <h2>Notes</h2>
+      </header>
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search notes..." aria-label="Search notes">
+        <button id="clearSearch">Clear</button>
+      </div>
+      <ul id="notesList" role="listbox" aria-label="Notes"></ul>
+      <footer>
+        <button id="newNoteBtn">+ New Note</button>
+      </footer>
+    </div>
+    <div class="editor" role="region" aria-label="Note editor">
+      <header>
+        <h2 id="editorTitle">Untitled Note</h2>
+        <div class="actions">
+          <button id="printBtn">Print</button>
+          <button id="exportBtn">Export</button>
+          <button id="importBtn" aria-label="Import notes">Import</button>
+          <input type="file" id="importFile" accept=".html" class="visually-hidden">
+          <button id="deleteBtn" class="danger">Delete</button>
+        </div>
+      </header>
+      <div class="toolbar">
+        <button id="undoBtn" aria-label="Undo">Undo</button>
+        <button id="redoBtn" aria-label="Redo">Redo</button>
+      </div>
+      <div id="editorContent" class="content" contenteditable="true" aria-label="Note content"></div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let notes = [];
+    let currentNoteId = null;
+    let history = {}; // { id: { stack: [...], index: 0 } }
+    const MAX_HISTORY = 10;
+
+    // DOM Elements
+    const notesListEl = document.getElementById('notesList');
+    const editorTitleEl = document.getElementById('editorTitle');
+    const editorContentEl = document.getElementById('editorContent');
+    const newNoteBtn = document.getElementById('newNoteBtn');
+    const deleteBtn = document.getElementById('deleteBtn');
+    const searchInput = document.getElementById('searchInput');
+    const clearSearch = document.getElementById('clearSearch');
+    const printBtn = document.getElementById('printBtn');
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importFile = document.getElementById('importFile');
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+
+    // Utilities
+    function formatDate(timestamp) {
+      const date = new Date(timestamp);
+      return date.toLocaleString();
+    }
+
+    function generateId() {
+      return Date.now().toString();
+    }
+
+    function saveToStorage() {
+      localStorage.setItem('quickcapture_notes', JSON.stringify(notes));
+      localStorage.setItem('quickcapture_history', JSON.stringify(history));
+    }
+
+    function loadFromStorage() {
+      const storedNotes = localStorage.getItem('quickcapture_notes');
+      const storedHistory = localStorage.getItem('quickcapture_history');
+      if (storedNotes) notes = JSON.parse(storedNotes);
+      if (storedHistory) history = JSON.parse(storedHistory);
+    }
+
+    function updateNotesList(filter = '') {
+      notesListEl.innerHTML = '';
+      const filteredNotes = filter ? notes.filter(n => n.title.toLowerCase().includes(filter.toLowerCase()) || n.content.toLowerCase().includes(filter.toLowerCase())) : notes;
+      filteredNotes.forEach(note => {
+        const li = document.createElement('li');
+        li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', currentNoteId === note.id ? 'true' : 'false');
+        li.setAttribute('tabindex', '0');
+        li.innerHTML = `
+          <div class="note-title">${note.title || 'Untitled'}</div>
+          <div class="note-date">${formatDate(note.updated)}</div>
+        `;
+        li.addEventListener('click', () => selectNote(note.id));
+        li.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            selectNote(note.id);
+          }
+        });
+        notesListEl.appendChild(li);
+      });
+    }
+
+    function selectNote(id) {
+      const note = notes.find(n => n.id === id);
+      if (!note) return;
+      currentNoteId = id;
+      editorTitleEl.textContent = note.title || 'Untitled Note';
+      editorContentEl.innerHTML = note.content;
+      updateNotesList();
+      updateHistoryState();
+    }
+
+    function createNewNote() {
+      const id = generateId();
+      const newNote = {
+        id,
+        title: '',
+        content: '',
+        created: Date.now(),
+        updated: Date.now()
+      };
+      notes.unshift(newNote);
+      history[id] = { stack: [{ title: '', content: '' }], index: 0 };
+      saveToStorage();
+      updateNotesList();
+      selectNote(id);
+    }
+
+    function updateCurrentNote() {
+      if (!currentNoteId) return;
+      const note = notes.find(n => n.id === currentNoteId);
+      if (!note) return;
+      note.title = editorTitleEl.textContent;
+      note.content = editorContentEl.innerHTML;
+      note.updated = Date.now();
+      saveToStorage();
+      updateNotesList();
+    }
+
+    function deleteCurrentNote() {
+      if (!currentNoteId) return;
+      if (!confirm('Are you sure you want to delete this note?')) return;
+      notes = notes.filter(n => n.id !== currentNoteId);
+      delete history[currentNoteId];
+      currentNoteId = null;
+      saveToStorage();
+      editorTitleEl.textContent = 'Untitled Note';
+      editorContentEl.innerHTML = '';
+      updateNotesList();
+    }
+
+    function updateHistoryState() {
+      if (!currentNoteId) return;
+      const note = notes.find(n => n.id === currentNoteId);
+      if (!note) return;
+      const state = { title: note.title, content: note.content };
+      const hist = history[currentNoteId];
+      // If we are not at the end, truncate forward
+      if (hist.index < hist.stack.length - 1) {
+        hist.stack = hist.stack.slice(0, hist.index + 1);
+      }
+      hist.stack.push(state);
+      if (hist.stack.length > MAX_HISTORY) {
+        hist.stack.shift();
+      }
+      hist.index = hist.stack.length - 1;
+      saveToStorage();
+    }
+
+    function undo() {
+      if (!currentNoteId) return;
+      const hist = history[currentNoteId];
+      if (hist.index <= 0) return;
+      hist.index--;
+      const state = hist.stack[hist.index];
+      const note = notes.find(n => n.id === currentNoteId);
+      note.title = state.title;
+      note.content = state.content;
+      note.updated = Date.now();
+      editorTitleEl.textContent = state.title;
+      editorContentEl.innerHTML = state.content;
+      saveToStorage();
+    }
+
+    function redo() {
+      if (!currentNoteId) return;
+      const hist = history[currentNoteId];
+      if (hist.index >= hist.stack.length - 1) return;
+      hist.index++;
+      const state = hist.stack[hist.index];
+      const note = notes.find(n => n.id === currentNoteId);
+      note.title = state.title;
+      note.content = state.content;
+      note.updated = Date.now();
+      editorTitleEl.textContent = state.title;
+      editorContentEl.innerHTML = state.content;
+      saveToStorage();
+    }
+
+    function togglePrintMode() {
+      document.body.classList.toggle('print-mode');
+      if (document.body.classList.contains('print-mode')) {
+        printBtn.textContent = 'Exit Print';
+        // Update editor for print
+        const note = notes.find(n => n.id === currentNoteId);
+        if (note) {
+          editorTitleEl.outerHTML = `<h1 class="note-title">${note.title || 'Untitled'}</h1>`;
+          editorContentEl.outerHTML = `<div class="note-content">${note.content}</div>`;
+        }
+      } else {
+        printBtn.textContent = 'Print';
+        // Restore editor
+        editorTitleEl.outerHTML = '<h2 id="editorTitle">Untitled Note</h2>';
+        editorContentEl.outerHTML = '<div id="editorContent" class="content" contenteditable="true" aria-label="Note content"></div>';
+        // Re-select note to restore content
+        if (currentNoteId) selectNote(currentNoteId);
+      }
+    }
+
+    function exportNotes() {
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>QuickCapture Notes Export</title>
+        </head>
+        <body>
+          <h1>QuickCapture Notes</h1>
+          ${notes.map(note => `
+            <div class="note">
+              <h2>${note.title || 'Untitled'}</h2>
+              <p><small>${formatDate(note.updated)}</small></p>
+              <div>${note.content}</div>
+            </div>
+            <hr>
+          `).join('')}
+        </body>
+        </html>
+      `;
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'quickcapture-notes-export.html';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importNotes() {
+      importFile.click();
+    }
+
+    function handleImport(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(e.target.result, 'text/html');
+        const noteElements = doc.querySelectorAll('.note');
+        const importedNotes = Array.from(noteElements).map(el => {
+          const title = el.querySelector('h2').textContent;
+          const content = el.querySelector('div').innerHTML;
+          const dateText = el.querySelector('small').textContent;
+          const updated = new Date(dateText).getTime() || Date.now();
+          return {
+            id: generateId(),
+            title,
+            content,
+            created: updated,
+            updated
+          };
+        });
+        notes = importedNotes;
+        history = {};
+        importedNotes.forEach(note => {
+          history[note.id] = { stack: [{ title: note.title, content: note.content }], index: 0 };
+        });
+        currentNoteId = null;
+        saveToStorage();
+        updateNotesList();
+        editorTitleEl.textContent = 'Untitled Note';
+        editorContentEl.innerHTML = '';
+      };
+      reader.readAsText(file);
+    }
+
+    // Event Listeners
+    newNoteBtn.addEventListener('click', createNewNote);
+    deleteBtn.addEventListener('click', deleteCurrentNote);
+    searchInput.addEventListener('input', () => updateNotesList(searchInput.value));
+    clearSearch.addEventListener('click', () => {
+      searchInput.value = '';
+      updateNotesList();
+    });
+    printBtn.addEventListener('click', togglePrintMode);
+    exportBtn.addEventListener('click', exportNotes);
+    importBtn.addEventListener('click', importNotes);
+    importFile.addEventListener('change', handleImport);
+    undoBtn.addEventListener('click', undo);
+    redoBtn.addEventListener('click', redo);
+
+    // Contenteditable events
+    editorTitleEl.addEventListener('input', updateCurrentNote);
+    editorContentEl.addEventListener('input', updateCurrentNote);
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case 'n':
+            e.preventDefault();
+            createNewNote();
+            break;
+          case 's':
+            e.preventDefault();
+            updateCurrentNote();
+            break;
+          case 'z':
+            e.preventDefault();
+            undo();
+            break;
+          case 'y':
+            e.preventDefault();
+            redo();
+            break;
+          case 'p':
+            e.preventDefault();
+            togglePrintMode();
+            break;
+        }
+      }
+    });
+
+    // Initialize
+    loadFromStorage();
+    updateNotesList();
+    if (notes.length > 0) {
+      selectNote(notes[0].id);
+    } else {
+      createNewNote();
+    }
+  </script>
+</body>
+</html>

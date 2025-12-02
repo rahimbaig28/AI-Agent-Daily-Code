@@ -15,3 +15,5 @@ QuickCapture Notes
 - Export all notes as a downloadable HTML file (single click, preserves formatting).
 - Import notes from an uploaded HTML file (overwrite current notes).
 - Responsive design: works on desktop and mobile screens.
+
+(Generated: 2025-12-02T13:33:19.143022Z, seed=96080, theme=personal productivity, extras=print-friendly view, undo/redo, ARIA-compliant components, kind=html)
