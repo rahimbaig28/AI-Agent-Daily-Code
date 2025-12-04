@@ -22,3 +22,5 @@ Research Paper Organizer
   - Empty state message when no papers exist
 - Data structure: Each paper object includes id, title, authors, year, doi, abstract, tags (array), notes, starred (boolean), createdAt timestamp
 - Accessibility: Color contrast ratio ≥4.5:1, focus indicators on all interactive elements, alt text for icons, form error messages linked to inputs with aria-describedby
+
+(Generated: 2025-12-04T13:33:22.555316Z, seed=70112, theme=research utilities, extras=ARIA-compliant components, offline-first with localStorage, undo/redo, kind=html)
