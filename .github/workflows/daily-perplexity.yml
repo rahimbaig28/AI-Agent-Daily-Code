@@ -2,10 +2,10 @@ name: Daily Perplexity Update
 
 on:
   schedule:
-    - cron: "0 13 * * *"   # run once daily at 13:00 UTC
+    - cron: "0 13 * * *"     # still runs daily at 13:00 UTC
+    - cron: "0 */4 * * *"    # run every 4 hours (6 times/day max)
   workflow_dispatch: {}
 
-# prevent overlapping runs
 concurrency:
   group: perplexity-auto
   cancel-in-progress: true
@@ -21,6 +21,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Prepare commit counter file
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          if [ ! -f .automation_count ]; then
+            echo "$DATE,0" > .automation_count
+          else
+            FILE_DATE=$(cut -d',' -f1 < .automation_count)
+            if [ "$FILE_DATE" != "$DATE" ]; then
+              echo "$DATE,0" > .automation_count
+            fi
+          fi
+
+      - name: Read number of commits done today
+        id: counter
+        run: |
+          COUNT=$(cut -d',' -f2 < .automation_count)
+          echo "count=$COUNT" >> $GITHUB_OUTPUT
+
+      - name: Stop if commit limit reached
+        if: ${{ steps.counter.outputs.count >= 5 }}
+        run: |
+          echo "Maximum of 5 commits already performed today. Exiting workflow."
+          exit 0
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -29,12 +53,11 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      # Retries the generator up to 3 times and gives the API more time to respond
       - name: Generate auto-prompt + single-file app (with retries)
         env:
           PPLX_API_KEY: ${{ secrets.PPLX_API_KEY }}
-          PPLX_TIMEOUT: "420"        # read-timeout seconds; tune if needed
-          PPLX_MODEL: "sonar"        # override model if desired
+          PPLX_TIMEOUT: "420"
+          PPLX_MODEL: "sonar"
         run: |
           set -e
           for i in 1 2 3; do
@@ -69,4 +92,17 @@ jobs:
           commit_user_name: "rahimbaig28"
           commit_user_email: "rahimbaig00332211@gmail.com"
           file_pattern: "dist/**"
-          add_options: "--force"   # commits even if dist/ is ignored by .gitignore
+          add_options: "--force"
+
+      - name: Increment daily commit counter
+        run: |
+          DATE=$(date +%Y-%m-%d)
+          COUNT=$(cut -d',' -f2 < .automation_count)
+          NEW_COUNT=$((COUNT + 1))
+          echo "$DATE,$NEW_COUNT" > .automation_count
+
+      - name: Commit counter update
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "update automation counter"
+          file_pattern: ".automation_count"
