@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-05T17:35:34.112251Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Wellness Habit Tracker</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 1em;
+    background: #f9f9f9;
+    color: #222;
+  }
+  h1, h2 {
+    color: #2c3e50;
+  }
+  nav {
+    margin-bottom: 1em;
+  }
+  button {
+    background: #2980b9;
+    border: none;
+    color: white;
+    padding: 0.5em 1em;
+    margin: 0.2em 0.5em 0.2em 0;
+    cursor: pointer;
+    font-size: 1em;
+    border-radius: 3px;
+  }
+  button:focus {
+    outline: 2px solid #f39c12;
+  }
+  button[disabled] {
+    background: #bdc3c7;
+    cursor: default;
+  }
+  label {
+    display: block;
+    margin: 0.5em 0 0.2em 0;
+  }
+  input[type="text"], input[type="number"], input[type="date"] {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.3em;
+    font-size: 1em;
+  }
+  textarea {
+    width: 100%;
+    max-width: 600px;
+    height: 6em;
+    font-family: monospace;
+    font-size: 0.9em;
+    margin-top: 0.5em;
+  }
+  .hidden {
+    display: none;
+  }
+  .error {
+    color: #c0392b;
+    font-weight: bold;
+  }
+  table {
+    border-collapse: collapse;
+    margin-top: 1em;
+    width: 100%;
+    max-width: 700px;
+  }
+  th, td {
+    border: 1px solid #ccc;
+    padding: 0.3em 0.6em;
+    text-align: center;
+  }
+  th {
+    background: #ecf0f1;
+  }
+  .calendar-day {
+    width: 2em;
+    height: 2em;
+    text-align: center;
+    vertical-align: middle;
+    cursor: default;
+    border-radius: 3px;
+  }
+  .completed {
+    background-color: #27ae60;
+    color: white;
+    font-weight: bold;
+  }
+  .not-completed {
+    background-color: #e74c3c;
+    color: white;
+  }
+  .today {
+    border: 2px solid #2980b9;
+  }
+  .streak-info {
+    margin-top: 0.5em;
+    font-size: 0.9em;
+  }
+  footer {
+    margin-top: 2em;
+    font-size: 0.8em;
+    color: #7f8c8d;
+  }
+</style>
+</head>
+<body>
+<h1>Wellness Habit Tracker</h1>
+<nav role="navigation" aria-label="Main menu">
+  <button id="menu-add" aria-controls="section-add" aria-expanded="false">Add New Habit</button>
+  <button id="menu-log" aria-controls="section-log" aria-expanded="false">Log Daily Progress</button>
+  <button id="menu-view" aria-controls="section-view" aria-expanded="false">View Habits & Stats</button>
+  <button id="menu-calendar" aria-controls="section-calendar" aria-expanded="false">Calendar Overview</button>
+  <button id="menu-export" aria-controls="section-export" aria-expanded="false">Export Data</button>
+  <button id="menu-import" aria-controls="section-import" aria-expanded="false">Import Data</button>
+  <button id="menu-summary" aria-controls="section-summary" aria-expanded="false">Print-Friendly Summary</button>
+  <button id="menu-quit">Quit</button>
+</nav>
+
+<section id="section-add" class="hidden" aria-live="polite" aria-label="Add new habit">
+  <h2>Add New Habit</h2>
+  <form id="form-add" autocomplete="off">
+    <label for="habit-name">Habit Name *</label>
+    <input type="text" id="habit-name" name="habit-name" required aria-required="true" maxlength="50" />
+    <label for="habit-target">Daily Target (positive integer) *</label>
+    <input type="number" id="habit-target" name="habit-target" min="1" step="1" required aria-required="true" />
+    <button type="submit">Add Habit</button>
+  </form>
+  <div id="add-error" class="error" role="alert" aria-live="assertive"></div>
+</section>
+
+<section id="section-log" class="hidden" aria-live="polite" aria-label="Log daily progress">
+  <h2>Log Daily Progress</h2>
+  <form id="form-log" autocomplete="off">
+    <label for="log-date">Date *</label>
+    <input type="date" id="log-date" name="log-date" required aria-required="true" />
+    <label for="log-habit">Select Habit *</label>
+    <select id="log-habit" name="log-habit" required aria-required="true"></select>
+    <label for="log-amount">Amount Completed (0 or positive integer) *</label>
+    <input type="number" id="log-amount" name="log-amount" min="0" step="1" required aria-required="true" />
+    <button type="submit">Log Progress</button>
+  </form>
+  <div id="log-error" class="error" role="alert" aria-live="assertive"></div>
+</section>
+
+<section id="section-view" class="hidden" aria-live="polite" aria-label="View habits and statistics">
+  <h2>Habits & Statistics</h2>
+  <div id="habits-list"></div>
+</section>
+
+<section id="section-calendar" class="hidden" aria-live="polite" aria-label="Calendar overview">
+  <h2>Calendar Overview</h2>
+  <form id="form-calendar" autocomplete="off">
+    <label for="calendar-habit">Select Habit *</label>
+    <select id="calendar-habit" name="calendar-habit" required aria-required="true"></select>
+    <label for="calendar-month">Select Month *</label>
+    <input type="month" id="calendar-month" name="calendar-month" required aria-required="true" />
+    <button type="submit">Show Calendar</button>
+  </form>
+  <div id="calendar-output" tabindex="0" aria-live="polite"></div>
+</section>
+
+<section id="section-export" class="hidden" aria-live="polite" aria-label="Export data">
+  <h2>Export Data</h2>
+  <button id="btn-export">Download JSON Backup</button>
+  <div id="export-message" role="alert" aria-live="assertive"></div>
+</section>
+
+<section id="section-import" class="hidden" aria-live="polite" aria-label="Import data">
+  <h2>Import Data</h2>
+  <form id="form-import" autocomplete="off">
+    <label for="import-file">Select JSON File *</label>
+    <input type="file" id="import-file" name="import-file" accept="application/json" required aria-required="true" />
+    <button type="submit">Import</button>
+  </form>
+  <div id="import-error" class="error" role="alert" aria-live="assertive"></div>
+  <div id="import-success" role="alert" aria-live="assertive"></div>
+</section>
+
+<section id="section-summary" class="hidden" aria-live="polite" aria-label="Print-friendly summary">
+  <h2>Print-Friendly Summary</h2>
+  <form id="form-summary" autocomplete="off">
+    <label for="summary-start">Start Date *</label>
+    <input type="date" id="summary-start" name="summary-start" required aria-required="true" />
+    <label for="summary-end">End Date *</label>
+    <input type="date" id="summary-end" name="summary-end" required aria-required="true" />
+    <button type="submit">Show Summary</button>
+  </form>
+  <pre id="summary-output" tabindex="0" style="white-space: pre-wrap; background:#fff; border:1px solid #ccc; padding:1em; max-height:400px; overflow:auto;"></pre>
+</section>
+
+<footer>
+  <p>Wellness Habit Tracker &copy; 2025 — Data stored locally in your browser</p>
+</footer>
+
+<script>
+(() => {
+  "use strict";
+
+  // Data structure:
+  // {
+  //   habits: {
+  //     habitId: {
+  //       name: string,
+  //       target: number,
+  //       logs: { "YYYY-MM-DD": number }
+  //     }
+  //   }
+  // }
+
+  const STORAGE_KEY = "wellness_habit_tracker_data";
+
+  function loadData() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return { habits: {} };
+      const data = JSON.parse(raw);
+      if (!data.habits) data.habits = {};
+      return data;
+    } catch {
+      return { habits: {} };
+    }
+  }
+
+  function saveData(data) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function generateId() {
+    return "h" + Math.random().toString(36).slice(2, 10);
+  }
+
+  // Date utilities
+  function formatDate(date) {
+    // date: Date object
+    return date.toISOString().slice(0, 10);
+  }
+
+  function parseDate(str) {
+    // str: "YYYY-MM-DD"
+    const d = new Date(str + "T00:00:00");
+    return isNaN(d) ? null : d;
+  }
+
+  function daysBetween(d1, d2) {
+    const msPerDay = 86400000;
+    return Math.floor((d2 - d1) / msPerDay);
+  }
+
+  // Habit stats calculations
+
+  function getSortedLogDates(logs) {
+    return Object.keys(logs).sort();
+  }
+
+  function calculateStreaks(logs, target) {
+    // logs: {date: amount}
+    // target: daily target number
+    // Returns {currentStreak, longestStreak, completionPercent}
+    const dates = getSortedLogDates(logs);
+    if (dates.length === 0) return { currentStreak: 0, longestStreak: 0, completionPercent: 0 };
+
+    // Convert dates to Date objects
+    const dateObjs = dates.map(d => parseDate(d)).filter(d => d !== null);
+
+    // Sort ascending
+    dateObjs.sort((a,b) => a - b);
+
+    // Calculate completion days count
+    let completedDays = 0;
+    for (const d of dateObjs) {
+      if (logs[formatDate(d)] >= target) completedDays++;
+    }
+    const completionPercent = Math.round((completedDays / dateObjs.length) * 100);
+
+    // Calculate streaks
+    let longestStreak = 0;
+    let currentStreak = 0;
+    let prevDate = null;
+
+    for (let i = 0; i < dateObjs.length; i++) {
+      const d = dateObjs[i];
+      const amount = logs[formatDate(d)];
+      if (amount >= target) {
+        if (prevDate) {
+          const diff = daysBetween(prevDate, d);
+          if (diff === 1) {
+            currentStreak++;
+          } else {
+            currentStreak = 1;
+          }
+        } else {
+          currentStreak = 1;
+        }
+        if (currentStreak > longestStreak) longestStreak = currentStreak;
+      } else {
+        currentStreak = 0;
+      }
+      prevDate = d;
+    }
+
+    // Check if last date is today or yesterday to decide current streak
+    // But we keep currentStreak as calculated from last logs
+
+    return { currentStreak, longestStreak, completionPercent };
+  }
+
+  // UI Elements
+  const sections = {
+    add: document.getElementById("section-add"),
+    log: document.getElementById("section-log"),
+    view: document.getElementById("section-view"),
+    calendar: document.getElementById("section-calendar"),
+    export: document.getElementById("section-export"),
+    import: document.getElementById("section-import"),
+    summary: document.getElementById("section-summary"),
+  };
+
+  const menuButtons = {
+    add: document.getElementById("menu-add"),
+    log: document.getElementById("menu-log"),
+    view: document.getElementById("menu-view"),
+    calendar: document.getElementById("menu-calendar"),
+    export: document.getElementById("menu-export"),
+    import: document.getElementById("menu-import"),
+    summary: document.getElementById("menu-summary"),
+    quit: document.getElementById("menu-quit"),
+  };
+
+  // Current data in memory
+  let data = loadData();
+
+  // Helpers to show/hide sections and update aria-expanded
+  function showSection(name) {
+    for (const key in sections) {
+      if (key === name) {
+        sections[key].classList.remove("hidden");
+        menuButtons[key].setAttribute("aria-expanded", "true");
+        sections[key].querySelector("button, input, select, textarea, form")?.focus();
+      } else {
+        sections[key].classList.add("hidden");
+        menuButtons[key].setAttribute("aria-expanded", "false");
+      }
+    }
+  }
+
+  // Populate habit selects
+  function populateHabitSelects() {
+    const selects = [
+      document.getElementById("log-habit"),
+      document.getElementById("calendar-habit"),
+    ];
+    selects.forEach(select => {
+      if (!select) return;
+      select.innerHTML = "";
+      const habitIds = Object.keys(data.habits);
+      if (habitIds.length === 0) {
+        const option = document.createElement("option");
+        option.textContent = "No habits available";
+        option.value = "";
+        select.appendChild(option);
+        select.disabled = true;
+      } else {
+        select.disabled = false;
+        habitIds.forEach(id => {
+          const habit = data.habits[id];
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = habit.name;
+          select.appendChild(option);
+        });
+      }
+    });
+  }
+
+  // Add Habit Form
+  const formAdd = document.getElementById("form-add");
+  const addError = document.getElementById("add-error");
+
+  formAdd.addEventListener("submit", e => {
+    e.preventDefault();
+    addError.textContent = "";
+    const name = formAdd["habit-name"].value.trim();
+    const targetStr = formAdd["habit-target"].value.trim();
+    if (!name) {
+      addError.textContent = "Habit name cannot be empty.";
+      return;
+    }
+    if (!/^\d+$/.test(targetStr) || Number(targetStr) < 1) {
+      addError.textContent = "Daily target must be a positive integer.";
+      return;
+    }
+    // Check for duplicate habit names (case insensitive)
+    const exists = Object.values(data.habits).some(h => h.name.toLowerCase() === name.toLowerCase());
+    if (exists) {
+      addError.textContent = "Habit name already exists.";
+      return;
+    }
+    const target = Number(targetStr);
+    const id = generateId();
+    data.habits[id] = { name, target, logs: {} };
+    saveData(data);
+    formAdd.reset();
+    populateHabitSelects();
+    alert(`Habit "${name}" added successfully.`);
+  });
+
+  // Log Progress Form
+  const formLog = document.getElementById("form-log");
+  const logError = document.getElementById("log-error");
+
+  // Set default date to today for logging
+  function setLogDateDefault() {
+    const today = new Date();
+    formLog["log-date"].value = formatDate(today);
+  }
+
+  formLog.addEventListener("submit", e => {
+    e.preventDefault();
+    logError.textContent = "";
+    const dateStr = formLog["log-date"].value;
+    const habitId = formLog["log-habit"].value;
+    const amountStr = formLog["log-amount"].value.trim();
+
+    if (!dateStr) {
+      logError.textContent = "Date is required.";
+      return;
+    }
+    if (!habitId || !data.habits[habitId]) {
+      logError.textContent = "Please select a valid habit.";
+      return;
+    }
+    if (!/^\d+$/.test(amountStr) || Number(amountStr) < 0) {
+      logError.textContent = "Amount must be zero or a positive integer.";
+      return;
+    }
+    const dateObj = parseDate(dateStr);
+    if (!dateObj) {
+      logError.textContent = "Invalid date format.";
+      return;
+    }
+    const amount = Number(amountStr);
+    data.habits[habitId].logs[dateStr] = amount;
+    saveData(data);
+    formLog.reset();
+    setLogDateDefault();
+    alert(`Logged ${amount} for "${data.habits[habitId].name}" on ${dateStr}.`);
+  });
+
+  // View Habits & Stats
+  const habitsList = document.getElementById("habits-list");
+
+  function renderHabitsView() {
+    habitsList.innerHTML = "";
+    const habitIds = Object.keys(data.habits);
+    if (habitIds.length === 0) {
+      habitsList.textContent = "No habits added yet.";
+      return;
+    }
+    const table = document.createElement("table");
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Habit</th><th>Daily Target</th><th>Current Streak</th><th>Longest Streak</th><th>Completion %</th></tr>";
+    table.appendChild(thead);
+    const tbody = document.createElement("tbody");
+    habitIds.forEach(id => {
+      const habit = data.habits[id];
+      const stats = calculateStreaks(habit.logs, habit.target);
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${habit.name}</td>
+        <td>${habit.target}</td>
+        <td>${stats.currentStreak}</td>
+        <td>${stats.longestStreak}</td>
+        <td>${stats.completionPercent}%</td>`;
+      tbody.appendChild(tr);
+    });
+    table.appendChild(tbody);
+    habitsList.appendChild(table);
+  }
+
+  // Calendar Overview
+  const formCalendar = document.getElementById("form-calendar");
+  const calendarOutput = document.getElementById("calendar-output");
+
+  function renderCalendar(habitId, year, month) {
+    calendarOutput.innerHTML = "";
+    if (!data.habits[habitId]) {
+      calendarOutput.textContent = "Invalid habit selected.";
+      return;
+    }
+    const habit = data.habits[habitId];
+    const logs = habit.logs;
+    const target = habit.target;
+
+    // Create calendar table
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const daysInMonth = lastDay.getDate();
+
+    const table = document.createElement("table");
+    table.setAttribute("role", "grid");
+    const thead = document.createElement("thead");
+    thead.innerHTML = "<tr><th>Su</th><th>Mo</th><th>Tu</th><th>We</th><th>Th</th><th>Fr</th><th>Sa</th></tr>";
+    table.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    let row = document.createElement("tr");
+    // Fill initial empty cells for days before first day of month
+    for (let i = 0; i < firstDay.getDay(); i++) {
+      const td = document.createElement("td");
+      row.appendChild(td);
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      if (row.children.length === 7) {
+        tbody.appendChild(row);
+        row = document.createElement("tr");
+      }
+      const td = document.createElement("td");
+      td.className = "calendar-day";
+      const dateStr = `${year.toString().padStart(4,"0")}-${(month+1).toString().padStart(2,"0")}-${day.toString().padStart(2,"0")}`;
+      td.textContent = day;
+
+      if (logs[dateStr] >= target) {
+        td.classList.add("completed");
+        td.title = `Completed: ${logs[dateStr]} (target ${target})`;
+      } else if (logs[dateStr] !== undefined) {
+        td.classList.add("not-completed");
+        td.title = `Logged: ${logs[dateStr]} (target ${target})`;
+      } else {
+        td.title = "No data";
+      }
+
+      // Highlight today if in this month
+      const todayStr = formatDate(new Date());
+      if (dateStr === todayStr) {
+        td.classList.add("today");
+        td.title += " (Today)";
+      }
+
+      row.appendChild(td);
+    }
+    // Fill trailing empty cells
+    while (row.children.length < 7) {
+      const td = document.createElement("td");
+      row.appendChild(td);
+    }
+    tbody.appendChild(row);
+    table.appendChild(tbody);
+    calendarOutput.appendChild(table);
+  }
+
+  formCalendar.addEventListener("submit", e => {
+    e.preventDefault();
+    const habitId = formCalendar["calendar-habit"].value;
+    const monthStr = formCalendar["calendar-month"].value;
+    if (!habitId || !data.habits[habitId]) {
+      calendarOutput.textContent = "Please select a valid habit.";
+      return;
+    }
+    if (!monthStr) {
+      calendarOutput.textContent = "Please select a valid month.";
+      return;
+    }
+    const [year, month] = monthStr.split("-").map(Number);
+    renderCalendar(habitId, year, month - 1);
+  });
+
+  // Export Data
+  const btnExport = document.getElementById("btn-export");
+  const exportMessage = document.getElementById("export-message");
+
+  btnExport.addEventListener("click", () => {
+    exportMessage.textContent = "";
+    try {
+      const jsonStr = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "wellness_habit_tracker_backup.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      exportMessage.textContent = "Backup downloaded successfully.";
+    } catch {
+      exportMessage.textContent = "Failed to export data.";
+    }
+  });
+
+  // Import Data
+  const formImport = document.getElementById("form-import");
+  const importFileInput = document.getElementById("import-file");
+  const importError = document.getElementById("import-error");
+  const importSuccess = document.getElementById("import-success");
+
+  formImport.addEventListener("submit", e => {
+    e.preventDefault();
+    importError.textContent = "";
+    importSuccess.textContent = "";
+    const file = importFileInput.files;
+    if (!file) {
+      importError.textContent = "Please select a JSON file to import.";
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const importedData = JSON.parse(reader.result);
+        if (!importedData || typeof importedData !== "object" || !importedData.habits) {
+          importError.textContent = "Invalid data format.";
+          return;
+        }
+        // Validate habits structure
+        for (const [id, habit] of Object.entries(importedData.habits)) {
+          if (typeof habit.name !== "string" || typeof habit.target !== "number" || typeof habit.logs !== "object") {
+            importError.textContent = "Invalid habit data structure.";
+            return;
+          }
+        }
+        data = importedData;
+        saveData(data);
+        populateHabitSelects();
+        importSuccess.textContent = "Data imported successfully.";
+        formImport.reset();
+      } catch {
+        importError.textContent = "Failed to parse JSON file.";
+      }
+    };
+    reader.onerror = () => {
+      importError.textContent = "Error reading the file.";
+    };
+    reader.readAsText(file);
+  });
+
+  // Print-Friendly Summary
+  const formSummary = document.getElementById("form-summary");
+  const summaryOutput = document.getElementById("summary-output");
+
+  formSummary.addEventListener("submit", e => {
+    e.preventDefault();
+    summaryOutput.textContent = "";
+    const startStr = formSummary["summary-start"].value;
+    const endStr = formSummary["summary-end"].value;
+    if (!startStr || !endStr) {
+      summaryOutput.textContent = "Please select both start and end dates.";
+      return;
+    }
+    const startDate = parseDate(startStr);
+    const endDate = parseDate(endStr);
+    if (!startDate || !endDate) {
+      summaryOutput.textContent = "Invalid date format.";
+      return;
+    }
+    if (endDate < startDate) {
+      summaryOutput.textContent = "End date must be on or after start date.";
+      return;
+    }
+    const habitIds = Object.keys(data.habits);
+    if (habitIds.length === 0) {
+      summaryOutput.textContent = "No habits to summarize.";
+      return;
+    }
+
+    // Build summary text
+    let output = `Wellness Habit Tracker Summary\nDate Range: ${startStr} to ${endStr}\n\n`;
+    for (const id of habitIds) {
+      const habit = data.habits[id];
+      output += `Habit: ${habit.name}\nDaily Target: ${habit.target}\n`;
+
+      // Collect logs in range
+      const logsInRange = [];
+      for (const [dateStr, amount] of Object.entries(habit.logs)) {
+        const d = parseDate(dateStr);
+        if (d && d >= startDate && d <= endDate) {
+          logsInRange.push({ date: dateStr, amount });
+        }
+      }
+      logsInRange.sort((a,b) => a.date.localeCompare(b.date));
+
+      if (logsInRange.length === 0) {
+        output += "  No logged data in this range.\n\n";
+        continue;
+      }
+
+      // Calculate completion stats in range
+      const completedDays = logsInRange.filter(l => l.amount >= habit.target).length;
+      const completionPercent = Math.round((completedDays / logsInRange.length) * 100);
+
+      // Calculate streaks in range
+      const logsObj = {};
+      logsInRange.forEach(l => logsObj[l.date] = l.amount);
+      const stats = calculateStreaks(logsObj, habit.target);
+
+      output += `  Logged Days: ${logsInRange.length}\n`;
+      output += `  Completion Percentage: ${completionPercent}%\n`;
+      output += `  Current Streak: ${stats.currentStreak}\n`;
+      output += `  Longest Streak: ${stats.longestStreak}\n`;
+      output += `  Logs:\n`;
+      logsInRange.forEach(l => {
+        const status = l.amount >= habit.target ? "✔" : "✘";
+        output += `    ${l.date}: ${l.amount} ${status}\n`;
+      });
+      output += "\n";
+    }
+    summaryOutput.textContent = output;
+  });
+
+  // Quit button: clear screen and show goodbye message
+  menuButtons.quit.addEventListener("click", () => {
+    if (confirm("Are you sure you want to quit? This will clear the screen.")) {
+      document.body.innerHTML = "<h1>Thank you for using Wellness Habit Tracker.</h1><p>Reload the page to start again.</p>";
+    }
+  });
+
+  // Menu button handlers
+  menuButtons.add.addEventListener("click", () => { showSection("add"); });
+  menuButtons.log.addEventListener("click", () => { showSection("log"); setLogDateDefault(); });
+  menuButtons.view.addEventListener("click", () => { showSection("view"); renderHabitsView(); });
+  menuButtons.calendar.addEventListener("click", () => { showSection("calendar"); });
+  menuButtons.export.addEventListener("click", () => { showSection("export"); exportMessage.textContent = ""; });
+  menuButtons.import.addEventListener("click", () => { showSection("import"); importError.textContent = ""; importSuccess.textContent = ""; });
+  menuButtons.summary.addEventListener("click", () => { showSection("summary"); summaryOutput.textContent = ""; });
+
+  // Initialize
+  populateHabitSelects();
+  showSection("view");
+})();
+</script>
+</body>
+</html>
