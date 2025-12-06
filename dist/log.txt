@@ -108,3 +108,6 @@
 [2025-12-06] Proceeding with run #1 of target 3.
 [2025-12-06T01:20:41.278007Z] Prompt OK  seed=63766  theme=accessibility helpers  extras=ARIA-compliant components, export/import JSON, offline-first with localStorage  title='Accessible Clipboard Helper'  slug=accessible-clipboard-helper  kind=html
 [2025-12-06T01:20:41.278007Z] Build OK  file=accessible-clipboard-helper-2.html  kind=html  required_kind=html  
+[2025-12-06] Proceeding with run #2 of target 3.
+[2025-12-06T04:20:44.040557Z] Prompt OK  seed=21308  theme=learning & study tools  extras=undo/redo, share via URL hash, ARIA-compliant components  title='Smart Flashcard Trainer'  slug=smart-flashcard-trainer  kind=py
+[2025-12-06T04:20:44.040557Z] Build OK  file=smart-flashcard-trainer.html  kind=html  required_kind=py  
