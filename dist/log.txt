@@ -125,3 +125,4 @@
 [2025-12-07] Proceeding with run #2 of target 2.
 [2025-12-07T04:31:27.805461Z] Prompt OK  seed=84763  theme=small business utilities  extras=drag-and-drop, print-friendly view, offline-first with localStorage  title='Small Business Invoice Manager'  slug=small-business-invoice-manager  kind=py
 [2025-12-07T04:31:27.805461Z] Build OK  file=small-business-invoice-manager.html  kind=html  required_kind=py  
+[2025-12-07] Skipping run: daily quota reached (count=2, target=2).
