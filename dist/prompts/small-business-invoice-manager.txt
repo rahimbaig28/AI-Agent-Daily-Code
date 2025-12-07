@@ -14,3 +14,5 @@ Small Business Invoice Manager
 - Offline-first; no network dependencies.
 - Well-structured code with functions for each feature and main loop for easy extensibility.
 - Runs in standard Python 3 environment using only standard library modules (e.g., json, datetime, os).
+
+(Generated: 2025-12-07T04:31:27.805461Z, seed=84763, theme=small business utilities, extras=drag-and-drop, print-friendly view, offline-first with localStorage, kind=py)
