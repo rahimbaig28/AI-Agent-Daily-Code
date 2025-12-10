@@ -13,3 +13,5 @@ Personal Finance Ledger with Undo/Redo and Auto Theme
 - Keyboard-driven menu interface with input validation and error handling.
 - Supports filtering transactions by date range or category.
 - No external dependencies; runs cross-platform in a terminal.
+
+(Generated: 2025-12-10T08:27:19.974949Z, seed=97008, theme=finance & budgeting, extras=undo/redo, responsive grid, dark/light auto theme, kind=py)
