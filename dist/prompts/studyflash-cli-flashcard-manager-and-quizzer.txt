@@ -14,3 +14,5 @@ StudyFlash: CLI Flashcard Manager and Quizzer
   - Data file created in the same directory as the script for easy access and backup.
   - Supports optional command-line arguments to start quiz immediately or import/export data.
 - Designed for lightweight study tool usage with no dependencies and minimal setup.
+
+(Generated: 2025-12-11T04:33:49.366979Z, seed=97992, theme=learning & study tools, extras=export/import JSON, responsive grid, dark/light auto theme, kind=py)

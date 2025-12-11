@@ -168,3 +168,6 @@
 [2025-12-11] Proceeding with run #1 of target 2.
 [2025-12-11T01:27:10.887402Z] Prompt OK  seed=41443  theme=small business utilities  extras=offline-first with localStorage, responsive grid, print-friendly view  title='Invoice Manager Pro'  slug=invoice-manager-pro  kind=html
 [2025-12-11T01:27:10.887402Z] Build OK  file=invoice-manager-pro.html  kind=html  required_kind=html  
+[2025-12-11] Proceeding with run #2 of target 2.
+[2025-12-11T04:33:49.366979Z] Prompt OK  seed=97992  theme=learning & study tools  extras=export/import JSON, responsive grid, dark/light auto theme  title='StudyFlash: CLI Flashcard Manager and Quizzer'  slug=studyflash-cli-flashcard-manager-and-quizzer  kind=py
+[2025-12-11T04:33:49.366979Z] Build OK  file=studyflash-cli-flashcard-manager-and-quizzer.html  kind=html  required_kind=py  
