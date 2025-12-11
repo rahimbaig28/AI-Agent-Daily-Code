@@ -13,3 +13,5 @@ Invoice Manager Pro
 - Real-time invoice total and tax calculations as user enters data.
 - Confirmation prompts before deleting invoices.
 - Use semantic HTML5 elements and ARIA roles for accessibility.
+
+(Generated: 2025-12-11T01:27:10.887402Z, seed=41443, theme=small business utilities, extras=offline-first with localStorage, responsive grid, print-friendly view, kind=html)
