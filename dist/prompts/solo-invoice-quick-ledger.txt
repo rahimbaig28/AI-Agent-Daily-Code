@@ -46,3 +46,5 @@ Solo Invoice & Quick Ledger
 - Deliverable expectations for implementer:
   - Single .py script implementing above commands and interactive mode.
   - Inline usage help and examples surfaced via --help.
+
+(Generated: 2025-12-12T01:26:52.970712Z, seed=50713, theme=small business utilities, extras=undo/redo, ARIA-compliant components, keyboard-first UX, kind=py)
