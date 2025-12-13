@@ -16,3 +16,5 @@ Research Note Vault
 - File handling: Drag-drop zone in sidebar with progress bar, file size limit 5MB, preview images inline in note content.
 - Persistence: Auto-save every 30s to localStorage; load on startup with version check (migrate if schema changes).
 - Testable features: Add 5 sample notes on first load; verify undo/redo restores; export JSON validates; search finds partial tags.
+
+(Generated: 2025-12-13T01:22:17.321875Z, seed=78994, theme=research utilities, extras=undo/redo, offline-first with localStorage, export/import JSON, kind=html)
