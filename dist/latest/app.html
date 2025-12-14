@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-14T04:35:37.741203Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Eco Carbon Tracker</title>
+<style>
+:root{--green:#2E7D32;--accent:#4CAF50;--yellow:#FBC02D;--red:#D32F2F;--bg:#F5F5F5;--card:#FFF;--text:#212121;--border:#E0E0E0}@media(prefers-contrast:high){:root{--green:#006400;--accent:#008000;--yellow:#FFD700;--red:#FF0000;--bg:#000;--card:#FFF;--text:#000;--border:#000}}*{box-sizing:border-box;margin:0;padding:0}body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.4;padding:1rem;max-width:1200px;margin:0 auto}@media(min-width:768px){body{padding:2rem}}.grid{display:grid;grid-template-columns:1fr;gap:1rem}@media(min-width:768px){.grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr)}}.card{background:var(--card);border-radius:12px;padding:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.1);transition:transform .2s,box-shadow .2s}.card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.15)}.header{text-align:center;margin-bottom:2rem}.total{display:grid;place-items:center;padding:2rem;border-radius:20px;font-size:2rem;font-weight:700;margin-bottom:2rem}@media(min-width:768px){.total{font-size:3rem;padding:3rem}}.total.green{background:linear-gradient(135deg,var(--green),var(--accent))}.total.yellow{background:linear-gradient(135deg,var(--yellow),#FF9800)}.total.red{background:linear-gradient(135deg,var(--red),#F44336)}.gauge{width:120px;height:120px;border-radius:50%;background:conic-gradient(var(--accent) 0deg calc(var(--pct,0)*3.6deg),transparent calc(var(--pct,0)*3.6deg) 360deg);display:grid;place-items:center;margin:0 auto .5rem;font-size:.8rem}@media(min-width:768px){.gauge{width:180px;height:180px;font-size:1rem}}.category{display:flex;gap:.5rem;align-items:center;margin-bottom:1rem}.icon{font-size:1.5rem}.slider-container{position:relative}.slider{width:100%;height:6px;background:var(--border);border-radius:3px;outline:none;-webkit-appearance:slider-vertical}@media(max-width:767px){.slider{height:40px;width:6px;-webkit-appearance:slider-vertical}}@media(min-width:768px){.slider{height:6px;width:100%;-webkit-appearance:slider-horizontal}}.value{display:inline-block;width:3rem;text-align:center;font-weight:500;background:var(--accent);color:#FFF;border-radius:6px;font-size:.9rem;margin-left:.5rem}.input-group{display:flex;flex-direction:column;gap:.25rem}.label{font-size:.85rem;font-weight:500;color:#666}.number{width:100%;padding:.5rem;border:1px solid var(--border);border-radius:6px;font-size:1rem}.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.5rem;border:none;border-radius:8px;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s,transform .1s}.btn-primary{background:var(--accent);color:#FFF}.btn-primary:hover{background:#45a049;transform:translateY(-1px)}.btn-secondary{background:#FFF;color:var(--text);border:2px solid var(--border)}.btn-secondary:hover{background:#F5F5F5}.btn-danger{background:var(--red);color:#FFF}.btn-danger:hover{background:#b71c1c}.btn-sm{padding:.5rem 1rem;font-size:.85rem}.history-grid{display:grid;grid-template-columns:1fr;gap:1rem;max-height:400px;overflow-y:auto;padding-right:.5rem}@media(min-width:768px){.history-grid{grid-template-columns:repeat(2,1fr)}}@media(min-width:1024px){.history-grid{grid-template-columns:repeat(3,1fr)}}.history-card{cursor:pointer;padding:1rem;border:2px solid transparent;transition:all .2s}.history-card:hover{border-color:var(--accent);background:var(--accent)10}.history-card.selected,.history-card:focus{border-color:var(--accent);background:var(--accent)20;outline:none}.history-card.editing{border-color:var(--yellow)}.stats{display:grid;gap:1rem}@media(min-width:768px){.stats{grid-template-columns:repeat(3,1fr)}}.stat-card{padding:1rem;border-radius:8px;background:var(--card);text-align:center}.stat-value{font-size:1.5rem;font-weight:700}.stat-label{font-size:.8rem;color:#666}.fade-in{animation:fadeIn .3s ease-in}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.controls{display:flex;flex-wrap:wrap;gap:1rem;justify-content:center;margin:2rem 0}[hidden]{display:none !important}::selection{background:var(--accent);color:#FFF}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+</style>
+</head>
+<body>
+<header class="header" role="banner">
+<h1>Eco Carbon Tracker</h1>
+<p aria-label="Track your daily carbon footprint">Track your daily CO₂e emissions</p>
+</header>
+
+<main class="grid" role="main">
+<section class="card total" role="status" aria-live="polite" aria-label="Daily total carbon footprint">
+<div class="gauge" style="--pct:0" role="img" aria-label="Carbon gauge"></div>
+<div id="total-co2" aria-label="Total CO2">0 kg CO₂e</div>
+</section>
+
+<section class="card" aria-labelledby="current-day">
+<h2 id="current-day" class="sr-only">Current Day Entry</h2>
+<form id="entry-form" novalidate>
+<div class="category"><span class="icon" aria-hidden="true">🚗</span>
+<div class="input-group">
+<label for="transport" class="label">Car (km)</label>
+<input type="range" id="transport" class="slider" min="0" max="100" value="0" aria-label="Kilometers driven">
+<span class="value" id="transport-value">0</span>
+</div></div>
+<div class="category"><span class="icon" aria-hidden="true">⚡</span>
+<div class="input-group">
+<label for="energy" class="label">Electricity (kWh)</label>
+<input type="range" id="energy" class="slider" min="0" max="50" value="0" aria-label="Kilowatt hours used">
+<span class="value" id="energy-value">0</span>
+</div></div>
+<div class="category"><span class="icon" aria-hidden="true">🍖</span>
+<div class="input-group">
+<label for="food" class="label">Beef meals</label>
+<input type="range" id="food" class="slider" min="0" max="5" value="0" aria-label="Number of beef meals">
+<span class="value" id="food-value">0</span>
+</div></div>
+<div class="category"><span class="icon" aria-hidden="true">♻️</span>
+<div class="input-group">
+<label for="waste" class="label">Waste (kg)</label>
+<input type="range" id="waste" class="slider" min="0" max="10" value="0" aria-label="Kilograms of waste">
+<span class="value" id="waste-value">0</span>
+</div></div>
+<div style="margin-top:1.5rem;display:grid;gap:1rem">
+<button type="submit" class="btn btn-primary" id="log-day">Log Day</button>
+<button type="button" class="btn btn-secondary btn-sm" id="undo">↶ Undo</button>
+<button type="button" class="btn btn-secondary btn-sm" id="redo">↷ Redo</button>
+</div>
+</form>
+</section>
+
+<section class="card" aria-labelledby="history-heading">
+<h2 id="history-heading">History (Last 30 days)</h2>
+<div class="history-grid" id="history-grid" role="grid" aria-label="Carbon footprint history" tabindex="-1"></div>
+</section>
+
+<section class="card stats" aria-labelledby="stats-heading">
+<h2 id="stats-heading" class="sr-only">Statistics</h2>
+<div class="stat-card">
+<div id="weekly-avg" class="stat-value" aria-label="Weekly average">0 kg</div>
+<div class="stat-label">Weekly Avg</div>
+</div>
+<div class="stat-card">
+<div id="monthly-avg" class="stat-value" aria-label="Monthly average">0 kg</div>
+<div class="stat-label">Monthly Avg</div>
+</div>
+<div class="stat-card">
+<div id="trend" class="stat-value" aria-label="Trend">→</div>
+<div class="stat-label">Trend</div>
+</div>
+</section>
+</main>
+
+<aside class="controls" role="group" aria-label="Data controls">
+<button class="btn btn-secondary" id="share">📤 Share Day</button>
+<button class="btn btn-secondary" id="export">📊 Export CSV</button>
+<button class="btn btn-danger" id="reset">🗑️ Reset All</button>
+</aside>
+
+<script>
+const MULTIPLIERS={transport:0.2,energy:0.5,food:5,waste:0.8},MAX_HISTORY=30,ACTION_STACK=[],STACK_SIZE=50;let history=[],currentDay={},selectedIndex=-1,stackIndex=0,editingIndex=-1;const storage={save:()=>localStorage.setItem('eco-tracker',JSON.stringify(history)),load:()=>JSON.parse(localStorage.getItem('eco-tracker')||'[]')},date=(d=new Date)=>d.toISOString().split('T')[0],updateTotal=()=>{const t=Object.entries(currentDay).reduce((s,[k,v])=>s+v*MULTIPLIERS[k],0),el=document.getElementById('total-co2'),gauge=document.querySelector('.gauge'),cls=t<10?'green':t<20?'yellow':'red';el.textContent=`${t.toFixed(1)} kg CO₂e`;el.parentElement.className=`card total ${cls}`;gauge.style.setProperty('--pct',Math.min(100,t/25*100));el.setAttribute('aria-label',`Total ${t.toFixed(1)} kilograms CO2 equivalent`)},updateSliders=()=>{['transport','energy','food','waste'].forEach(k=>{const el=document.getElementById(k),valEl=document.getElementById(k+'-value');el.value=currentDay[k]||0;valEl.textContent=el.value;el.oninput=()=>updateInput(k,parseFloat(el.value))})},updateInput=(k,v)=>{currentDay[k]=v;updateTotal()},renderHistory=()=>{const grid=document.getElementById('history-grid');grid.innerHTML=history.slice(-MAX_HISTORY).map((day,i)=>`<div class="history-card fade-in" role="gridcell" tabindex="0" data-index="${history.length-1-i}" aria-label="Day ${date(new Date(day.date))}, ${day.total.toFixed(1)}kg CO₂e">
+${date(new Date(day.date))}
+<div style="font-size:1.2rem;font-weight:700;margin:.5rem 0">${day.total.toFixed(1)}kg</div>
+<button class="btn btn-sm btn-secondary" onclick="editDay(${history.length-1-i})">✏️</button>
+<button class="btn btn-sm btn-danger" onclick="deleteDay(${history.length-1-i})">🗑️</button>
+</div>`).join('');if(selectedIndex>=0){const sel=grid.querySelector(`[data-index="${history.length-1-selectedIndex}"]`);sel?.classList.add('selected');sel?.focus()}},updateStats=()=>{const days=history.slice(-30),w=days.slice(-7).reduce((s,d)=>s+d.total,0)/7||0,m=days.reduce((s,d)=>s+d.total,0)/days.length||0,trend=days.length>1?days[days.length-1].total-days[days.length-2].total:0;document.getElementById('weekly-avg').textContent=`${w.toFixed(1)}`;document.getElementById('weekly-avg').setAttribute('aria-label',`Weekly average ${w.toFixed(1)} kilograms`);document.getElementById('monthly-avg').textContent=`${m.toFixed(1)}`;document.getElementById('monthly-avg').setAttribute('aria-label',`Monthly average ${m.toFixed(1)} kilograms`);document.getElementById('trend').textContent=trend>0?'↑':trend<0?'↓':'→';document.getElementById('trend').setAttribute('aria-label',trend>0?'Trend up':trend<0?'Trend down':'Trend flat')},pushAction=(type,data)=>{ACTION_STACK.length=++stackIndex;ACTION_STACK.push({type,dayIndex:editingIndex>=0?editingIndex:history.length-1,data});if(ACTION_STACK.length>STACK_SIZE)ACTION_STACK.shift();storage.save()},undo=()=>{if(stackIndex>0){const action=ACTION_STACK[--stackIndex];if(action.type==='log'){history.pop()}else if(action.type==='edit'){history[action.dayIndex]=action.data}else if(action.type==='delete'){history.splice(action.dayIndex,0,action.data)}renderAll()}},redo=()=>{if(stackIndex<ACTION_STACK.length-1){const action=ACTION_STACK[++stackIndex];if(action.type==='log'){history.push(action.data)}else if(action.type==='edit'){history[action.dayIndex]=action.data}else if(action.type==='delete'){history.splice(action.dayIndex,1)}}renderAll()},editDay=i=>{editingIndex=i;selectedIndex=i;currentDay={...history[i]};updateSliders();document.getElementById('log-day').textContent='Update Day';renderHistory()},deleteDay=i=>{if(confirm('Delete this day?')){pushAction('delete',{...history[i],index:i});history.splice(i,1);selectedIndex=-1;renderAll()}},renderAll=()=>{renderHistory();updateStats()},logDay=()=>{const total=Object.entries(currentDay).reduce((s,[k,v])=>s+(v||0)*MULTIPLIERS[k],0);const day={date:new Date().toISOString(),transport:currentDay.transport||0,energy:currentDay.energy||0,food:currentDay.food||0,waste:currentDay.waste||0,total};if(editingIndex>=0){pushAction('edit',{...history[editingIndex]},editingIndex);history[editingIndex]=day;editingIndex=-1;document.getElementById('log-day').textContent='Log Day'}else{pushAction('log',day);history.push(day)}currentDay={};updateSliders();renderAll()},shareDay=()=>{const data=btoa(JSON.stringify(currentDay));window.location.hash=data},loadShare=()=>{try{const data=atob(window.location.hash.slice(1));currentDay=JSON.parse(data);updateSliders()}catch(e){}},exportCSV=()=>{const csv=['Date,Transport,Energy,Food,Waste,Total',...history.map(d=>`${date(new Date(d.date))},${d.transport},${d.energy},${d.food},${d.waste},${d.total}`)].join('\n');const a=document.createElement('a');a.href=`data:text/csv;charset=utf-8,${encodeURIComponent(csv)}`;a.download='carbon-history.csv';a.click()},resetData=()=>{if(confirm('Reset all data? This cannot be undone.')){history=[];ACTION_STACK.length=0;stackIndex=0;currentDay={};localStorage.removeItem('eco-tracker');renderAll();updateSliders()}};document.getElementById('entry-form').onsubmit=e=>{e.preventDefault();logDay()};document.getElementById('undo').onclick=undo;document.getElementById('redo').onclick=redo;document.getElementById('share').onclick=shareDay;document.getElementById('export').onclick=exportCSV;document.getElementById('reset').onclick=resetData;document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey){if(e.key==='z'){e.preventDefault();undo()}if(e.key==='y'){e.preventDefault();redo()}}});document.getElementById('history-grid').addEventListener('keydown',e=>{const cards=Array.from(e.currentTarget.children);let idx=cards.indexOf(document.activeElement);if(e.key==='ArrowUp'&&idx>0)cards[--idx].focus();if(e.key==='ArrowDown'&&idx<cards.length-1)cards[++idx].focus();if(e.key==='Enter'&&idx>=0){const i=parseInt(cards[idx].dataset.index);editDay(i)}});window.addEventListener('hashchange',loadShare);(()=>{history=storage.load();updateSliders();renderAll();loadShare();updateTotal()})();
+</script>
+</body>
+</html>
