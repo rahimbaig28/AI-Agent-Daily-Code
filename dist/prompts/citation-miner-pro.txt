@@ -29,3 +29,5 @@ Citation Miner Pro
   5. 's' "Einstein" → filters list correctly.
 - **Edge cases**: Handle missing PDF paths, duplicate DOIs, invalid JSON recovery on startup.
 - **Size target**: <800 LOC; no external deps; runs on Windows/Mac/Linux terminals.
+
+(Generated: 2025-12-14T01:41:05.626473Z, seed=34338, theme=research utilities, extras=drag-and-drop, undo/redo, share via URL hash, kind=py)
