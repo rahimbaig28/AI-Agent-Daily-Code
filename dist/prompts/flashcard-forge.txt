@@ -13,3 +13,5 @@ Flashcard Forge
 - Compact curses UI: Clean borders, color-coded (green=easy, red=hard), progress bar for sessions.
 - Error handling: Validates inputs, backups JSON before edits, console fallback if curses fails.
 - Testable: Run script, add 5 cards, study session scores >70% easy, edit changes persist after restart.
+
+(Generated: 2025-12-15T08:30:04.698585Z, seed=50173, theme=learning & study tools, extras=offline-first with localStorage, drag-and-drop, keyboard-first UX, kind=py)
