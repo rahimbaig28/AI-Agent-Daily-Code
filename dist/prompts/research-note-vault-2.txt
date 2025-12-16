@@ -14,3 +14,5 @@ Research Note Vault
 - **Responsive**: Mobile stacks preview below editor; touch drag-drop support.
 - **Polish**: Smooth transitions (CSS), loading spinner for large imports, undo stack (Cmd/Ctrl+Z up to 50 steps), auto-title on first save.
 - Testable features: Create 5 notes, drag text file, search "research", export/import JSON, verify persistence after refresh.
+
+(Generated: 2025-12-16T04:34:02.210633Z, seed=98098, theme=research utilities, extras=drag-and-drop, export/import JSON, keyboard-first UX, kind=html)
