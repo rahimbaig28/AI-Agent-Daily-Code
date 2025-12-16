@@ -232,3 +232,7 @@
 [2025-12-16] Proceeding with run #3 of target 4.
 [2025-12-16T08:28:17.050430Z] Prompt OK  seed=41347  theme=data visualization  extras=print-friendly view, drag-and-drop, offline-first with localStorage  title='Data Sketchpad — single-file CSV visualizer (HTML)'  slug=data-sketchpad-single-file-csv-visualizer-html  kind=html
 [2025-12-16T08:28:17.050430Z] Build OK  file=data-sketchpad-single-file-csv-visualizer-html.html  kind=html  required_kind=html  
+[2025-12-16] Proceeding with run #4 of target 4.
+[2025-12-16T12:41:09.712434Z] Prompt OK  seed=17331  theme=personal productivity  extras=undo/redo, print-friendly view, share via URL hash  title='Habit Streak Tracker'  slug=habit-streak-tracker  kind=py
+[2025-12-16T12:41:09.712434Z] Build validation failed (html): Missing <!DOCTYPE html> at top.. Attempting auto-fix.
+[2025-12-16T12:41:09.712434Z] Build OK  file=habit-streak-tracker.html  kind=html  required_kind=py  (after auto-fix)
