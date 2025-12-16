@@ -54,3 +54,5 @@ Data Sketchpad — single-file CSV visualizer (HTML)
   - Work entirely client-side; no server component.
   - Aim for graceful degradation: if browser lacks a feature (e.g., FileSystem), still allow file picker and basic functions.
   - Keep UI responsive: initial load under 200ms for UI shell; parsing and visualization operations should display progress for large files.
+
+(Generated: 2025-12-16T08:28:17.050430Z, seed=41347, theme=data visualization, extras=print-friendly view, drag-and-drop, offline-first with localStorage, kind=html)
