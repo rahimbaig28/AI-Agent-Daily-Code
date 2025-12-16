@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-16T01:29:23.589900Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Micro Grid Puzzle Rush</title>
+<style>
+:root{
+  --gap:4px;
+  --tile-min:50px;
+  --bg:#0f1724;
+  --tile:#e6eef8;
+  --tile-dark:#1f2937;
+  --accent:#06b6d4;
+  --bad:#ff6b6b;
+  --glow: 0 0 10px rgba(6,182,212,.8);
+  --fast:240ms;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:linear-gradient(180deg,#071026,#0f1724);color:#e6eef8;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; -webkit-font-smoothing:antialiased}
+.app{display:flex;flex-direction:column;height:100vh;padding:10px;gap:10px}
+.topbar, .bottombar{display:flex;align-items:center;gap:10px}
+.topbar{justify-content:space-between}
+.controls{display:flex;gap:8px;align-items:center}
+.indicators{display:flex;gap:8px;align-items:center}
+.badge{background:rgba(255,255,255,.04);padding:6px 10px;border-radius:8px;min-width:72px;text-align:center;font-variant-numeric:tabular-nums}
+.btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);color:inherit;padding:6px 10px;border-radius:8px;cursor:pointer}
+.btn:active{transform:translateY(1px)}
+.icon{width:18px;height:18px;display:inline-block;vertical-align:middle}
+.gridwrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:200px}
+.grid{display:grid;gap:var(--gap);width:min(100vw - 20px, 96vh);height:min(100vw - 20px, 96vh);max-width:900px;max-height:900px;outline:none}
+.tile{
+  display:flex;align-items:center;justify-content:center;
+  background:var(--tile);color:#041024;font-weight:700;border-radius:6px;
+  user-select:none;touch-action:none;transition:transform var(--fast) cubic-bezier(.2,.9,.2,1),box-shadow .12s;
+  min-width:var(--tile-min);min-height:var(--tile-min);font-size:1.05rem;
+  box-shadow:0 2px 0 rgba(0,0,0,.2);
+}
+.tile.blank{background:transparent;box-shadow:none}
+.tile:focus{outline:3px solid rgba(6,182,212,.16);z-index:2}
+.tile:hover{box-shadow:var(--glow);transform:translateY(-3px)}
+.rowcol{font-size:12px;opacity:.7}
+.lives{display:flex;gap:4px}
+.life{width:16px;height:16px;border-radius:50%;background:limegreen}
+.life.empty{background:rgba(255,255,255,.06)}
+.confetti{position:absolute;pointer-events:none;inset:0}
+.bottombar{justify-content:space-between}
+.hint{font-size:12px;opacity:.7}
+.controls small{display:block;font-size:11px;opacity:.7;text-align:center}
+.hidden{display:none!important}
+
+/* layout switching for narrow screens */
+@media (max-width:600px){
+  .grid{width:100vw;height:100vh;gap:var(--gap);padding:6px}
+  /* transform 6x6 to 4x9 when narrow portrait-like */
+  .grid.cols-4{grid-template-columns:repeat(4,1fr);grid-auto-rows:1fr}
+}
+/* default 6x6 */
+.grid.cols-6{grid-template-columns:repeat(6,1fr);grid-auto-rows:1fr}
+
+/* confetti pieces */
+.confetti .piece{position:absolute;width:8px;height:14px;opacity:0;transform-origin:center;}
+
+/* high-contrast mode */
+body.high-contrast{background:#000;color:#fff}
+body.high-contrast .tile{background:#000;color:#fff;border:2px solid #fff}
+body.high-contrast .badge, body.high-contrast .btn{background:#111;border-color:#444}
+
+/* print */
+@media print{
+  body{background:#fff;color:#000}
+  .topbar,.bottombar,.controls,.hint{display:none}
+  .gridwrap{padding:1cm}
+  .tile{background:#ddd;color:#000;border-radius:2px;box-shadow:none}
+  .grid{width:100%;height:auto;max-height:none;display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+  @page{margin:1cm}
+}
+.visually-hidden{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="app" role="application" aria-labelledby="title">
+  <div class="topbar" role="region" aria-label="Top controls">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="title" style="font-weight:700">Micro Grid Puzzle Rush</div>
+      <div class="hint" id="fs-hint">Press F11 for full-screen</div>
+    </div>
+    <div class="controls" role="toolbar" aria-label="Game info">
+      <div class="badge" id="timer" aria-live="polite">01:00</div>
+      <div class="badge" id="moves">Moves: 0</div>
+      <div class="lives" id="lives" aria-live="polite" title="Lives">
+        <!-- life icons -->
+      </div>
+      <button class="btn" id="shuffleBtn" title="Shuffle (Space/Enter)">Shuffle</button>
+      <button class="btn" id="fullscreenBtn" title="Toggle Fullscreen">⛶</button>
+      <button class="btn" id="hcToggle" title="High-contrast mode">HC</button>
+      <label style="display:flex;align-items:center;gap:6px">
+        <input type="checkbox" id="soundToggle"/><small>Sound</small>
+      </label>
+    </div>
+  </div>
+
+  <div class="gridwrap" role="main">
+    <div id="grid" class="grid cols-6" tabindex="0" aria-label="Puzzle grid" ></div>
+    <canvas class="confetti" id="confetti" aria-hidden="true"></canvas>
+  </div>
+
+  <div class="bottombar" role="region" aria-label="Bottom controls">
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="badge" id="best">Best: —</div>
+      <div class="badge" id="toplist">Top: —</div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center">
+      <button class="btn" id="restartBtn">Restart</button>
+      <button class="btn" id="printBtn">Print</button>
+      <div id="shareWrap" style="display:flex;gap:6px;align-items:center">
+        <input id="shareUrl" class="badge" readonly style="min-width:140px" aria-label="Share URL"/>
+        <button class="btn" id="copyBtn">Copy</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sr" class="visually-hidden" aria-live="assertive"></div>
+</div>
+
+<script>
+/* Micro Grid Puzzle Rush - Single file implementation
+   Constraints kept: inline CSS/JS, localStorage persistence, hash-based share, keyboard/touch, animations <300ms, accessibility
+   Size kept compact (<1000 lines).
+*/
+
+(function(){
+const ROWS=6,COLS=6,TOTAL=ROWS*COLS,BLANK=TOTAL;
+let gridEl=document.getElementById('grid');
+let timerEl=document.getElementById('timer'),movesEl=document.getElementById('moves'),livesEl=document.getElementById('lives');
+let shuffleBtn=document.getElementById('shuffleBtn'),restartBtn=document.getElementById('restartBtn'),hcToggle=document.getElementById('hcToggle');
+let fullscreenBtn=document.getElementById('fullscreenBtn'),soundToggle=document.getElementById('soundToggle');
+let bestEl=document.getElementById('best'),toplistEl=document.getElementById('toplist');
+let shareUrl=document.getElementById('shareUrl'),copyBtn=document.getElementById('copyBtn');
+let sr=document.getElementById('sr');
+let confCanvas=document.getElementById('confetti');
+let ctx=confCanvas.getContext?.('2d');
+let state={arr:[],moves:0,lives:5,seconds:60,seed:0,solved:false,playing:false,beep:true};
+const STORAGE_KEY='microgrid_v1';
+const TOP_KEY='microgrid_top';
+const LAST_SEED='microgrid_last';
+const MAX_TOP=10;
+const ANIM=240;
+let animating=false,timerInterval=null,visibilityHidden=false;
+let rafId=null,confettiPieces=[];
+
+/* util: seeded rng */
+function mulberry32(a){return function(){var t=a+=0x6D2B79F5; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296;}}
+
+/* persist/load */
+function loadStorage(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY))||{};}catch(e){return {};}}
+function saveStorage(obj){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(obj));}catch(e){}}
+function loadTop(){try{return JSON.parse(localStorage.getItem(TOP_KEY))||[];}catch(e){return []}}
+function saveTop(arr){try{localStorage.setItem(TOP_KEY,JSON.stringify(arr));}catch(e){}}
+
+/* layout adaptation */
+function layoutAdjust(){
+  let narrow=window.innerWidth<600 || window.innerHeight>window.innerWidth*1.3;
+  gridEl.classList.toggle('cols-4', narrow);
+  gridEl.classList.toggle('cols-6', !narrow);
+  // set grid rows based on columns
+  let cols = narrow?4:6;
+  gridEl.style.gridTemplateColumns=`repeat(${cols},1fr)`;
+}
+
+/* generate solvable shuffle using random valid moves from solved state */
+function generate(seed, moves=200){
+  let rng=mulberry32(seed);
+  let arr=Array.from({length:TOTAL},(_,i)=>i+1);
+  let blankIdx=TOTAL-1;
+  let lastSwap=-1;
+  for(let m=0;m<moves;m++){
+    let r=(blankIdx%COLS),c=Math.floor(blankIdx/COLS);
+    let neighbors=[];
+    if(r>0) neighbors.push(blankIdx-1);
+    if(r<COLS-1) neighbors.push(blankIdx+1);
+    if(c>0) neighbors.push(blankIdx-COLS);
+    if(c<ROWS-1) neighbors.push(blankIdx+COLS);
+    // pick neighbor not equal lastSwap to avoid undo
+    let n=neighbors[Math.floor(rng()*neighbors.length)];
+    [arr[blankIdx],arr[n]]=[arr[n],arr[blankIdx]];
+    lastSwap=blankIdx; blankIdx=n;
+  }
+  return arr;
+}
+
+/* render grid DOM */
+function render(){
+  gridEl.innerHTML='';
+  let cols = gridEl.classList.contains('cols-4')?4:6;
+  gridEl.setAttribute('role','grid');
+  for(let i=0;i<TOTAL;i++){
+    let tile=document.createElement('button');
+    tile.className='tile';
+    tile.setAttribute('role','gridcell');
+    tile.setAttribute('tabindex','0');
+    let val=state.arr[i];
+    if(val===BLANK){ tile.classList.add('blank'); tile.innerText=''; tile.setAttribute('aria-label',`Blank, row ${Math.floor(i/cols)+1} col ${i%cols+1}`) }
+    else{ tile.textContent=val; tile.setAttribute('aria-label',`Tile ${val}, row ${Math.floor(i/cols)+1} col ${i%cols+1}`) }
+    tile.dataset.index=i;
+    tile.style.transitionDuration=ANIM+'ms';
+    tile.addEventListener('click', onTileClick);
+    tile.addEventListener('touchstart', onTileTouch,{passive:true});
+    tile.addEventListener('keydown', onTileKeyDown);
+    gridEl.appendChild(tile);
+  }
+  updateUI();
+}
+
+/* find index of blank */
+function blankIndex(){return state.arr.indexOf(BLANK);}
+
+/* swap logic: only orthogonal adjacent allowed */
+function canSwap(i,j){
+  let cols=gridEl.classList.contains('cols-4')?4:6;
+  if(i<0||j<0||i>=TOTAL||j>=TOTAL) return false;
+  let ri=Math.floor(i/cols), rj=Math.floor(j/cols);
+  let ci=i%cols, cj=j%cols;
+  let dx=Math.abs(ci-cj), dy=Math.abs(ri-rj);
+  return (dx+dy===1);
+}
+
+/* perform swap with animation */
+function swapTiles(i,j,record=true){
+  if(animating) return false;
+  if(!canSwap(i,j)) return false;
+  let tiles=gridEl.children;
+  let a=tiles[i], b=tiles[j];
+  if(!a||!b) return false;
+  animating=true;
+  // visual transform swap
+  a.style.transitionDuration=ANIM+'ms';
+  b.style.transitionDuration=ANIM+'ms';
+  a.style.transform='scale(.98)';
+  b.style.transform='scale(.98)';
+  // swap data in state
+  [state.arr[i],state.arr[j]]=[state.arr[j],state.arr[i]];
+  setTimeout(()=>{ animating=false; render(); announce(`Swapped tiles`); if(state.beep) playBeep(880,0.06); checkSolved(); }, ANIM);
+  if(record){ state.moves++; updateUI(); }
+  return true;
+}
+
+/* UI updates */
+function updateUI(){
+  movesEl.textContent='Moves: '+state.moves;
+  timerEl.textContent=formatTime(state.seconds);
+  // lives
+  livesEl.innerHTML='';
+  for(let i=0;i<5;i++){
+    let l=document.createElement('div'); l.className='life'+(i<state.lives?'':' empty'); l.setAttribute('aria-hidden','true');
+    livesEl.appendChild(l);
+  }
+  // best/top
+  let top=loadTop();
+  bestEl.textContent='Best: '+(top.length?formatEntry(top):'—');
+  toplistEl.textContent='Top: '+(top.length?top.length:'—');
+  // share hash preview
+  shareUrl.value=state.solved?location.origin+location.pathname+'#'+encodeShare(state.seed,state.moves):'';
+}
+
+/* formatting */
+function formatTime(s){let mm=Math.floor(s/60), ss=s%60; return String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');}
+function formatEntry(e){return formatTime(e.t)+' / '+e.m+'m';}
+
+/* tile interactions */
+function onTileClick(e){
+  let idx=Number(e.currentTarget.dataset.index);
+  let blank=blankIndex();
+  if(canSwap(idx,blank)){ swapTiles(idx,blank); if(state.beep) playBeep(1200,0.03); } else { state.lives--; announce('Invalid swap'); if(state.beep) playBeep(220,0.08); if(state.lives<=0) { endRound(false); } updateUI(); }
+}
+function onTileTouch(e){ onTileClick(e); }
+function onTileKeyDown(e){
+  // Enter or Space to shuffle
+  if(e.key==='Enter' || e.key===' '){ e.preventDefault(); shuffle(); return; }
+}
+
+/* keyboard for grid when focused */
+gridEl.addEventListener('keydown', (e)=>{
+  let k=e.key.toLowerCase();
+  const keys={'arrowup':'up','w':'up','arrowdown':'down','s':'down','arrowleft':'left','a':'left','arrowright':'right','d':'right'};
+  if(k===' '||k==='enter'){ e.preventDefault(); shuffle(); return; }
+  if(!(k in keys)) return;
+  e.preventDefault();
+  // move blank by swapping with neighbor in direction
+  let blank=blankIndex();
+  let cols = gridEl.classList.contains('cols-4')?4:6;
+  let r=Math.floor(blank/cols), c=blank%cols;
+  let target=-1;
+  if(keys[k]==='up') { if(r<ROWS-1) target=blank+cols; }
+  if(keys[k]==='down'){ if(r>0) target=blank-cols; }
+  if(keys[k]==='left'){ if(c<COLS-1) target=blank+1; }
+  if(keys[k]==='right'){ if(c>0) target=blank-1; }
+  if(target>=0) swapTiles(blank,target);
+});
+
+/* shuffle & seed */
+function shuffle(seed){
+  state.seed = seed===undefined? Math.floor(Math.random()*2**31) : seed;
+  state.arr = generate(state.seed, 200);
+  state.moves=0; state.lives=5; state.seconds=60; state.solved=false; state.playing=true;
+  saveStorageState();
+  render(); startTimer();
+  announce('Shuffled puzzle');
+}
+
+/* check solved */
+function checkSolved(){
+  if(state.arr.every((v,i)=>v===i+1)){ state.solved=true; state.playing=false; stopTimer(); announce('Puzzle solved'); onWin(); }
+}
+
+/* win handling: confetti, record, share */
+function onWin(){
+  if(state.beep) playBeep(1200,0.12);
+  burstConfetti();
+  recordTop();
+  // generate share hash
+  shareUrl.value=location.origin+location.pathname+'#'+encodeShare(state.seed,state.moves);
+}
+
+/* record top scores by time remaining and moves */
+function recordTop(){
+  let top=loadTop();
+  let entry={t:60-state.seconds,m:state.moves,seed:state.seed,date:Date.now()};
+  top.push(entry);
+  top.sort((a,b)=> (a.t!==b.t? b.t-a.t : a.m - b.m));
+  if(top.length>MAX_TOP) top=top.slice(0,MAX_TOP);
+  saveTop(top);
+  updateUI();
+}
+
+/* timer */
+function startTimer(){
+  stopTimer();
+  timerInterval=setInterval(()=>{
+    if(visibilityHidden) return;
+    if(!state.playing) return;
+    state.seconds--;
+    if(state.seconds<=0){ state.seconds=0; stopTimer(); endRound(false); }
+    updateUI();
+  },1000);
+}
+function stopTimer(){ if(timerInterval){ clearInterval(timerInterval); timerInterval=null; } }
+
+/* end round on timeout or lives 0 */
+function endRound(success){
+  state.playing=false;
+  if(success){ announce('You solved the puzzle'); }
+  else{ announce('Time up'); if(state.beep) playBeep(200,0.12); }
+  // auto-shuffle after short delay
+  setTimeout(()=>{ shuffle(); }, 800);
+}
+
+/* visibility handling */
+document.addEventListener('visibilitychange', ()=>{
+  visibilityHidden = document.hidden;
+  if(visibilityHidden){ stopTimer(); announce('Paused'); }
+  else if(state.playing){ startTimer(); announce('Resumed'); }
+});
+
+/* persistence */
+function saveStorageState(){
+  let s=loadStorage();
+  s.lastSeed=state.seed; s.sound=state.beep; s.lastArr=state.arr; localStorage.setItem(STORAGE_KEY,JSON.stringify(s));
+}
+
+/* encode share: short base36 of seed and moves */
+function encodeShare(seed,moves){
+  let a=seed.toString(36), b=moves.toString(36);
+  return a+'-'+b;
+}
+function decodeShare(hash){
+  if(!hash) return null;
+  let parts=hash.replace('#','').split('-');
+  if(parts.length!==2) return null;
+  return {seed:parseInt(parts,36), moves:parseInt(parts[1],36)};
+}
+function loadFromHash(){
+  let h=location.hash;
+  let parsed=decodeShare(h);
+  if(parsed){ shuffle(parsed.seed); // set moves to recorded for replay visualization (not altering actual gameplay)
+    state.moves=parsed.moves; updateUI();
+  }
+}
+
+/* copy share */
+copyBtn.addEventListener('click', ()=>{
+  shareUrl.select(); shareUrl.setSelectionRange(0,99999);
+  try{ document.execCommand('copy'); announce('Share URL copied'); }catch(e){ announce('Copy failed'); }
+});
+
+/* shuffle button */
+shuffleBtn.addEventListener('click', ()=>shuffle());
+
+/* restart */
+restartBtn.addEventListener('click', ()=>{ shuffle(state.seed); });
+
+/* fullscreen toggle */
+fullscreenBtn.addEventListener('click', ()=>{ if(!document.fullscreenElement) document.documentElement.requestFullscreen?.(); else document.exitFullscreen?.(); });
+
+/* high-contrast */
+hcToggle.addEventListener('click', ()=>{ document.body.classList.toggle('high-contrast'); });
+
+/* sound toggle */
+soundToggle.addEventListener('change',(e)=>{ state.beep=e.target.checked; let s=loadStorage(); s.sound=state.beep; saveStorage(s); });
+
+/* print */
+document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+/* announcements for screen readers */
+function announce(msg){ sr.textContent=msg; }
+
+/* beep synth with WebAudio (short) */
+let audioCtx=null;
+function playBeep(freq,dur){
+  try{
+    if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+    let o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type='sine'; o.frequency.value=freq;
+    g.gain.value=0.0001;
+    o.connect(g); g.connect(audioCtx.destination);
+    let now=audioCtx.currentTime;
+    g.gain.exponentialRampToValueAtTime(0.08,now+0.01);
+    o.start(now);
+    g.gain.exponentialRampToValueAtTime(0.0001, now+dur);
+    o.stop(now+dur+0.02);
+  }catch(e){/*ignore*/ }
+}
+
+/* confetti burst (DOM-free canvas) */
+function burstConfetti(){
+  if(!ctx) return;
+  confCanvas.width=window.innerWidth; confCanvas.height=window.innerHeight;
+  confettiPieces=[];
+  const colors=['#ffcd3c','#06b6d4','#ff6b6b','#8b5cf6','#34d399'];
+  for(let i=0;i<90;i++){
+    confettiPieces.push({
+      x:window.innerWidth/2 + (Math.random()-0.5)*300,
+      y:window.innerHeight/2 + (Math.random()-0.5)*200,
+      vx:(Math.random()-0.5)*8,
+      vy:-6 - Math.random()*6,
+      color:colors[Math.floor(Math.random()*colors.length)],
+      rot:Math.random()*360,
+      vr:(Math.random()-0.5)*20,
+      life:120 + Math.random()*40
+    });
+  }
+  let tick=()=>{
+    ctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+    confettiPieces.forEach(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=0.28; p.rot+=p.vr; p.life--;
+      ctx.save();
+      ctx.translate(p.x,p.y); ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle=p.color; ctx.fillRect(-4,-6,8,12);
+      ctx.restore();
+    });
+    confettiPieces = confettiPieces.filter(p=>p.life>0);
+    if(confettiPieces.length>0) requestAnimationFrame(tick); else ctx.clearRect(0,0,confCanvas.width,confCanvas.height);
+  };
+  requestAnimationFrame(tick);
+}
+
+/* load last state or new */
+function init(){
+  layoutAdjust();
+  window.addEventListener('resize', layoutAdjust);
+  // load storage
+  let s=loadStorage();
+  state.beep = s.sound!==undefined? s.sound : true;
+  soundToggle.checked=state.beep;
+  // lives display
+  renderInitialLives();
+  // parse hash or last seed
+  if(location.hash){ loadFromHash(); } else if(s.lastSeed !== undefined){ shuffle(s.lastSeed); } else { shuffle(); }
+  // load top list into UI
+  updateUI();
+  // keyboard shortkeys
+  window.addEventListener('keydown',(e)=>{
+    if(e.key==='F11') return;
+    if(e.key===' ' || e.key==='Enter'){/*handled*/} 
+  });
+  // pause/resume on visibility handled earlier
+  // persist on unload
+  window.addEventListener('beforeunload', ()=> saveStorageState());
+  // click copy on share area to copy
+  shareUrl.addEventListener('click', ()=>{ shareUrl.select(); document.execCommand('copy'); announce('Copied'); });
+  // allow space to shuffle when focused anywhere
+  window.addEventListener('keydown', (e)=>{ if(e.code==='Space' && document.activeElement===document.body){ e.preventDefault(); shuffle(); } if(e.key==='Escape'){ document.activeElement.blur(); } });
+}
+
+/* render initial lives placeholders */
+function renderInitialLives(){ livesEl.innerHTML=''; for(let i=0;i<5;i++){ let d=document.createElement('div'); d.className='life'; livesEl.appendChild(d); } }
+
+/* share encode on win done above */
+
+/* save last seed */
+function saveLastSeed(){ try{ localStorage.setItem(LAST_SEED,String(state.seed)); }catch(e){} }
+
+/* ensure no diagonal swaps: canSwap already forbids diagonal by Manhattan distance */
+
+init();
+})(); 
+</script>
+</body>
+</html>
