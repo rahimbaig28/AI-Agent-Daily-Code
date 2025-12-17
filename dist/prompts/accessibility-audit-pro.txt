@@ -15,3 +15,5 @@ Accessibility Audit Pro
 - Keyboard nav: Tab through all controls, arrow keys for tabs/sliders, Esc closes popovers.
 - Responsive grid layout, 100% mobile support, focus-visible styles.
 - Testable features: Load sample page text, toggle modes, drag-drop works, hash sharing restores audit, full keyboard control passes audit.
+
+(Generated: 2025-12-17T04:32:02.309990Z, seed=86617, theme=accessibility helpers, extras=ARIA-compliant components, share via URL hash, drag-and-drop, kind=html)

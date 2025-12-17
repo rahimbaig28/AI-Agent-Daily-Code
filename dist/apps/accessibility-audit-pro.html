@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-17T04:32:40.449279Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessibility Audit Pro</title>
+<style>
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --border: #e0e0e0;
+  --primary: #0066cc;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+[data-theme="dark"] {
+  --bg: #1a1a1a;
+  --fg: #f0f0f0;
+  --border: #404040;
+  --primary: #4d9eff;
+  --success: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.5; }
+.container { max-width: 1200px; margin: 0 auto; padding: 1rem; }
+header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+.theme-toggle { position: relative; }
+.theme-toggle input { display: none; }
+.theme-toggle label { display: block; width: 50px; height: 26px; background: var(--border); border-radius: 26px; position: relative; cursor: pointer; transition: background 0.3s; }
+.theme-toggle label::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.3s; }
+.theme-toggle input:checked + label { background: var(--primary); }
+.theme-toggle input:checked + label::after { transform: translateX(24px); }
+.drop-zone { border: 3px dashed var(--border); border-radius: 12px; padding: 3rem 2rem; text-align: center; margin-bottom: 1rem; transition: all 0.3s; cursor: pointer; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.drop-zone.dragover { border-color: var(--primary); background: rgba(0,102,204,0.1); }
+.drop-zone:focus { outline: 3px solid var(--primary); outline-offset: 2px; }
+.audit-btn { background: var(--primary); color: white; border: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; cursor: pointer; margin-bottom: 2rem; }
+.audit-btn:focus-visible, .audit-btn:hover { background: #0052a3; }
+.audit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.tablist { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 1rem; flex-wrap: wrap; }
+.tab { background: none; border: none; padding: 1rem 1.5rem; cursor: pointer; font-size: 1rem; transition: all 0.3s; }
+.tab[aria-selected="true"] { border-bottom: 3px solid var(--primary); color: var(--primary); }
+.tab:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+.tabpanel { display: none; }
+.tabpanel[aria-hidden="false"] { display: block; }
+.results { display: grid; gap: 1rem; }
+.badge { padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; font-weight: bold; }
+.badge.pass { background: var(--success); color: white; }
+.badge.fail { background: var(--danger); color: white; }
+.badge.warn { background: var(--warning); color: var(--fg); }
+.tree { font-family: monospace; background: var(--border); padding: 1rem; border-radius: 8px; white-space: pre-wrap; max-height: 300px; overflow: auto; }
+.sliders { display: grid; gap: 1rem; margin: 1rem 0; }
+.slider-group { display: flex; flex-direction: column; }
+.slider { width: 100%; margin: 0.5rem 0; }
+.color-preview { width: 100%; height: 2rem; border-radius: 4px; border: 1px solid var(--border); margin-top: 0.5rem; }
+.contrast-ratio { font-weight: bold; font-size: 1.2rem; margin: 1rem 0; }
+.popover { position: absolute; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; box-shadow: var(--shadow); z-index: 1000; max-width: 300px; }
+.fix-trigger:focus + .popover { display: block; }
+@media (max-width: 768px) { .tablist { flex-direction: column; } .tab { border-bottom: 1px solid var(--border); } }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Accessibility Audit Pro</h1>
+    <div class="theme-toggle">
+      <input type="checkbox" id="theme" role="switch" aria-label="Toggle dark mode">
+      <label for="theme"></label>
+    </div>
+  </header>
+  
+  <div class="drop-zone" id="dropZone" role="region" aria-label="Drag and drop content to audit" aria-dropeffect="copy" tabindex="0">
+    <p>Drag text, HTML, or URLs here or paste content</p>
+    <p>Keyboard: Focus and press Enter to activate drop mode (use arrows to simulate)</p>
+  </div>
+  
+  <button class="audit-btn" id="auditBtn" disabled>Audit Content (Enter/Space)</button>
+  
+  <div class="tablist" role="tablist" aria-label="Audit categories">
+    <button class="tab" role="tab" aria-selected="true" aria-controls="contrast" tabindex="0">Contrast</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="headings" tabindex="-1">Headings</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="links" tabindex="-1">Links</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="forms" tabindex="-1">Forms</button>
+    <button class="tab" role="tab" aria-selected="false" aria-controls="images" tabindex="-1">Images</button>
+  </div>
+  
+  <div id="contrast" class="tabpanel" role="tabpanel" aria-labelledby="contrast-tab" aria-hidden="false">
+    <div class="sliders">
+      <div class="slider-group">
+        <label for="fgColor">Foreground Color</label>
+        <input type="color" id="fgColor" class="slider" value="#000000">
+        <div class="color-preview" id="fgPreview"></div>
+      </div>
+      <div class="slider-group">
+        <label for="bgColor">Background Color</label>
+        <input type="color" id="bgColor" class="slider" value="#ffffff">
+        <div class="color-preview" id="bgPreview"></div>
+      </div>
+      <div class="slider-group">
+        <label for="fontSize">Font Size (px)</label>
+        <input type="range" id="fontSize" class="slider" min="12" max="24" value="16">
+        <span id="fontSizeVal">16px</span>
+      </div>
+    </div>
+    <div class="contrast-ratio" id="contrastRatio">Ratio: --</div>
+    <div id="contrastResult" class="results"></div>
+  </div>
+  
+  <div id="headings" class="tabpanel" role="tabpanel" aria-labelledby="headings-tab" aria-hidden="true">
+    <div id="headingTree" class="tree"></div>
+    <div id="headingResult" class="results"></div>
+  </div>
+  
+  <div id="links" class="tabpanel" role="tabpanel" aria-labelledby="links-tab" aria-hidden="true">
+    <div id="linkResult" class="results"></div>
+  </div>
+  
+  <div id="forms" class="tabpanel" role="tabpanel" aria-labelledby="forms-tab" aria-hidden="true">
+    <div id="formResult" class="results"></div>
+  </div>
+  
+  <div id="images" class="tabpanel" role="tabpanel" aria-labelledby="images-tab" aria-hidden="true">
+    <div id="imageResult" class="results"></div>
+  </div>
+</div>
+
+<div id="fixPopover" class="popover" role="dialog" aria-live="polite" hidden></div>
+
+<script>
+class AccessibilityAuditPro {
+  constructor() {
+    this.content = '';
+    this.audits = JSON.parse(localStorage.getItem('audits')) || [];
+    this.currentAuditId = null;
+    this.init();
+  }
+  
+  init() {
+    this.setupTheme();
+    this.setupDropZone();
+    this.setupTabs();
+    this.setupContrast();
+    this.loadFromHash();
+    this.renderAuditHistory();
+  }
+  
+  setupTheme() {
+    const toggle = document.getElementById('theme');
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    toggle.checked = isDark;
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    toggle.addEventListener('change', (e) => {
+      document.documentElement.setAttribute('data-theme', e.target.checked ? 'dark' : 'light');
+    });
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+      if (!toggle.checked) {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+      }
+    });
+  }
+  
+  setupDropZone() {
+    const dropZone = document.getElementById('dropZone');
+    const auditBtn = document.getElementById('auditBtn');
+    
+    // Drag & drop
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(event => {
+      dropZone.addEventListener(event, e => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+    });
+    
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      this.content = e.dataTransfer.getData('text') || e.dataTransfer.getData('text/html') || '';
+      this.updateDropZone();
+      auditBtn.disabled = false;
+      dropZone.classList.remove('dragover');
+    });
+    
+    dropZone.addEventListener('dragover', () => dropZone.classList.add('dragover'));
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    
+    // Paste
+    dropZone.addEventListener('paste', e => {
+      e.preventDefault();
+      this.content = e.clipboardData.getData('text') || e.clipboardData.getData('text/html') || '';
+      this.updateDropZone();
+      auditBtn.disabled = false;
+    });
+    
+    // Keyboard simulation
+    dropZone.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        navigator.clipboard.readText().then(text => {
+          this.content = text;
+          this.updateDropZone();
+          auditBtn.disabled = false;
+        });
+      }
+    });
+    
+    auditBtn.addEventListener('click', () => this.runAudit());
+  }
+  
+  updateDropZone() {
+    document.getElementById('dropZone').textContent = this.content.substring(0, 100) + (this.content.length > 100 ? '...' : '');
+  }
+  
+  setupTabs() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => this.switchTab(tab));
+      tab.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight') {
+          tabs[(index + 1) % tabs.length].focus();
+        } else if (e.key === 'ArrowLeft') {
+          tabs[(index - 1 + tabs.length) % tabs.length].focus();
+        }
+      });
+    });
+  }
+  
+  switchTab(selectedTab) {
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.setAttribute('aria-selected', 'false');
+      tab.setAttribute('tabindex', '-1');
+    });
+    document.querySelectorAll('.tabpanel').forEach(panel => {
+      panel.setAttribute('aria-hidden', 'true');
+    });
+    
+    selectedTab.setAttribute('aria-selected', 'true');
+    selectedTab.setAttribute('tabindex', '0');
+    const panelId = selectedTab.getAttribute('aria-controls');
+    document.getElementById(panelId).setAttribute('aria-hidden', 'false');
+  }
+  
+  setupContrast() {
+    const sliders = ['fgColor', 'bgColor', 'fontSize'];
+    sliders.forEach(id => {
+      const slider = document.getElementById(id);
+      slider.addEventListener('input', () => this.updateContrast());
+      if (id === 'fontSize') {
+        slider.addEventListener('input', () => {
+          document.getElementById('fontSizeVal').textContent = slider.value + 'px';
+        });
+      }
+    });
+    ['fgPreview', 'bgPreview'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => this.updateContrast());
+    });
+    this.updateContrast();
+  }
+  
+  getContrastRatio(hex1, hex2) {
+    const [r1, g1, b1] = this.hexToRgb(hex1).map(c => c / 255);
+    const [r2, g2, b2] = this.hexToRgb(hex2).map(c => c / 255);
+    const l1 = 0.2126 * r1 + 0.7152 * g1 + 0.0722 * b1;
+    const l2 = 0.2126 * r2 + 0.7152 * g2 + 0.0722 * b2;
+    return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+  }
+  
+  hexToRgb(hex) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return [r, g, b];
+  }
+  
+  updateContrast() {
+    const fg = document.getElementById('fgColor').value;
+    const bg = document.getElementById('bgColor').value;
+    const size = document.getElementById('fontSize').value;
+    
+    document.getElementById('fgPreview').style.background = fg;
+    document.getElementById('bgPreview').style.background = bg;
+    
+    const ratio = this.getContrastRatio(fg, bg);
+    const aaNormal = ratio >= 4.5;
+    const aaaNormal = ratio >= 7;
+    const aaLarge = size >= 18 || (size >= 14 && parseFloat(document.getElementById('fontSize').dataset.weight) >= 600);
+    
+    document.getElementById('contrastRatio').textContent = `Ratio: ${ratio.toFixed(2)}`;
+    
+    const result = document.getElementById('contrastResult');
+    result.innerHTML = `
+      <div class="badge ${aaNormal ? 'pass' : 'fail'}">WCAG AA Normal: ${aaNormal ? 'PASS' : 'FAIL'}</div>
+      <div class="badge ${aaaNormal ? 'pass' : 'fail'}">WCAG AAA Normal: ${aaaNormal ? 'PASS' : 'FAIL'}</div>
+      <div class="badge ${aaLarge ? 'pass' : 'fail'}">WCAG AA Large Text: ${aaLarge ? 'PASS' : 'FAIL'}</div>
+      <button class="fix-trigger" tabindex="0" aria-describedby="fixPopover">Fix Suggestions</button>
+      <div id="fixPopover" class="popover" role="dialog">${this.getContrastFixes(ratio, aaNormal, aaaNormal)}</div>
+    `;
+  }
+  
+  getContrastFixes(ratio, aa, aaa) {
+    let fixes = [];
+    if (!aa) fixes.push('Increase contrast ratio to 4.5:1 for AA or 7:1 for AAA');
+    fixes.push('Use darker foreground or lighter background');
+    fixes.push('Check font weight for large text exceptions');
+    return fixes.join('<br>');
+  }
+  
+  async runAudit() {
+    const timestamp = new Date().toISOString();
+    const audit = {
+      id: Date.now(),
+      content: this.content,
+      timestamp,
+      results: {}
+    };
+    
+    // Analyze content
+    audit.results.headings = this.analyzeHeadings(this.content);
+    audit.results.links = this.analyzeLinks(this.content);
+    audit.results.forms = this.analyzeForms(this.content);
+    audit.results.images = this.analyzeImages(this.content);
+    
+    this.currentAuditId = audit.id;
+    this.audits.unshift(audit);
+    this.audits = this.audits.slice(0, 10);
+    localStorage.setItem('audits', JSON.stringify(this.audits));
+    
+    this.renderResults(audit);
+    window.location.hash = audit.id;
+    
+    // Alert screen readers
+    const alert = document.createElement('div');
+    alert.setAttribute('role', 'alert');
+    alert.textContent = 'Audit complete. Results updated.';
+    document.body.appendChild(alert);
+    setTimeout(() => alert.remove(), 1000);
+  }
+  
+  analyzeHeadings(content) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const headings = Array.from(doc.querySelectorAll('h1,h2,h3,h4,h5,h6'));
+    const tree = this.buildHeadingTree(headings);
+    const issues = [];
+    
+    if (headings.length === 0) issues.push('No headings found');
+    let expectedLevel = 1;
+    headings.forEach(h => {
+      const level = parseInt(h.tagName[1]);
+      if (level !== expectedLevel) issues.push(`Skipped from H${expectedLevel} to H${level}`);
+      expectedLevel = level + 1;
+    });
+    
+    return { tree, issues, count: headings.length };
+  }
+  
+  buildHeadingTree(headings) {
+    let tree = '';
+    headings.forEach(h => {
+      tree += `${h.tagName} ${h.textContent.trim().substring(0, 30)}...\n`;
+    });
+    return tree || 'No headings detected';
+  }
+  
+  analyzeLinks(content) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const links = Array.from(doc.querySelectorAll('a'));
+    const issues = [];
+    
+    links.forEach(link => {
+      const text = link.textContent.trim();
+      const href = link.getAttribute('href') || '';
+      if (!text || text.length < 2) issues.push('Empty or short link text');
+      if (!href || href.startsWith('#') || href === '') issues.push('Missing or invalid href');
+      if (text.toLowerCase().includes(href.toLowerCase())) issues.push('Link text same as URL');
+    });
+    
+    return {
+      count: links.length,
+      issues,
+      descriptive: issues.length === 0 ? 'All descriptive' : `${issues.length} issues`
+    };
+  }
+  
+  analyzeForms(content) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const inputs = Array.from(doc.querySelectorAll('input, textarea, select'));
+    const issues = [];
+    
+    inputs.forEach(input => {
+      if (!input.labels?.length && !input.getAttribute('aria-label')) {
+        issues.push(`Unlabeled ${input.type || input.tagName}`);
+      }
+    });
+    
+    return { count: inputs.length, issues, labeled: issues.length === 0 };
+  }
+  
+  analyzeImages(content) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(content, 'text/html');
+    const images = Array.from(doc.querySelectorAll('img'));
+    const issues = [];
+    
+    images.forEach(img => {
+      const alt = img.getAttribute('alt') || '';
+      if (!alt || alt === '') issues.push('Missing alt text');
+      if (alt === img.src) issues.push('Alt text same as filename');
+    });
+    
+    return { count: images.length, issues, accessible: issues.length === 0 };
+  }
+  
+  renderResults(audit) {
+    // Headings
+    const headingTree = document.getElementById('headingTree');
+    headingTree.textContent = audit.results.headings.tree;
+    
+    const headingResult = document.getElementById('headingResult');
+    const hBadge = audit.results.headings.issues.length === 0 ? 'pass' : 'fail';
+    headingResult.innerHTML = `
+      <div class="badge ${hBadge}">Headings: ${audit.results.headings.count} found, ${audit.results.headings.issues.length} issues</div>
+    `;
+    
+    // Links
+    const linkResult = document.getElementById('linkResult');
+    const lBadge = audit.results.links.issues.length === 0 ? 'pass' : 'warn';
+    linkResult.innerHTML = `
+      <div class="badge ${lBadge}">Links: ${audit.results.links.count}, ${audit.results.links.descriptive}</div>
+    `;
+    
+    // Forms
+    const formResult = document.getElementById('formResult');
+    const fBadge = audit.results.forms.labeled ? 'pass' : 'fail';
+    formResult.innerHTML = `
+      <div class="badge ${fBadge}">Forms: ${audit.results.forms.count} elements, ${audit.results.forms.issues.length} unlabeled</div>
+    `;
+    
+    // Images
+    const imageResult = document.getElementById('imageResult');
+    const iBadge = audit.results.images.accessible ? 'pass' : 'fail';
+    imageResult.innerHTML = `
+      <div class="badge ${iBadge}">Images: ${audit.results.images.count}, ${audit.results.images.issues.length} alt issues</div>
+    `;
+  }
+  
+  loadFromHash() {
+    const hash = window.location.hash.slice(1);
+    if (hash) {
+      const audit = this.audits.find(a => a.id == hash);
+      if (audit) {
+        this.content = audit.content;
+        this.updateDropZone();
+        document.getElementById('auditBtn').disabled = false;
+        this.renderResults(audit);
+      }
+    }
+  }
+  
+  renderAuditHistory() {
+    // History could be added to UI if space permits
+  }
+}
+
+new AccessibilityAuditPro();
+</script>
+</body>
+</html>
