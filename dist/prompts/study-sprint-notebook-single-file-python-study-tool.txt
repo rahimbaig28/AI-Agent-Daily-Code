@@ -1,0 +1,65 @@
+Study Sprint Notebook — single-file Python study tool
+
+- Purpose: lightweight, keyboard-first command-line study notebook for short study "sprints" and micro-notes; supports timed sprints, quick flashcards, tagging, undo/redo, and export/import as JSON in a single Python 3 script (standard library only).
+
+- Run mode: interactive terminal application (text UI). Single-file Python 3 script, no external libraries. Must run on Python 3.8+.
+
+- Data model (persist to disk): one JSON file "study_data.json" stored next to the script. Structure: { "notes": [{id, text, tags[], created_iso, updated_iso}], "cards": [{id, front, back, tags[], created_iso, updated_iso, ease}], "sprints": [{id, note_ids[], card_ids[], duration_sec, completed_at_iso}], "meta": {next_id:int} }.
+
+- Core features (keyboard-first):
+  - Main menu keyboard commands displayed: N=new note, C=new card, S=start sprint, L=list items, E=edit item, D=delete item, T=tag filter, U=undo, R=redo, X=export JSON, I=import JSON, Q=quit. Commands accept single-letter keys or typed commands; ENTER confirms; ESC/ctrl-c cancels current action.
+  - Navigation: arrow keys or j/k to move list cursor; Enter to open selected item for view/edit; Home/End to jump to top/bottom.
+  - Input editing: simple multiline editor for notes/cards using common keys (Enter to add line, Ctrl+S to save, Ctrl+C/ESC to cancel). For terminals without raw-mode support, fallback to line-by-line input.
+
+- Sprint workflow:
+  - Start a timed sprint: prompt for duration (default 25m, allow seconds), optional selection: current filtered notes/cards or pick by tags. While sprint runs show countdown timer in-place and a progress bar (text), keyboard bindings: P=pause/resume, A=add quick note (stores immediately), F=finish early.
+  - On completion record sprint entry with selected item ids and completed_at timestamp.
+
+- Flashcard mode:
+  - Quick review queue built from selected cards (by tag or all). Show front, press Space to reveal back, then rate: 1 (hard),2(medium),3(easy). Update card 'ease' (numeric) and schedule ordering using simple spaced repetition heuristic (higher ease moves card later in queue for current session). Display counts reviewed/remaining.
+
+- Undo/Redo:
+  - Maintain in-memory action stack (push actions for create/edit/delete/import/export and sprint complete). U = undo last action, R = redo. Undo must revert data changes and update persisted JSON.
+
+- Persistence:
+  - Auto-save to "study_data.json" after each confirmed change. On startup load file if exists; on first run create an empty structure. Export command writes a user-chosen filename JSON snapshot; Import merges or replaces (ask user to choose) with confirmation and create undo snapshot.
+
+- Import/Export JSON:
+  - Export: prompt for filename, write pretty JSON, include timestamp metadata. Show success message.
+  - Import: prompt for filename, validate JSON schema minimally (presence of top-level keys), on invalid JSON reject with error. Offer two modes: merge (reassign imported ids to avoid collisions) or replace (backup current to timestamped file before replace). Record import as undoable action.
+
+- Search & Tagging:
+  - Text search across notes and cards (case-insensitive substring). Tag filter: enter one or more tags to filter lists; support negative tags with "-" prefix (exclude).
+  - Tag management: when editing item allow add/remove tags; list of existing tags viewable.
+
+- Accessibility & Terminal behavior:
+  - Detect terminal width/height; adapt list displays with wrapping. Use clear textual cues and avoid color dependence; if terminal supports ANSI, optional color for emphasis but must work without it.
+  - Keyboard shortcuts documented in-app and accessible via H (help).
+  - Graceful handling of SIGINT: prompt to confirm quit if unsaved edits; save on exit.
+
+- Robustness:
+  - Validate JSON and timestamps using datetime.fromisoformat/fromtimestamp. Use tempfile for safe writes (atomic replace).
+  - Concurrency: if file modified externally, detect changed mtime on save and warn user offering options: overwrite, reload, or merge.
+
+- Implementation notes for developer (must fit single file; under ~1000 lines):
+  - Use standard modules: json, os, sys, time, datetime, tempfile, shutil, tty, termios (Unix raw mode), msvcrt (Windows key reading), select, readline (optional), argparse, copy, uuid.
+  - Provide a small cross-platform keyboard input helper that supports single-key reads and simple arrow/j/k mapping.
+  - Keep UI simple text-based (no curses dependency) built from print/erase lines using ANSI when available; provide non-ANSI fallback.
+  - Encapsulate data access via a single DataStore class with load/save/backup/merge, and an ActionStack class for undo/redo that stores inverse operations.
+  - Provide a --export and --import CLI to run non-interactive export/import if needed.
+
+- Minimal testable feature set to implement first (priority for a minimal viable script):
+  1) Load/create JSON datastore and save.
+  2) Create/edit/delete notes with tags.
+  3) List and search notes; keyboard single-letter commands.
+  4) Export/import JSON with merge/replace options.
+  5) Start a simple timed sprint that records completion.
+  6) Undo/redo of create/edit/delete and sprint completion.
+  7) Flashcard review of existing cards with reveal and rating (basic ease adjustment).
+
+- Edge cases and constraints:
+  - Keep file IO atomic and handle JSON decode errors gracefully.
+  - Ensure all IDs are unique integers using meta.next_id increment.
+  - Script size suitable to implement in one file and run cross-platform in terminal.
+
+(Generated: 2025-12-19T08:27:22.343428Z, seed=31011, theme=learning & study tools, extras=export/import JSON, keyboard-first UX, undo/redo, kind=py)

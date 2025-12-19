@@ -271,3 +271,11 @@
 [2025-12-19T04:32:45.761962Z] Prompt OK  seed=62405  theme=environment & sustainability  extras=responsive grid, offline-first with localStorage, dark/light auto theme  title='Eco Impact Tracker'  slug=eco-impact-tracker  kind=html
 [2025-12-19T04:32:45.761962Z] Build validation failed (html): Missing <!DOCTYPE html> at top.; Missing required tag: <body>. Attempting auto-fix.
 [2025-12-19T04:32:45.761962Z] Build OK  file=eco-impact-tracker-2.html  kind=html  required_kind=html  (after auto-fix)
+[2025-12-19] Proceeding with run #3 of target 5.
+[2025-12-19T08:27:22.343428Z] Prompt OK  seed=31011  theme=learning & study tools  extras=export/import JSON, keyboard-first UX, undo/redo  title='Study Sprint Notebook — single-file Python study tool'  slug=study-sprint-notebook-single-file-python-study-tool  kind=py
+[2025-12-19T08:27:22.343428Z] Build validation failed (py): Python syntax error: invalid syntax (<unknown>, line 574). Attempting auto-fix.
+[2025-12-19T08:27:22.343428Z] Build FAILED: RuntimeError: Final py validation failed after fix attempt: Python syntax error: invalid syntax (<unknown>, line 2)
+[2025-12-19] Proceeding with run #4 of target 5.
+[2025-12-19T08:28:41.922186Z] Prompt OK  seed=22738  theme=environment & sustainability  extras=ARIA-compliant components, dark/light auto theme, share via URL hash  title='Eco Footprint Tracker'  slug=eco-footprint-tracker  kind=py
+[2025-12-19T08:28:41.922186Z] Build validation failed (html): Missing <!DOCTYPE html> at top.. Attempting auto-fix.
+[2025-12-19T08:28:41.922186Z] Build OK  file=eco-footprint-tracker.html  kind=html  required_kind=py  (after auto-fix)
