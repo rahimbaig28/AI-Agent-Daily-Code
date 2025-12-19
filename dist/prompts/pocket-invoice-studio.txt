@@ -59,3 +59,5 @@ Pocket Invoice Studio
   - Single HTML file, no external libraries or network requests.
   - Implementable in under ~1000 lines of code.
   - Keep UI simple and focused on functionality; styling modest but accessible.
+
+(Generated: 2025-12-19T12:38:45.446195Z, seed=46228, theme=small business utilities, extras=offline-first with localStorage, undo/redo, drag-and-drop, kind=html)
