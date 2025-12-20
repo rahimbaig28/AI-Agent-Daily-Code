@@ -62,3 +62,5 @@ Research Clipboard — single-file HTML research utilities app
 - Deliverable expectations for developer:
   - The HTML file implements the above features with modular, commented JS functions for storage, rendering, editor interactions, attachments handling, undo/redo, and export/import.
   - Include a compact README comment at top of file describing storage key, shortcuts, and schema.
+
+(Generated: 2025-12-20T01:22:37.598986Z, seed=64375, theme=research utilities, extras=offline-first with localStorage, drag-and-drop, undo/redo, kind=html)
