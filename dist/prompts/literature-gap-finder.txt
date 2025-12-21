@@ -24,3 +24,5 @@ Literature Gap Finder
   - Handles 100+ KB files efficiently with streaming read.
   - Under 800 lines total code.
 - Shebang: `#!/usr/bin/env python3`; works cross-platform (Windows/Linux/Mac).
+
+(Generated: 2025-12-21T01:40:58.163901Z, seed=69072, theme=research utilities, extras=responsive grid, print-friendly view, keyboard-first UX, kind=py)
