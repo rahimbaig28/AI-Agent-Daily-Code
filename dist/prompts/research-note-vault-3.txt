@@ -17,3 +17,5 @@ Research Note Vault
 - **Data Format**: Each note {id: uuid(via Date.now()+Math.random()), title, content, tags[], created, updated, wordCount}.
 - **Edge Cases**: Handle localStorage quota (prompt to clear if >80% used via navigator.storage.estimate), prevent duplicate IDs, graceful degradation on old browsers (fallback to sessionStorage).
 - **Visual Style**: Minimalist sans-serif font, subtle shadows, green accents for actions, smooth transitions (<0.3s).
+
+(Generated: 2025-12-21T12:36:02.083415Z, seed=22545, theme=research utilities, extras=offline-first with localStorage, print-friendly view, undo/redo, kind=html)
