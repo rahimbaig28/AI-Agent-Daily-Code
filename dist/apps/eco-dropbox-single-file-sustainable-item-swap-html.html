@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-21T08:24:36.905868Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Dropbox</title>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --bg-card: #ffffff;
+            --bg-panel: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #10b981;
+            --primary-hover: #059669;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.1);
+            --radius: 12px;
+            --transition: all 0.2s ease;
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-card: #1e293b;
+            --bg-panel: #334155;
+            --text: #f1f5f9;
+            --text-muted: #cbd5e1;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1rem; }
+        header { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 1rem 0; margin-bottom: 1rem; }
+        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .toolbar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; margin-bottom: 1rem; }
+        .search { flex: 1; min-width: 200px; padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: var(--radius); font-size: 1rem; }
+        .search:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(16,185,129,0.1); }
+        .filter-btn, .theme-toggle, .export-btn { padding: 0.5rem 1rem; border: 1px solid var(--border); background: var(--bg-card); border-radius: var(--radius); cursor: pointer; transition: var(--transition); }
+        .filter-btn.active, .filter-btn:hover, .theme-toggle:hover, .export-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
+        .stats { display: flex; gap: 2rem; font-size: 0.9rem; color: var(--text-muted); flex-wrap: wrap; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.5rem; cursor: pointer; transition: var(--transition); position: relative; }
+        .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .card.requested { border-color: var(--warning); background: linear-gradient(135deg, var(--bg-card), #fef3c7); }
+        .card-image { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
+        .card-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+        .card-meta { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .card-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+        .tag { background: var(--border); padding: 0.25rem 0.5rem; border-radius: 20px; font-size: 0.8rem; }
+        .request-btn { width: 100%; padding: 0.75rem; background: var(--primary); color: white; border: none; border-radius: var(--radius); cursor: pointer; font-weight: 500; }
+        .request-btn.requested { background: var(--warning); }
+        .panel { position: fixed; top: 0; right: -100%; width: 100%; max-width: 500px; height: 100vh; background: var(--bg-panel); border-left: 1px solid var(--border); transition: right 0.3s ease; z-index: 1000; overflow-y: auto; }
+        .panel.open { right: 0; }
+        .panel-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .panel-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+        .form-group { padding: 0 1.5rem 1.5rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); }
+        .form-row { display: flex; gap: 1rem; }
+        .form-row > * { flex: 1; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: var(--radius); cursor: pointer; font-weight: 500; transition: var(--transition); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-danger { background: var(--danger); color: white; }
+        .add-card { position: fixed; bottom: 2rem; right: 2rem; width: 80px; height: 80px; background: var(--primary); color: white; border: none; border-radius: 50%; font-size: 1.5rem; cursor: pointer; box-shadow: var(--shadow-lg); transition: var(--transition); z-index: 999; }
+        .add-card:hover { transform: scale(1.1); }
+        .add-card.dragover { background: var(--primary-hover); }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1001; }
+        .modal-content { background: var(--bg-card); padding: 2rem; border-radius: var(--radius); max-width: 400px; width: 90%; }
+        .offline { position: fixed; top: 1rem; right: 1rem; background: var(--warning); color: white; padding: 0.5rem 1rem; border-radius: var(--radius); font-size: 0.9rem; }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .panel { width: 100%; max-width: none; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search { min-width: auto; }
+        }
+        @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+        .error { border-color: var(--danger) !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header role="banner">
+            <h1>Eco Dropbox</h1>
+            <div class="toolbar" role="search">
+                <label for="search" class="sr-only">Search items</label>
+                <input type="search" id="search" class="search" placeholder="Search title, description, tags..." aria-label="Search items">
+                <select id="categoryFilter" class="filter-btn" aria-label="Filter by category">
+                    <option value="">All categories</option>
+                </select>
+                <select id="conditionFilter" class="filter-btn" aria-label="Filter by condition">
+                    <option value="">All conditions</option>
+                    <option value="new">New</option>
+                    <option value="good">Good</option>
+                    <option value="fair">Fair</option>
+                </select>
+                <button id="clearFilters" class="filter-btn">Clear</button>
+                <div class="stats" id="stats" role="status" aria-live="polite"></div>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">🌙</button>
+                <button id="exportBtn" class="export-btn">Export</button>
+                <input type="file" id="importFile" accept=".json" style="display:none;" aria-label="Import collection">
+                <button id="importBtn" class="export-btn">Import</button>
+            </div>
+        </header>
+        <main role="main">
+            <div id="itemsGrid" class="grid" role="list" aria-label="Available items"></div>
+        </main>
+    </div>
+
+    <div id="detailPanel" class="panel" role="dialog" aria-labelledby="panelTitle" aria-hidden="true">
+        <div class="panel-header">
+            <h2 id="panelTitle">Item Details</h2>
+            <button id="panelClose" class="panel-close" aria-label="Close panel">×</button>
+        </div>
+        <form id="itemForm">
+            <div class="form-group">
+                <label for="title">Title *</label>
+                <input type="text" id="title" required maxlength="100">
+            </div>
+            <div class="form-group">
+                <label for="category">Category *</label>
+                <select id="category" required>
+                    <option value="tools">Tools</option>
+                    <option value="books">Books</option>
+                    <option value="plants">Plants/Seedlings</option>
+                    <option value="kitchen">Kitchen</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="text" id="customCategory" placeholder="Custom category" style="margin-top:0.5rem;">
+            </div>
+            <div class="form-group">
+                <label for="description">Description *</label>
+                <textarea id="description" rows="3" required maxlength="500"></textarea>
+            </div>
+            <div class="form-row">
+                <div>
+                    <label for="condition">Condition *</label>
+                    <select id="condition" required>
+                        <option value="new">New</option>
+                        <option value="good">Good</option>
+                        <option value="fair">Fair</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="quantity">Quantity</label>
+                    <input type="number" id="quantity" min="1" max="99" value="1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pickupNotes">Pickup notes</label>
+                <textarea id="pickupNotes" rows="2" maxlength="200"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="tags">Tags (comma separated)</label>
+                <input type="text" id="tags" placeholder="e.g. drill, power tool">
+            </div>
+            <div class="form-group">
+                <label for="imageInput">Image</label>
+                <input type="file" id="imageInput" accept="image/*">
+                <div id="imagePreview" style="margin-top:1rem;"></div>
+            </div>
+            <div style="padding:0 1.5rem 1.5rem;">
+                <button type="submit" class="btn btn-primary">Save Item</button>
+                <button type="button" id="deleteBtn" class="btn btn-danger" style="float:right;">Delete</button>
+            </div>
+        </form>
+    </div>
+
+    <button id="addBtn" class="add-card" aria-label="List an Item" role="button">+</button>
+
+    <div id="requestModal" class="modal" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <h3>Request Item</h3>
+            <label for="requesterName">Your name:</label>
+            <input type="text" id="requesterName" required>
+            <div style="margin-top:1rem; display:flex; gap:1rem;">
+                <button id="confirmRequest" class="btn btn-primary">Request</button>
+                <button id="cancelRequest" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data management
+        const STORAGE_KEY = 'eco-dropbox-v1';
+        let items = [];
+        let currentFilters = { search: '', category: '', condition: '' };
+        let editingId = null;
+        const MAX_IMAGE_SIZE = 1.5 * 1024 * 1024; // 1.5MB
+
+        // UUID generator
+        function uuid() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                const r = Math.random() * 16 | 0;
+                return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+            });
+        }
+
+        // Load/save data
+        function loadData() {
+            try {
+                const data = localStorage.getItem(STORAGE_KEY);
+                items = data ? JSON.parse(data) : [];
+            } catch (e) {
+                items = [];
+                showError('Storage unavailable. Data will not persist.');
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+            } catch (e) {
+                showError('Storage full. Export your data immediately.');
+                downloadJSON(items, 'eco-dropbox-backup.json');
+            }
+        }
+
+        // UI Updates
+        function renderItems(filteredItems = items) {
+            const grid = document.getElementById('itemsGrid');
+            grid.innerHTML = filteredItems.map(item => `
+                <article class="card ${item.requestedBy ? 'requested' : ''}" role="listitem" tabindex="0" data-id="${item.id}">
+                    ${item.imageDataUrl ? `<img src="${item.imageDataUrl}" alt="${item.title} image" class="card-image" loading="lazy">` : ''}
+                    <h3 class="card-title">${escapeHtml(item.title)}</h3>
+                    <div class="card-meta">${item.category}${item.customCategory ? ` (${item.customCategory})` : ''} • ${item.condition} • ${item.quantity || 1}x</div>
+                    <div class="card-tags">${(item.tags || []).map(tag => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
+                    ${item.pickupNotes ? `<p>${escapeHtml(item.pickupNotes)}</p>` : ''}
+                    ${item.requestedBy ? `<div style="color:var(--warning);">Requested by ${escapeHtml(item.requestedBy)} on ${new Date(item.requestedAt).toLocaleDateString()}</div>` : ''}
+                    <button class="request-btn ${item.requestedBy ? 'requested' : ''}" data-id="${item.id}">
+                        ${item.requestedBy ? 'Requested' : 'Request / Reserve'}
+                    </button>
+                </article>
+            `).join('');
+        }
+
+        function updateFilters() {
+            const search = document.getElementById('search').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const condition = document.getElementById('conditionFilter').value;
+
+            let filtered = items.filter(item => {
+                const matchesSearch = !search || 
+                    item.title.toLowerCase().includes(search) ||
+                    item.description.toLowerCase().includes(search) ||
+                    (item.tags || []).some(tag => tag.toLowerCase().includes(search));
+                const matchesCategory = !category || item.category === category || item.customCategory === category;
+                const matchesCondition = !condition || item.condition === condition;
+                return matchesSearch && matchesCategory && matchesCondition;
+            });
+
+            renderItems(filtered);
+            updateStats(filtered);
+            updateUrlHash(editingId);
+        }
+
+        function updateStats(filteredItems = items) {
+            const statsEl = document.getElementById('stats');
+            const catCounts = {};
+            filteredItems.forEach(item => {
+                const cat = item.category || item.customCategory || 'uncat';
+                catCounts[cat] = (catCounts[cat] || 0) + 1;
+            });
+            const imgPercent = filteredItems.length ? Math.round(filteredItems.filter(i => i.imageDataUrl).length / filteredItems.length * 100) : 0;
+            const requested = filteredItems.filter(i => i.requestedBy).length;
+            
+            statsEl.innerHTML = `
+                <div>Total: ${filteredItems.length}</div>
+                <div>With images: ${imgPercent}%</div>
+                <div>Requested: ${requested}</div>
+            `;
+        }
+
+        function updateCategoryFilter() {
+            const select = document.getElementById('categoryFilter');
+            const categories = [''];
+            items.forEach(item => {
+                if (!categories.includes(item.category)) categories.push(item.category);
+                if (item.customCategory && !categories.includes(item.customCategory)) categories.push(item.customCategory);
+            });
+            select.innerHTML = categories.map(cat => `<option value="${cat}">${cat || 'All'}</option>`).join('');
+        }
+
+        // Panel management
+        function openPanel(item = null) {
+            editingId = item ? item.id : null;
+            document.getElementById('detailPanel').classList.add('open');
+            document.getElementById('detailPanel').setAttribute('aria-hidden', 'false');
+            
+            if (item) {
+                document.getElementById('title').value = item.title;
+                document.getElementById('category').value = item.category || '';
+                document.getElementById('customCategory').value = item.customCategory || '';
+                document.getElementById('description').value = item.description;
+                document.getElementById('condition').value = item.condition;
+                document.getElementById('quantity').value = item.quantity || 1;
+                document.getElementById('pickupNotes').value = item.pickupNotes || '';
+                document.getElementById('tags').value = (item.tags || []).join(', ');
+                const preview = document.getElementById('imagePreview');
+                if (item.imageDataUrl) {
+                    preview.innerHTML = `<img src="${item.imageDataUrl}" style="max-width:100%;border-radius:8px;">`;
+                } else {
+                    preview.innerHTML = '';
+                }
+                document.getElementById('deleteBtn').style.display = 'inline-block';
+            } else {
+                document.getElementById('itemForm').reset();
+                document.getElementById('imagePreview').innerHTML = '';
+                document.getElementById('deleteBtn').style.display = 'none';
+                document.getElementById('title').focus();
+            }
+        }
+
+        function closePanel() {
+            document.getElementById('detailPanel').classList.remove('open');
+            document.getElementById('detailPanel').setAttribute('aria-hidden', 'true');
+            editingId = null;
+        }
+
+        // Form handling
+        document.getElementById('itemForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const formData = {
+                id: editingId || uuid(),
+                title: document.getElementById('title').value.trim(),
+                category: document.getElementById('category').value,
+                customCategory: document.getElementById('customCategory').value.trim() || null,
+                description: document.getElementById('description').value.trim(),
+                condition: document.getElementById('condition').value,
+                quantity: parseInt(document.getElementById('quantity').value) || 1,
+                pickupNotes: document.getElementById('pickupNotes').value.trim() || null,
+                tags: document.getElementById('tags').value.split(',').map(t => t.trim()).filter(t => t),
+                createdAt: editingId ? items.find(i => i.id === editingId).createdAt : new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+
+            // Handle image
+            const imageFile = document.getElementById('imageInput').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    if (e.target.result.length > MAX_IMAGE_SIZE) {
+                        alert('Image too large (max 1.5MB). Image not saved.');
+                    } else {
+                        formData.imageDataUrl = e.target.result;
+                        saveItem(formData);
+                    }
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                saveItem(formData);
+            }
+        });
+
+        function saveItem(data) {
+            if (editingId) {
+                const index = items.findIndex(i => i.id === editingId);
+                items[index] = { ...items[index], ...data };
+            } else {
+                items.push(data);
+            }
+            saveData();
+            updateCategoryFilter();
+            updateFilters();
+            closePanel();
+        }
+
+        document.getElementById('deleteBtn').addEventListener('click', () => {
+            if (confirm('Delete this item?')) {
+                items = items.filter(i => i.id !== editingId);
+                saveData();
+                updateCategoryFilter();
+                updateFilters();
+                closePanel();
+            }
+        });
+
+        // Request handling
+        function toggleRequest(id) {
+            const item = items.find(i => i.id === id);
+            if (item.requestedBy) {
+                item.requestedBy = null;
+                item.requestedAt = null;
+            } else {
+                document.getElementById('requestModal').classList.add('show');
+                document.getElementById('requestModal').setAttribute('aria-hidden', 'false');
+                document.getElementById('confirmRequest').onclick = () => {
+                    const name = document.getElementById('requesterName').value.trim();
+                    if (name) {
+                        item.requestedBy = name;
+                        item.requestedAt = new Date().toISOString();
+                        saveData();
+                        updateFilters();
+                    }
+                    closeRequestModal();
+                };
+            }
+            saveData();
+            updateFilters();
+        }
+
+        function closeRequestModal() {
+            document.getElementById('requestModal').classList.remove('show');
+            document.getElementById('requestModal').setAttribute('aria-hidden', 'true');
+        }
+
+        // Drag & drop
+        function setupDragDrop() {
+            const addCard = document.getElementById('addBtn');
+            const cards = document.querySelectorAll('.card');
+            const imageInput = document.getElementById('imageInput');
+
+            ['dragover', 'dragenter'].forEach(event => {
+                addCard.addEventListener(event, e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.add('dragover');
+                });
+                addCard.addEventListener('dragleave', e => {
+                    e.currentTarget.classList.remove('dragover');
+                });
+                addCard.addEventListener('drop', e => {
+                    e.preventDefault();
+                    e.currentTarget.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file && file.type.startsWith('image/')) {
+                        imageInput.files = e.dataTransfer.files;
+                        openPanel();
+                    }
+                });
+            });
+        }
+
+        // Export/Import
+        function downloadJSON(data, filename) {
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.getElementById('exportBtn').addEventListener('click', () => {
+            const stripImages = items.some(i => i.imageDataUrl && i.imageDataUrl.length > 100000) && confirm('Strip images to reduce file size?');
+            const exportData = stripImages ? items.map(({imageDataUrl, ...item}) => item) : items;
+            downloadJSON(exportData, 'eco-dropbox.json');
+        });
+
+        document.getElementById('importBtn').addEventListener('click', () => {
+            document.getElementById('importFile').click();
+        });
+
+        document.getElementById('importFile').addEventListener('change', e => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    try {
+                        const imported = JSON.parse(ev.target.result);
+                        // Merge, generate new IDs for conflicts
+                        imported.forEach(item => {
+                            if (items.some(existing => existing.id === item.id)) {
+                                item.id = uuid();
+                            }
+                            items.push(item);
+                        });
+                        saveData();
+                        updateCategoryFilter();
+                        updateFilters();
+                        alert(`${imported.length} items imported.`);
+                    } catch (err) {
+                        alert('Invalid JSON file.');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        });
+
+        // URL Hash sharing
+        function updateUrlHash(selectedId = null) {
+            const state = {
+                filters: currentFilters,
+                selected: selectedId
+            };
+            const hash = btoa(JSON.stringify(state)).replace(/=/g, '').replace(/\//g, '_');
+            window.location.hash = hash.slice(0, 1800);
+        }
+
+        function parseUrlHash() {
+            try {
+                const hash = window.location.hash.slice(1).replace(/_/g, '/');
+                const state = JSON.parse(atob(hash));
+                document.getElementById('search').value = state.filters.search || '';
+                document.getElementById('categoryFilter').value = state.filters.category || '';
+                document.getElementById('conditionFilter').value = state.filters.condition || '';
+                currentFilters = state.filters;
+                if (state.selected) {
+                    setTimeout(() => {
+                        const item = items.find(i => i.id === state.selected);
+                        if (item) openPanel(item);
+                    }, 100);
+                }
+            } catch (e) {
+                // Invalid hash, ignore
+            }
+        }
+
+        // Theme
+        function initTheme() {
+            const saved = localStorage.getItem('theme');
+            const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            const theme = saved || system;
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeToggle').textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            document.getElementById('themeToggle').textContent = next === 'dark' ? '☀️' : '🌙';
+        });
+
+        // Event listeners
+        document.getElementById('search').addEventListener('input', updateFilters);
+        document.getElementById('categoryFilter').addEventListener('change', updateFilters);
+        document.getElementById('conditionFilter').addEventListener('change', updateFilters);
+        document.getElementById('clearFilters').addEventListener('click', () => {
+            document.getElementById('search').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('conditionFilter').value = '';
+            updateFilters();
+        });
+        document.getElementById('panelClose').addEventListener('click', closePanel);
+        document.getElementById('addBtn').addEventListener('click', () => openPanel());
+        document.getElementById('cancelRequest').addEventListener('click', closeRequestModal);
+
+        document.addEventListener('click', e => {
+            if (e.target.matches('.card')) {
+                const id = e.target.closest('.card').dataset.id;
+                const item = items.find(i => i.id === id);
+                openPanel(item);
+            }
+            if (e.target.matches('.request-btn')) {
+                toggleRequest(e.target.dataset.id);
+            }
+        });
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                closePanel();
+                closeRequestModal();
+            }
+            if (e.key === 'N' && e.ctrlKey === false) {
+                e.preventDefault();
+                openPanel();
+            }
+            if (e.key === '/') {
+                e.preventDefault();
+                document.getElementById('search').focus();
+            }
+        });
+
+        // Offline indicator
+        function checkOffline() {
+            if (!navigator.onLine || location.protocol === 'file:') {
+                const indicator = document.createElement('div');
+                indicator.className = 'offline';
+                indicator.textContent = 'Offline Mode';
+                indicator.setAttribute('role', 'status');
+                document.body.appendChild(indicator);
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function showError(msg) {
+            alert(msg);
+        }
+
+        // Init
+        loadData();
+        updateCategoryFilter();
+        parseUrlHash();
+        updateFilters();
+        initTheme();
+        checkOffline();
+        setupDragDrop();
+    </script>
+</body>
+</html>

@@ -55,3 +55,5 @@ Eco Dropbox — Single-file Sustainable Item Swap (HTML)
   - Export/Import buttons: "Export Collection" / "Import Collection"
 
 - Deliverable expectation: clear, single-file HTML that any web-savvy implementer can build from this spec in under ~1000 lines of code.
+
+(Generated: 2025-12-21T08:23:44.359680Z, seed=84718, theme=environment & sustainability, extras=drag-and-drop, share via URL hash, dark/light auto theme, kind=html)
