@@ -13,3 +13,5 @@ Literature Note Vault
 - Error handling: validate inputs, handle corrupt/missing JSON (backup to 'litnotes_backup.json', recreate empty).
 - Share feature: export includes URL-hash-friendly note IDs; notes list shows shareable ID strings.
 - Testable features: verify new note saves/loads; edit updates timestamp; search finds tags; export opens valid HTML; persistence survives restarts.
+
+(Generated: 2025-12-22T01:40:38.938205Z, seed=98608, theme=research utilities, extras=offline-first with localStorage, share via URL hash, print-friendly view, kind=py)
