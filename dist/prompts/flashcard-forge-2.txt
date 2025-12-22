@@ -17,3 +17,5 @@ Flashcard Forge
 - Error handling: validate inputs, backup JSON on corruption, help text for all commands.
 - Example usage: python flash.py add vocab "hello" "bonjour"; python flash.py study vocab.
 - Keep under 800 LOC: compact functions, no classes, inline data structures.
+
+(Generated: 2025-12-22T08:28:30.351554Z, seed=99907, theme=learning & study tools, extras=responsive grid, offline-first with localStorage, keyboard-first UX, kind=py)
