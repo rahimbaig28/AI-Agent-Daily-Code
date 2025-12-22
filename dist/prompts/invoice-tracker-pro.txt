@@ -17,3 +17,5 @@ Invoice Tracker Pro
 - Validation: Required fields, positive qty/price, valid date format.
 - Help text for all commands; "--help" shows full usage.
 - Testable: Run "python app.py list" shows empty, "add" creates data, "list" displays grid, "export" creates CSV.
+
+(Generated: 2025-12-22T04:38:29.217907Z, seed=24178, theme=small business utilities, extras=keyboard-first UX, responsive grid, print-friendly view, kind=py)
