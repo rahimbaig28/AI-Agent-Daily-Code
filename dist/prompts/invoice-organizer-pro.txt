@@ -13,3 +13,5 @@ Invoice Organizer Pro
 - Visual states: Color-coded cards (green=Paid, orange=Pending, red=Overdue), progress bar for file upload simulation, empty state with upload prompt.
 - Export: "Export CSV" button downloads current filtered/sorted invoices as CSV file for accounting backup.
 - Theme: Clean professional blue/gray palette for small business use, with subtle animations (CSS transitions) for card hover/add/remove.
+
+(Generated: 2025-12-23T08:27:45.823360Z, seed=53602, theme=small business utilities, extras=offline-first with localStorage, responsive grid, print-friendly view, kind=html)
