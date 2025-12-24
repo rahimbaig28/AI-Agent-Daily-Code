@@ -69,3 +69,5 @@ Accessible Layout Builder — single-file web app spec
   - Single HTML file that runs offline in modern browsers.
   - Demonstrable drag+keyboard placement, inspector editing, accessibility warnings, responsive preview, and export of semantic HTML + checklist JSON.
   - LocalStorage persistence for auto-save and saved versions.
+
+(Generated: 2025-12-24T12:40:19.043896Z, seed=91988, theme=accessibility helpers, extras=responsive grid, ARIA-compliant components, drag-and-drop, kind=html)

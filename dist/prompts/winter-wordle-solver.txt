@@ -1,0 +1,17 @@
+Winter Wordle Solver
+- Single-file Python 3 script using ONLY standard library (json, random, os, sys, argparse, pathlib).
+- Console-based Wordle game variant: 6x5 grid, guesses limited to 6-letter winter holiday words (predefined list of 50+ words like "snowman", "reindeer", "eggnog", "mistletoe", "caroling").
+- Main loop: display current grid (print-friendly ASCII art with colored letters using ANSI escapes: green=correct position 🟩, yellow=wrong position 🟨, gray=not in word).
+- Input: read 5-letter uppercase guess via input(), validate length/alphabet, provide feedback.
+- Win/lose detection: win if row 5 matches secret word exactly; lose if 6 guesses used.
+- Persistence: save/load game state to 'winter_wordle.json' (secret word, grid state, used letters) using json module.
+- CLI args via argparse: --new (start fresh game), --load (load saved game), --stats (show win/loss stats from JSON), --export (dump full stats to 'wordle_stats.json').
+- Stats tracking: append win/loss to JSON list with timestamps (datetime.now().isoformat()).
+- Keyboard-friendly: support arrow keys/up-down for guess history navigation (read keys with sys.stdin.read(1)), Enter to submit.
+- Random secret word: select from predefined list using random.choice(), regenerate on --new.
+- Export/import: --import <file> loads stats JSON, merges with existing.
+- Testable features: python wordle.py --new (play game), python wordle.py --stats (view stats), handles EOFError gracefully.
+- ARIA-like: print clear status messages (e.g., "Guess 3/6: _ _ 🟩 _ 🟨"), help text with controls.
+- Error handling: invalid input prompts retry, no crashes, save state on exit (KeyboardInterrupt).
+
+(Generated: 2025-12-24T12:39:39.044245Z, seed=73413, theme=micro games, extras=print-friendly view, export/import JSON, ARIA-compliant components, kind=py)
