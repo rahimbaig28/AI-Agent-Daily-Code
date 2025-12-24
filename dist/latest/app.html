@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-24T04:35:01.300273Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Service Schedule Manager</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a1a;
+      --border: #e0e0e0;
+      --primary: #007bff;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --sidebar-bg: #f8f9fa;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --fg: #f8f9fa;
+      --border: #444;
+      --primary: #4dabf7;
+      --success: #47d66b;
+      --warning: #ffeb3b;
+      --danger: #ff6b6b;
+      --sidebar-bg: #2a2a2a;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.5;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      flex-direction: column;
+    }
+    .header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+    button:hover {
+      background: rgba(255,255,255,0.3);
+    }
+    button:focus {
+      outline: 2px solid white;
+      outline-offset: 2px;
+    }
+    button.primary {
+      background: white;
+      color: var(--primary);
+    }
+    button.primary:hover {
+      background: #f0f0f0;
+    }
+    .main {
+      display: flex;
+      flex: 1;
+      gap: 0;
+    }
+    .appointments {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .sidebar {
+      width: 300px;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--border);
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    @media (max-width: 768px) {
+      .main {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: auto;
+        border-left: none;
+        border-top: 1px solid var(--border);
+      }
+    }
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.25rem;
+      font-weight: 500;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      background: var(--bg);
+      color: var(--fg);
+      font-size: 1rem;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: 2px solid var(--primary);
+      border-color: var(--primary);
+    }
+    .appointment {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    [data-theme="dark"] .appointment {
+      background: #2a2a2a;
+    }
+    .appointment:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .appointment.selected {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+    }
+    .appointment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.5rem;
+    }
+    .time {
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .status {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+    .status.pending { background: #fff3cd; color: #856404; }
+    .status.completed { background: #d4edda; color: #155724; }
+    .status.noshow { background: #f8d7da; color: #721c24; }
+    .client-summary {
+      font-weight: 500;
+    }
+    .totals {
+      background: var(--sidebar-bg);
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+    .total-row strong {
+      font-size: 1.2rem;
+    }
+    .client-list {
+      list-style: none;
+      padding: 0;
+    }
+    .client-item {
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .client-item:last-child {
+      border-bottom: none;
+    }
+    .client-item:hover {
+      background: rgba(0,123,255,0.1);
+    }
+    .hidden {
+      display: none;
+    }
+    .search {
+      margin-bottom: 1rem;
+    }
+    .view-toggle {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    .calendar-day {
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.5rem;
+      min-height: 100px;
+      background: white;
+    }
+    [data-theme="dark"] .calendar-day {
+      background: #2a2a2a;
+    }
+    .today {
+      border-color: var(--primary);
+      background: rgba(0,123,255,0.1);
+    }
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--bg);
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .file-input {
+      display: none;
+    }
+    .error {
+      border-color: var(--danger);
+      background: #f8d7da;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header class="header" role="banner">
+      <h1>Service Schedule Manager</h1>
+      <div class="controls">
+        <button id="addBtn" aria-label="Add new appointment">+ Add</button>
+        <button id="toggleDark" aria-label="Toggle dark mode">🌙</button>
+        <div class="view-toggle">
+          <button id="dailyView" aria-pressed="true">Daily</button>
+          <button id="weeklyView" aria-pressed="false">Weekly</button>
+        </div>
+        <button id="exportBtn" aria-label="Export data (Ctrl+E)">Export</button>
+        <label for="importFile" class="sr-only">Import file</label>
+        <input type="file" id="importFile" class="file-input" accept=".json" aria-label="Import data (Ctrl+I)">
+        <button id="importBtn" aria-label="Import data (Ctrl+I)">Import</button>
+      </div>
+    </header>
+
+    <div class="main">
+      <section class="appointments" aria-label="Appointments" role="region">
+        <div class="search form-group">
+          <label for="searchInput">Search clients or services</label>
+          <input type="text" id="searchInput" placeholder="Search..." autocomplete="off">
+        </div>
+        <div id="dailyViewContent" role="list">
+          <div id="appointmentsList"></div>
+        </div>
+        <div id="weeklyViewContent" class="hidden" role="grid" aria-label="Weekly calendar">
+          <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+        <div class="totals" id="totals" aria-live="polite"></div>
+      </section>
+
+      <aside class="sidebar" aria-label="Client contacts" role="complementary">
+        <h2>Clients</h2>
+        <ul id="clientList" class="client-list" role="listbox"></ul>
+      </aside>
+    </div>
+  </div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-content">
+      <h2 id="modalTitle">Add Appointment</h2>
+      <form id="appointmentForm">
+        <div class="form-group">
+          <label for="time">Time (HH:MM)</label>
+          <input type="time" id="time" required>
+        </div>
+        <div class="form-group">
+          <label for="clientName">Client Name</label>
+          <input type="text" id="clientName" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone">
+        </div>
+        <div class="form-group">
+          <label for="serviceType">Service Type</label>
+          <select id="serviceType" required>
+            <option value="">Select...</option>
+            <option value="plumbing">Plumbing</option>
+            <option value="electrical">Electrical</option>
+            <option value="cleaning">Cleaning</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="hourlyRate">Hourly Rate ($)</label>
+          <input type="number" id="hourlyRate" min="0" step="0.01" required>
+        </div>
+        <div class="form-group">
+          <label for="duration">Duration (hours)</label>
+          <input type="number" id="duration" min="0.25" max="8" step="0.25" value="1" required>
+        </div>
+        <div class="form-group">
+          <label for="status">Status</label>
+          <select id="status">
+            <option value="pending">Pending</option>
+            <option value="completed">Completed</option>
+            <option value="noshow">No Show</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="notes">Notes</label>
+          <textarea id="notes" rows="3"></textarea>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" id="cancelBtn">Cancel</button>
+          <button type="submit" class="primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    class ServiceScheduleManager {
+      constructor() {
+        this.appointments = [];
+        this.clients = new Map();
+        this.currentDate = new Date();
+        this.selectedAppointment = null;
+        this.viewMode = 'daily';
+        this.init();
+      }
+
+      init() {
+        this.loadData();
+        this.updateCurrentDate();
+        this.bindEvents();
+        this.render();
+        this.loadTheme();
+      }
+
+      bindEvents() {
+        // Form handling
+        document.getElementById('appointmentForm').addEventListener('submit', (e) => this.handleSubmit(e));
+        document.getElementById('cancelBtn').addEventListener('click', () => this.closeModal());
+        document.getElementById('addBtn').addEventListener('click', () => this.openModal());
+
+        // Controls
+        document.getElementById('toggleDark').addEventListener('click', () => this.toggleDarkMode());
+        document.getElementById('dailyView').addEventListener('click', () => this.setView('daily'));
+        document.getElementById('weeklyView').addEventListener('click', () => this.setView('weekly'));
+        document.getElementById('exportBtn').addEventListener('click', () => this.exportData());
+        document.getElementById('importBtn').addEventListener('click', () => this.triggerImport());
+        document.getElementById('importFile').addEventListener('change', (e) => this.importData(e));
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => this.filterAppointments(e.target.value));
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+        // Appointment selection
+        document.addEventListener('click', (e) => {
+          if (e.target.closest('.appointment')) {
+            this.selectAppointment(e.target.closest('.appointment').dataset.id);
+          }
+          if (e.target.closest('.client-item')) {
+            this.filterByClient(e.target.closest('.client-item').dataset.client);
+          }
+        });
+      }
+
+      updateCurrentDate() {
+        this.currentDate = new Date();
+        this.currentDate.setHours(0, 0, 0, 0);
+      }
+
+      loadData() {
+        const data = localStorage.getItem('serviceSchedule');
+        if (data) {
+          const parsed = JSON.parse(data);
+          this.appointments = parsed.appointments || [];
+          this.buildClients();
+        }
+      }
+
+      saveData() {
+        localStorage.setItem('serviceSchedule', JSON.stringify({
+          appointments: this.appointments,
+          clients: Array.from(this.clients.entries())
+        }));
+      }
+
+      buildClients() {
+        this.clients.clear();
+        this.appointments.forEach(apt => {
+          const client = `${apt.clientName} (${apt.phone || 'no phone'})`;
+          if (!this.clients.has(apt.clientName)) {
+            this.clients.set(apt.clientName, {
+              phone: apt.phone,
+              lastService: apt.date
+            });
+          } else {
+            const existing = this.clients.get(apt.clientName);
+            if (new Date(apt.date) > new Date(existing.lastService)) {
+              existing.lastService = apt.date;
+            }
+          }
+        });
+      }
+
+      render() {
+        if (this.viewMode === 'daily') {
+          this.renderDaily();
+        } else {
+          this.renderWeekly();
+        }
+        this.renderClients();
+        this.renderTotals();
+      }
+
+      renderDaily() {
+        const today = this.formatDate(this.currentDate);
+        const list = document.getElementById('appointmentsList');
+        list.innerHTML = '';
+        
+        const todayAppts = this.appointments
+          .filter(apt => apt.date === today)
+          .sort((a, b) => new Date(`2000-01-01T${a.time}`) - new Date(`2000-01-01T${b.time}`));
+
+        todayAppts.forEach(apt => {
+          const div = this.createAppointmentElement(apt);
+          list.appendChild(div);
+        });
+      }
+
+      renderWeekly() {
+        const grid = document.getElementById('calendarGrid');
+        grid.innerHTML = '';
+
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(this.currentDate);
+          date.setDate(date.getDate() + i);
+          const dayDiv = document.createElement('div');
+          dayDiv.className = 'calendar-day';
+          dayDiv.innerHTML = `<strong>${date.toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</strong>`;
+          
+          if (i === 0) dayDiv.classList.add('today');
+
+          const dayAppts = this.appointments
+            .filter(apt => apt.date === this.formatDate(date))
+            .sort((a, b) => new Date(`2000-01-01T${a.time}`) - new Date(`2000-01-01T${b.time}`));
+
+          dayAppts.slice(0, 3).forEach(apt => {
+            const aptDiv = document.createElement('div');
+            aptDiv.className = `appointment status-${apt.status}`;
+            aptDiv.innerHTML = `<div class="time">${apt.time}</div><div>${apt.clientName}</div>`;
+            dayDiv.appendChild(aptDiv);
+          });
+
+          if (dayAppts.length > 3) {
+            dayDiv.innerHTML += `<div>+${dayAppts.length - 3} more</div>`;
+          }
+
+          grid.appendChild(dayDiv);
+        }
+      }
+
+      createAppointmentElement(apt) {
+        const div = document.createElement('div');
+        div.className = `appointment status-${apt.status}`;
+        div.dataset.id = apt.id;
+        div.tabIndex = 0;
+        div.setAttribute('role', 'button');
+        div.setAttribute('aria-label', `${apt.clientName} at ${apt.time}`);
+        div.innerHTML = `
+          <div class="appointment-header">
+            <div class="time">${apt.time}</div>
+            <span class="status status-${apt.status}" aria-label="Status: ${apt.status}">${apt.status.charAt(0).toUpperCase() + apt.status.slice(1)}</span>
+          </div>
+          <div class="client-summary">${apt.clientName}</div>
+          <div>${apt.serviceType} • ${apt.duration}h @ $${apt.hourlyRate}/hr</div>
+          ${apt.notes ? `<div style="font-size:0.9rem; color:#666; margin-top:0.5rem;">${apt.notes}</div>` : ''}
+        `;
+        return div;
+      }
+
+      renderClients() {
+        const list = document.getElementById('clientList');
+        list.innerHTML = '';
+        Array.from(this.clients.entries())
+          .sort(([a], [b]) => b.lastService.localeCompare(a.lastService))
+          .slice(0, 10)
+          .forEach(([name, data]) => {
+            const li = document.createElement('li');
+            li.className = 'client-item';
+            li.dataset.client = name;
+            li.tabIndex = 0;
+            li.setAttribute('role', 'option');
+            li.innerHTML = `
+              <strong>${name}</strong><br>
+              ${data.phone || 'No phone'} • Last: ${new Date(data.lastService).toLocaleDateString()}
+            `;
+            list.appendChild(li);
+          });
+      }
+
+      renderTotals() {
+        const today = this.formatDate(this.currentDate);
+        const todayAppts = this.appointments.filter(apt => apt.date === today && apt.status === 'completed');
+        const totalHours = todayAppts.reduce((sum, apt) => sum + parseFloat(apt.duration), 0);
+        const totalRevenue = todayAppts.reduce((sum, apt) => sum + (parseFloat(apt.duration) * parseFloat(apt.hourlyRate)), 0);
+
+        document.getElementById('totals').innerHTML = `
+          <div class="total-row">
+            <span>Billable Hours:</span>
+            <strong>${totalHours.toFixed(1)}h</strong>
+          </div>
+          <div class="total-row">
+            <span>Revenue:</span>
+            <strong>$${totalRevenue.toFixed(2)}</strong>
+          </div>
+        `;
+      }
+
+      openModal(apt = null) {
+        document.getElementById('modal').classList.remove('hidden');
+        document.getElementById('modalTitle').textContent = apt ? 'Edit Appointment' : 'Add Appointment';
+        
+        if (apt) {
+          this.selectedAppointment = apt;
+          document.getElementById('time').value = apt.time;
+          document.getElementById('clientName').value = apt.clientName;
+          document.getElementById('phone').value = apt.phone || '';
+          document.getElementById('serviceType').value = apt.serviceType;
+          document.getElementById('hourlyRate').value = apt.hourlyRate;
+          document.getElementById('duration').value = apt.duration;
+          document.getElementById('status').value = apt.status;
+          document.getElementById('notes').value = apt.notes || '';
+        } else {
+          this.selectedAppointment = null;
+          const now = new Date();
+          document.getElementById('time').value = now.toTimeString().slice(0,5);
+          document.getElementById('clientName').value = '';
+          document.getElementById('phone').value = '';
+          document.getElementById('serviceType').value = '';
+          document.getElementById('hourlyRate').value = '';
+          document.getElementById('duration').value = '1';
+          document.getElementById('status').value = 'pending';
+          document.getElementById('notes').value = '';
+        }
+
+        document.getElementById('time').focus();
+      }
+
+      closeModal() {
+        document.getElementById('modal').classList.add('hidden');
+        document.getElementById('appointmentForm').reset();
+      }
+
+      handleSubmit(e) {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const apt = {
+          id: this.selectedAppointment?.id || Date.now().toString(),
+          date: this.formatDate(this.currentDate),
+          time: document.getElementById('time').value,
+          clientName: document.getElementById('clientName').value,
+          phone: document.getElementById('phone').value,
+          serviceType: document.getElementById('serviceType').value,
+          hourlyRate: parseFloat(document.getElementById('hourlyRate').value),
+          duration: parseFloat(document.getElementById('duration').value),
+          status: document.getElementById('status').value,
+          notes: document.getElementById('notes').value
+        };
+
+        if (!this.validateAppointment(apt)) return;
+
+        if (this.selectedAppointment) {
+          const index = this.appointments.findIndex(a => a.id === apt.id);
+          this.appointments[index] = apt;
+        } else {
+          this.appointments.push(apt);
+        }
+
+        this.buildClients();
+        this.saveData();
+        this.render();
+        this.closeModal();
+      }
+
+      validateAppointment(apt) {
+        // Check for overlapping appointments
+        const today = this.formatDate(this.currentDate);
+        const conflicts = this.appointments.filter(a => 
+          a.date === today &&
+          a.id !== apt.id &&
+          this.timesOverlap(a.time, apt.time, a.duration, apt.duration)
+        );
+
+        if (conflicts.length > 0) {
+          alert('Cannot schedule overlapping appointments.');
+          return false;
+        }
+        return true;
+      }
+
+      timesOverlap(t1, t2, d1, d2) {
+        const start1 = this.timeToMinutes(t1);
+        const end1 = start1 + (d1 * 60);
+        const start2 = this.timeToMinutes(t2);
+        const end2 = start2 + (d2 * 60);
+        return start1 < end2 && start2 < end1;
+      }
+
+      timeToMinutes(time) {
+        const [h, m] = time.split(':').map(Number);
+        return h * 60 + m;
+      }
+
+      selectAppointment(id) {
+        document.querySelectorAll('.appointment').forEach(el => el.classList.remove('selected'));
+        const el = document.querySelector(`[data-id="${id}"]`);
+        if (el) el.classList.add('selected');
+        this.selectedAppointment = this.appointments.find(a => a.id === id);
+        if (this.selectedAppointment) {
+          this.openModal(this.selectedAppointment);
+        }
+      }
+
+      deleteSelected() {
+        if (!this.selectedAppointment) return;
+        this.appointments = this.appointments.filter(a => a.id !== this.selectedAppointment.id);
+        this.buildClients();
+        this.saveData();
+        this.render();
+        this.selectedAppointment = null;
+      }
+
+      filterAppointments(query) {
+        // Simplified filter - highlight matching in daily view
+        const appts = document.querySelectorAll('.appointment');
+        appts.forEach(el => {
+          const text = el.textContent.toLowerCase();
+          el.style.background = text.includes(query.toLowerCase()) ? 'rgba(0,123,255,0.1)' : '';
+        });
+      }
+
+      filterByClient(clientName) {
+        document.getElementById('searchInput').value = clientName;
+        this.filterAppointments(clientName);
+      }
+
+      setView(mode) {
+        this.viewMode = mode;
+        document.getElementById('dailyViewContent').classList.toggle('hidden', mode !== 'daily');
+        document.getElementById('weeklyViewContent').classList.toggle('hidden', mode !== 'weekly');
+        document.getElementById(mode === 'daily' ? 'dailyView' : 'weeklyView').setAttribute('aria-pressed', 'true');
+        document.getElementById(mode === 'daily' ? 'weeklyView' : 'dailyView').setAttribute('aria-pressed', 'false');
+        this.render();
+      }
+
+      exportData() {
+        const dataStr = JSON.stringify({appointments: this.appointments}, null, 2);
+        const blob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `schedule-${this.formatDate(this.currentDate)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      triggerImport() {
+        document.getElementById('importFile').click();
+      }
+
+      async importData(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          const data = JSON.parse(text);
+          if (data.appointments) {
+            if (confirm('Merge with existing data?')) {
+              this.appointments = [...this.appointments, ...data.appointments];
+            } else {
+              this.appointments = data.appointments;
+            }
+            this.buildClients();
+            this.saveData();
+            this.render();
+          }
+        } catch (err) {
+          alert('Invalid JSON file.');
+        }
+        e.target.value = '';
+      }
+
+      shareSchedule() {
+        const todayAppts = this.appointments.filter(apt => apt.date === this.formatDate(this.currentDate));
+        const shareData = btoa(JSON.stringify(todayAppts));
+        navigator.clipboard.writeText(`${location.href.split('#')[0]}#${shareData}`);
+      }
+
+      loadShare() {
+        const hash = location.hash.slice(1);
+        if (hash) {
+          try {
+            const sharedAppts = JSON.parse(atob(hash));
+            // Display shared appointments temporarily
+            console.log('Shared appointments:', sharedAppts);
+          } catch (e) {}
+        }
+      }
+
+      toggleDarkMode() {
+        const isDark = document.documentElement.dataset.theme === 'dark';
+        document.documentElement.dataset.theme = isDark ? 'light' : 'dark';
+        localStorage.setItem('darkMode', isDark ? 'false' : 'true');
+      }
+
+      loadTheme() {
+        const isDark = localStorage.getItem('darkMode') !== 'false';
+        if (isDark) {
+          document.documentElement.dataset.theme = 'dark';
+          document.getElementById('toggleDark').textContent = '☀️';
+        }
+      }
+
+      handleKeydown(e) {
+        // Global shortcuts
+        if (e.ctrlKey || e.metaKey) {
+          switch(e.key.toLowerCase()) {
+            case 'e': e.preventDefault(); this.exportData(); break;
+            case 'i': e.preventDefault(); this.triggerImport(); break;
+            case 'd': e.preventDefault(); this.setView('daily'); break;
+            case 'w': e.preventDefault(); this.setView('weekly'); break;
+          }
+        }
+
+        // Appointment navigation
+        if (e.key === 'Enter' && document.activeElement.classList.contains('appointment')) {
+          e.preventDefault();
+          this.selectAppointment(document.activeElement.dataset.id);
+        }
+        if (e.key === 'Delete' && this.selectedAppointment) {
+          if (confirm('Delete selected appointment?')) {
+            this.deleteSelected();
+          }
+        }
+
+        // Modal navigation
+        if (document.getElementById('modal').classList.contains('hidden') === false) {
+          if (e.key === 'Escape') {
+            this.closeModal();
+          }
+        }
+      }
+
+      formatDate(date) {
+        return date.toISOString().split('T')[0];
+      }
+    }
+
+    // Add screen reader only text
+    const srOnly = document.createElement('span');
+    srOnly.className = 'sr-only';
+    srOnly.textContent = 'Press Tab to navigate, Enter to activate, Ctrl+E to export';
+    document.body.appendChild(srOnly);
+
+    // Initialize app
+    const manager = new ServiceScheduleManager();
+    window.addEventListener('hashchange', () => manager.loadShare());
+    manager.loadShare();
+
+    // Add sample data if empty
+    if (manager.appointments.length === 0) {
+      manager.appointments = [
+        {
+          id: '1',
+          date: manager.formatDate(new Date()),
+          time: '09:00',
+          clientName: 'John Smith',
+          phone: '555-0101',
+          serviceType: 'plumbing',
+          hourlyRate: 85,
+          duration: 2,
+          status: 'pending',
+          notes: 'Fix leaky faucet in kitchen'
+        },
+        {
+          id: '2',
+          date: manager.formatDate(new Date()),
+          time: '14:00',
+          clientName: 'Jane Doe',
+          phone: '555-0202',
+          serviceType: 'electrical',
+          hourlyRate: 95,
+          duration: 1.5,
+          status: 'completed',
+          notes: ''
+        }
+      ];
+      manager.buildClients();
+      manager.saveData();
+      manager.render();
+    }
+  </script>
+</body>
+</html>
