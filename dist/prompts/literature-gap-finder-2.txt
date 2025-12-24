@@ -13,3 +13,5 @@ Literature Gap Finder
 - Data flow: input -> fetch/parse 5-10 related abstracts -> extract keywords -> compute gap scores -> store/display.
 - Error handling: offline mode uses cached data; graceful failures for bad DOIs.
 - Keep under 800 lines: simple regex parsing, no ML/heavy computation.
+
+(Generated: 2025-12-24T01:26:07.925376Z, seed=88092, theme=research utilities, extras=ARIA-compliant components, drag-and-drop, offline-first with localStorage, kind=py)
