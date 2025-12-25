@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-25T04:38:31.817641Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Accessibility Auditor Pro</title>
+<style>
+:root{
+  --bg:#ffffff; --fg:#111; --accent:#0b6; --muted:#666;
+  --panel-bg:#f7f7f9; --danger:#c93; --good:#2a9d8f;
+  --font-scale:1rem;
+  --high-contrast:0;
+}
+html{font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; font-size:16px;}
+body{margin:0; color:var(--fg); background:var(--bg); font-size:var(--font-scale); line-height:1.35;}
+.app{display:grid; grid-template-columns:260px 1fr; min-height:100vh;}
+header,footer{grid-column:1/-1; background:var(--panel-bg); padding:0.5rem 1rem; border-bottom:1px solid #e6e6e6;}
+.header-inner{display:flex;align-items:center;gap:1rem;}
+h1{font-size:1rem;margin:0;}
+.skip-link{position:absolute;left:-999px;top:auto;background:#000;color:#fff;padding:0.5rem;border-radius:4px;z-index:1000;}
+.skip-link:focus{left:1rem;top:1rem;}
+.sidebar{background:var(--panel-bg); padding:1rem; border-right:1px solid #e6e6e6; display:flex;flex-direction:column; gap:0.75rem;}
+.sidebar button, .sidebar .control{width:100%; padding:0.6rem; font-size:0.95rem; border:1px solid #ccc; background:white; color:inherit; text-align:left; border-radius:6px; cursor:pointer;}
+.sidebar .toggle{display:flex;align-items:center;justify-content:space-between;}
+.main{padding:1rem; display:flex; flex-direction:column; gap:0.75rem;}
+.panel{background:var(--panel-bg); padding:0.75rem; border-radius:8px; border:1px solid #e6e6e6;}
+.results-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.stats{display:flex;gap:0.5rem;align-items:center;}
+.badge{background:#eee;padding:0.25rem 0.5rem;border-radius:6px;font-weight:600;}
+.table-wrap{overflow:auto; resize:vertical; min-height:120px; max-height:60vh;}
+.results-table{width:100%; border-collapse:collapse;}
+.results-table th, .results-table td{padding:0.5rem 0.4rem; border-bottom:1px solid #eaeaea; text-align:left;}
+.results-table th{position:sticky; top:0; background:var(--panel-bg); cursor:pointer;}
+.issue-pass{color:var(--good);font-weight:700;}
+.issue-fail{color:var(--danger);font-weight:700;}
+.controls{display:flex;gap:0.5rem;flex-wrap:wrap;}
+.small{font-size:0.9rem;padding:0.4rem 0.5rem;}
+.panel-resize{resize:vertical; overflow:auto; padding:0;}
+.footer-stats{display:flex;gap:1rem;align-items:center;}
+.note{font-size:0.9rem;color:var(--muted);}
+
+/* High contrast mode */
+.high-contrast body, .hc{ --bg:#000; --fg:#fff; --panel-bg:#000; --accent:#0ff; --muted:#fff; --danger:#ff0; --good:#0f0; }
+.high-contrast :focus{outline:3px solid var(--accent); outline-offset:2px;background:transparent;}
+
+/* Focus visibility */
+:focus{outline:3px solid rgba(11,102,51,0.15); outline-offset:2px; box-shadow:none;}
+button:focus, a:focus, [role="button"]:focus{outline:3px solid var(--accent);}
+
+/* Responsive */
+@media(max-width:820px){.app{grid-template-columns:1fr;} .sidebar{order:2;position:relative;} .main{order:1;}}
+
+/* Print view helper */
+@media print{
+  body{background:#fff;color:#000;}
+  .sidebar, header, footer, .controls, .small, .skip-link{display:none !important;}
+  .results-table th, .results-table td{color:#000;border-color:#000;}
+  .results-table{width:100%;}
+}
+</style>
+</head>
+<body class="" aria-live="polite">
+<a href="#main" class="skip-link">Skip to results</a>
+<div class="app" role="application" aria-labelledby="appTitle">
+  <header>
+    <div class="header-inner">
+      <h1 id="appTitle">Accessibility Auditor Pro</h1>
+      <div class="note" id="sr-note" aria-hidden="false">Simplified language, ARIA helpers enabled.</div>
+    </div>
+  </header>
+
+  <aside class="sidebar" role="navigation" aria-label="Auditor controls">
+    <button id="auditBtn" class="small" aria-describedby="auditDesc">Audit Now</button>
+    <div id="auditDesc" class="note">Runs a full page accessibility scan and saves results.</div>
+
+    <div class="control">
+      <label class="toggle" for="hcToggle">High contrast mode
+        <input id="hcToggle" type="checkbox" aria-describedby="hcDesc" style="margin-left:0.5rem;">
+      </label>
+      <div id="hcDesc" class="note">7:1 contrast theme for readability.</div>
+    </div>
+
+    <div class="control">
+      <label for="fontRange">Font size</label>
+      <input id="fontRange" type="range" min="100" max="200" value="100" aria-describedby="fontDesc" />
+      <div id="fontDesc" class="note">Adjust app font size (100-200%).</div>
+    </div>
+
+    <button id="printBtn" class="small" aria-describedby="printDesc">Print (Ctrl+P)</button>
+    <div id="printDesc" class="note">Generates print-optimized view.</div>
+
+    <button id="shareBtn" class="small" aria-describedby="shareDesc">Share top issues (copy hash)</button>
+    <div id="shareDesc" class="note">Encodes top 3 issues into URL hash.</div>
+
+    <div style="margin-top:auto;">
+      <button id="clearBtn" class="small" aria-describedby="clearDesc">Clear saved audits</button>
+      <div id="clearDesc" class="note">Removes stored audit data.</div>
+    </div>
+  </aside>
+
+  <main id="main" class="main" role="main" aria-label="Audit results">
+    <div class="panel" role="region" aria-labelledby="resultsTitle">
+      <div class="results-header">
+        <div>
+          <h2 id="resultsTitle" style="margin:0;font-size:1rem;">Results</h2>
+          <div class="note" id="summary" aria-live="polite">No audit run yet.</div>
+        </div>
+        <div class="controls" role="toolbar" aria-label="Results controls">
+          <button id="undoBtn" class="small" title="Undo (Ctrl+Z)">Undo</button>
+          <button id="redoBtn" class="small" title="Redo (Ctrl+Y)">Redo</button>
+          <button id="screenshotBtn" class="small">Save Screenshot</button>
+        </div>
+      </div>
+
+      <div class="panel-resize table-wrap" tabindex="0" aria-live="polite">
+        <table class="results-table" id="resultsTable" aria-describedby="resultsTitle">
+          <thead>
+            <tr>
+              <th data-key="issue" scope="col">Issue</th>
+              <th data-key="count" scope="col">Count</th>
+              <th data-key="severity" scope="col">Severity</th>
+              <th data-key="examples" scope="col">Examples</th>
+              <th data-key="fix" scope="col">One-click Fix</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody">
+            <tr><td colspan="5" class="note">Run an audit to populate results.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" role="region" aria-label="Issue details">
+      <h3 style="margin-top:0">Issue details & notes</h3>
+      <div id="details" class="note">Select an issue to see details.</div>
+      <div style="margin-top:0.5rem;">
+        <label for="noteInput">Add note to selected issue</label>
+        <input id="noteInput" type="text" style="width:100%;padding:0.5rem;margin-top:0.25rem;" aria-describedby="noteDesc" />
+        <div id="noteDesc" class="note">Notes persist and support undo/redo.</div>
+      </div>
+    </div>
+
+    <footer class="panel" role="contentinfo" aria-label="Footer stats">
+      <div class="footer-stats">
+        <div class="badge" id="passCount">Pass: 0</div>
+        <div class="badge" id="failCount">Fail: 0</div>
+        <div id="accessScore" class="note">Accessibility: --%</div>
+      </div>
+    </footer>
+  </main>
+</div>
+
+<script>
+/* Accessibility Auditor Pro
+   Single-file app: scans page for key WCAG issues.
+   No external deps. Keeps code compact.
+*/
+
+(function(){
+  // Utilities
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+  const persistKey = 'a11y_audits_v1';
+  const state = {results:[], selected:null, history:[], future:[]};
+
+  // Initial elements
+  const auditBtn = $('#auditBtn');
+  const hcToggle = $('#hcToggle');
+  const fontRange = $('#fontRange');
+  const resultsBody = $('#resultsBody');
+  const summary = $('#summary');
+  const passCountEl = $('#passCount');
+  const failCountEl = $('#failCount');
+  const accessScoreEl = $('#accessScore');
+  const noteInput = $('#noteInput');
+  const undoBtn = $('#undoBtn'), redoBtn = $('#redoBtn');
+  const screenshotBtn = $('#screenshotBtn'), printBtn = $('#printBtn'), shareBtn = $('#shareBtn'), clearBtn = $('#clearBtn');
+
+  // Accessibility helpers
+  document.documentElement.setAttribute('lang','en');
+  auditBtn.setAttribute('aria-describedby','auditDesc');
+  // Keyboard bindings for activation
+  document.addEventListener('keydown', e=> {
+    if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z'){ e.preventDefault(); undo(); }
+    if ((e.ctrlKey||e.metaKey) && (e.key.toLowerCase()==='y' || (e.shiftKey && e.key.toLowerCase()==='z'))){ e.preventDefault(); redo(); }
+    if ((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='p'){ e.preventDefault(); doPrint(); }
+    if (e.key==='Escape'){ closePanels(); }
+  });
+
+  function closePanels(){ // small focus helper
+    document.activeElement && document.activeElement.blur();
+  }
+
+  // Load persisted
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(persistKey);
+      if(raw){ const parsed = JSON.parse(raw); Object.assign(state, parsed); renderResults(); parseHashOnLoad(); }
+    }catch(e){}
+  }
+  function saveState(){ localStorage.setItem(persistKey, JSON.stringify({results:state.results})); }
+
+  // Basic severity mapping
+  const sev = {high:'High', medium:'Medium', low:'Low'};
+
+  // Core checks: returns array of {id, issue, count, severity, examples:[{nodePath,desc,elIndex}], fix}
+  function runAudit(){
+    const results = [];
+    // Helper to push
+    function push(id, issue, severity, examples, fix){ results.push({id,issue,count:examples.length,severity,examples,fix}); }
+
+    // 1. Missing alt text on images
+    const imgs = $$('img');
+    const missingAlt = imgs.filter((img,i)=> {
+      const alt = img.getAttribute('alt');
+      return !(alt && alt.trim().length>0) && img.getAttribute('role')!=='presentation';
+    }).map((el,i)=> makeExample(el,'Image without alt'));
+    push('img-alt','Images missing alt text', 'high', missingAlt, 'Add alt="description"');
+
+    // 2. Empty links and non-descriptive link text
+    const links = $$('a');
+    const emptyLinks = links.filter(a=> !a.textContent.trim() && !a.getAttribute('aria-label') ).map(el=> makeExample(el,'Empty link'));
+    push('empty-links','Empty links', 'high', emptyLinks, 'Add text or aria-label describing purpose');
+
+    const nonDesc = links.filter(a=>{
+      const txt = a.textContent.trim().toLowerCase();
+      return txt && (txt==='click here' || txt==='read more' || txt==='more' || txt==='here') && !a.getAttribute('aria-label');
+    }).map(el=> makeExample(el,'Non-descriptive link text'));
+    push('link-purpose','Non-descriptive link text', 'medium', nonDesc, 'Make link text specific to purpose');
+
+    // 3. Insufficient color contrast (WCAG AA for normal text 4.5:1)
+    const contrastIssues = [];
+    // We'll check visible text nodes by scanning elements with text content but not hidden
+    const candidate = $$('body *').filter(el=>{
+      const cs = getComputedStyle(el);
+      if (el === document.body) return false;
+      if (cs.visibility==='hidden' || cs.display==='none' || parseFloat(cs.opacity)===0) return false;
+      // has text?
+      return el.textContent && el.textContent.trim().length>0;
+    }).slice(0,800); // limit for perf
+    candidate.forEach(el=>{
+      try{
+        const cs = getComputedStyle(el);
+        const fg = cs.color; const bg = findBackgroundColor(el);
+        if(!fg || !bg) return;
+        const ratio = contrastRatio(parseColor(fg), parseColor(bg));
+        if (isNaN(ratio)) return;
+        if (ratio < 4.5){
+          contrastIssues.push(makeExample(el,`Contrast ${ratio.toFixed(2)}:1`));
+        }
+      }catch(e){}
+    });
+    push('contrast','Insufficient color contrast', 'high', contrastIssues, 'Increase color contrast to >=4.5:1');
+
+    // 4. Keyboard focus visibility: interactive elements lacking visible focus styles
+    const interactive = $$('a,button,input,textarea,select,[tabindex]').filter(el=>!el.disabled);
+    const focusIssues = interactive.filter(el=>{
+      // compute if outline style effectively none
+      const cs = getComputedStyle(el);
+      const outline = cs.outlineStyle;
+      // If outline is none and box-shadow doesn't provide, flag
+      return (outline==='none' || outline==='') && !hasVisibleFocusStyle(el);
+    }).map(el=> makeExample(el,`No visible focus indicator`));
+    push('focus','Keyboard focus not visible', 'medium', focusIssues, 'Ensure visible focus (outline or ring)');
+
+    // 5. Missing form labels (inputs without associated label)
+    const inputs = $$('input,textarea,select').filter(i=> i.type!=='hidden');
+    const missingLabel = inputs.filter(input=>{
+      if(input.getAttribute('aria-hidden')==='true') return false;
+      if(input.matches('input[type="submit"],input[type="button"],button')) return false;
+      if(input.labels && input.labels.length>0) return false;
+      if (input.getAttribute('aria-label') || input.getAttribute('aria-labelledby')) return false;
+      // placeholder not sufficient
+      return true;
+    }).map(el=> makeExample(el,'Form control missing label'));
+    push('form-labels','Form controls without labels', 'high', missingLabel, 'Add <label for> or aria-label');
+
+    // 6. Heading hierarchy: check for skipped levels (e.g., h1 then h3)
+    const headings = $$('h1,h2,h3,h4,h5,h6');
+    const headingIssues = [];
+    let prevLevel = 0;
+    headings.forEach(h=>{
+      const lvl = parseInt(h.tagName.substring(1));
+      if(prevLevel && lvl>prevLevel+1){
+        headingIssues.push(makeExample(h,`Skipped from h${prevLevel} to h${lvl}`));
+      }
+      prevLevel = lvl;
+    });
+    push('headings','Heading hierarchy issues', 'medium', headingIssues, 'Ensure headings follow sequential order');
+
+    // 7. ARIA role absence on interactive elements: interactive elements without roles or semantic element
+    const interactiveSelectors = '[role="button"],[role="link"],[role="menu"],button,a,[tabindex]';
+    const possible = $$('*').filter(el=>{
+      if(el.getAttribute && el.getAttribute('aria-hidden')==='true') return false;
+      const cs = getComputedStyle(el);
+      if (cs.display==='none' || cs.visibility==='hidden') return false;
+      return el.hasAttribute('onclick') || el.getAttribute('role') || el.matches('button,a,[tabindex]');
+    });
+    const ariaIssues = possible.filter(el=>{
+      const tag = el.tagName.toLowerCase();
+      if(tag==='a' || tag==='button' || tag==='input' || tag==='select' || tag==='textarea') return false;
+      // if clickable but no role
+      const hasClick = el.getAttribute('onclick') || el.getAttribute('role') || el.tabIndex>=0;
+      const role = el.getAttribute('role');
+      return hasClick && !role;
+    }).map(el=> makeExample(el,'Interactive element missing ARIA role'));
+    push('aria-role','Interactive element missing ARIA role', 'low', ariaIssues, 'Add appropriate role, e.g., role="button"');
+
+    // 8. Empty elements (aria-hidden?) - already had empty links; include empty anchors or buttons
+    const emptyEls = $$('a,button').filter(el=> !el.textContent.trim() && !el.querySelector('img,svg') && !el.getAttribute('aria-label'));
+    push('empty-elements','Empty interactive elements', 'high', emptyEls.map(el=> makeExample(el,'Empty interactive element')), 'Provide accessible name or remove');
+
+    // Compute pass/fail summary: count issues >0 are failures; else pass
+    state.results = results;
+    pushHistory();
+    saveState();
+    renderResults();
+    return results;
+  }
+
+  // Helpers for example representation
+  function makeExample(el,desc){
+    return {
+      nodePath: getNodePath(el),
+      desc,
+      html: (el.outerHTML||el.tagName),
+      snapshot: shortDesc(el)
+    };
+  }
+  function shortDesc(el){
+    const tag = el.tagName.toLowerCase();
+    const id = el.id?`#${el.id}`:'';
+    const cls = el.className?'.'+String(el.className).split(' ').join('.'):'';
+    return `<${tag}${id}${cls}>`;
+  }
+  function getNodePath(el){
+    try{
+      const path = [];
+      let node = el;
+      while(node && node.nodeType===1 && node !== document.documentElement){
+        const idx = Array.from(node.parentNode.children).indexOf(node)+1;
+        path.unshift(`${node.tagName.toLowerCase()}:nth-child(${idx})`);
+        node = node.parentNode;
+      }
+      return path.join(' > ');
+    }catch(e){ return ''; }
+  }
+
+  // Render results table
+  function renderResults(){
+    const res = state.results || [];
+    resultsBody.innerHTML = '';
+    if(!res.length){
+      resultsBody.innerHTML = '<tr><td colspan="5" class="note">No issues found or run audit.</td></tr>';
+      summary.textContent = 'No audit run yet.';
+      passCountEl.textContent = 'Pass: 0';
+      failCountEl.textContent = 'Fail: 0';
+      accessScoreEl.textContent = 'Accessibility: --%';
+      return;
+    }
+    let pass = 0, fail=0, totalItems=0;
+    res.forEach((r,idx)=>{
+      const tr = document.createElement('tr');
+      tr.tabIndex = 0;
+      tr.setAttribute('role','row');
+      tr.dataset.idx = idx;
+      const issueTd = document.createElement('td'); issueTd.textContent = r.issue;
+      const countTd = document.createElement('td'); countTd.textContent = r.count;
+      const sevTd = document.createElement('td'); sevTd.textContent = r.severity;
+      const exTd = document.createElement('td');
+      exTd.innerHTML = r.examples.slice(0,3).map((e,i)=>`<div><strong>Example ${i+1}:</strong> ${escapeHtml(e.desc)} <span class="note">${escapeHtml(e.snapshot)}</span></div>`).join('');
+      const fixTd = document.createElement('td');
+      const fixBtn = document.createElement('button');
+      fixBtn.className='small';
+      fixBtn.textContent = 'Suggest Fix';
+      fixBtn.addEventListener('click', ()=> applyFix(idx));
+      fixBtn.setAttribute('aria-describedby','fixDesc');
+      fixTd.appendChild(fixBtn);
+
+      if(r.count>0){ tr.classList.add('issue-fail'); fail++; } else { pass++; tr.classList.add('issue-pass'); }
+      totalItems += r.count;
+      tr.appendChild(issueTd); tr.appendChild(countTd); tr.appendChild(sevTd); tr.appendChild(exTd); tr.appendChild(fixTd);
+      tr.addEventListener('click', ()=> selectIssue(idx));
+      resultsBody.appendChild(tr);
+    });
+    summary.textContent = `${res.filter(r=>r.count>0).length} issue categories with problems.`;
+    passCountEl.textContent = `Pass: ${pass}`;
+    failCountEl.textContent = `Fail: ${fail}`;
+    const score = Math.max(0, Math.round(100 - (totalItems*2)));
+    accessScoreEl.textContent = `Accessibility: ${score}%`;
+  }
+
+  function selectIssue(idx){
+    state.selected = idx;
+    const r = state.results[idx];
+    if(!r){ $('#details').textContent = 'Select an issue to see details.'; return; }
+    $('#details').innerHTML = `<strong>${r.issue}</strong> — ${r.count} example(s).<div style="margin-top:0.5rem;">${r.examples.map((e,i)=>`<div><strong>#${i+1}</strong> ${escapeHtml(e.desc)} <span class="note">${escapeHtml(e.nodePath)}</span></div>`).join('')}</div>`;
+  }
+
+  // One-click fix: suggestions are mostly informational; for alt text we can set alt attribute on image elements as demonstration
+  function applyFix(idx){
+    const item = state.results[idx];
+    if(!item || !item.examples.length) return alert('No examples to fix.');
+    // For known fixes, apply minimal DOM change
+    if(item.id==='img-alt'){
+      item.examples.forEach(ex=>{
+        const el = queryByPath(ex.nodePath);
+        if(el && el.tagName.toLowerCase()==='img'){
+          el.setAttribute('alt','Description added by Accessibility Auditor');
+        }
+      });
+      pushNote(`Applied alt fixes to ${item.examples.length} image(s)`);
+      runAudit();
+      return;
+    }
+    if(item.id==='empty-links' || item.id==='empty-elements'){
+      item.examples.forEach(ex=>{
+        const el = queryByPath(ex.nodePath);
+        if(el && (el.tagName.toLowerCase()==='a' || el.tagName.toLowerCase()==='button')){
+          el.setAttribute('aria-label','Descriptive name added');
+        }
+      });
+      pushNote(`Added aria-labels to ${item.examples.length} element(s)`);
+      runAudit(); return;
+    }
+    if(item.id==='form-labels'){
+      item.examples.forEach((ex,i)=>{
+        const el = queryByPath(ex.nodePath);
+        if(el && el.id==='' ){ el.id = 'a11y-added-'+Math.floor(Math.random()*9999); }
+        if(el){
+          const lbl = document.createElement('label');
+          lbl.setAttribute('for', el.id);
+          lbl.textContent = 'Label added';
+          el.parentNode && el.parentNode.insertBefore(lbl, el);
+        }
+      });
+      pushNote(`Inserted labels for ${item.examples.length} control(s)`);
+      runAudit(); return;
+    }
+    // Generic: copy suggested fix to clipboard
+    navigator.clipboard && navigator.clipboard.writeText(item.fix).then(()=> alert('Suggested fix copied to clipboard.'));
+  }
+
+  // Query element by saved path heuristic
+  function queryByPath(path){
+    if(!path) return null;
+    try{
+      const parts = path.split(' > ');
+      let node = document.body;
+      for(const p of parts){
+        const m = p.match(/^([a-z0-9]+):nth-child\((\d+)\)$/i);
+        if(!m) continue;
+        const tag = m[1], idx = parseInt(m[2]);
+        const candidates = Array.from(node.children).filter(c=>c.tagName.toLowerCase()===tag);
+        node = candidates[idx-1] || node.children[idx-1] || node;
+      }
+      return node;
+    }catch(e){ return null; }
+  }
+
+  function pushNote(txt){
+    if(!state.results) state.results=[];
+    const note = {note:txt, ts:Date.now()};
+    state.results._notes = state.results._notes || [];
+    state.results._notes.push(note);
+    pushHistory();
+    saveState();
+  }
+
+  // Undo/Redo simple implementation for notes/filters (we only snapshot results)
+  function pushHistory(){
+    try{
+      state.history.push(JSON.stringify(state.results));
+      if(state.history.length>50) state.history.shift();
+      state.future = [];
+      updateUndoRedo();
+    }catch(e){}
+  }
+  function undo(){
+    if(!state.history.length) return;
+    const last = state.history.pop();
+    state.future.push(JSON.stringify(state.results));
+    state.results = JSON.parse(last);
+    saveState();
+    renderResults();
+    updateUndoRedo();
+  }
+  function redo(){
+    if(!state.future.length) return;
+    const next = state.future.pop();
+    state.history.push(JSON.stringify(state.results));
+    state.results = JSON.parse(next);
+    saveState();
+    renderResults();
+    updateUndoRedo();
+  }
+  function updateUndoRedo(){ undoBtn.disabled = state.history.length===0; redoBtn.disabled = state.future.length===0; }
+
+  // Screenshot via canvas: draw current viewport into canvas using drawWindow isn't available; instead attempt html2canvas-like fallback: create SVG foreignObject
+  async function saveScreenshot(){
+    try{
+      const w = Math.min(window.innerWidth, 1200), h = Math.min(window.innerHeight, 900);
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}'>
+        <foreignObject width='100%' height='100%'>
+          <div xmlns='http://www.w3.org/1999/xhtml' style='font-size:14px'>${escapeHtml(document.documentElement.innerHTML)}</div>
+        </foreignObject>
+      </svg>`;
+      const img = new Image();
+      const url = 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+      img.src = url;
+      await new Promise((res,rej)=>{ img.onload=res; img.onerror=rej; });
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = getComputedStyle(document.body).backgroundColor || '#fff';
+      ctx.fillRect(0,0,w,h);
+      ctx.drawImage(img,0,0);
+      const data = c.toDataURL('image/png');
+      // save with timestamp
+      const store = JSON.parse(localStorage.getItem(persistKey) || '{}');
+      store.screenshots = store.screenshots || [];
+      store.screenshots.push({ts:Date.now(), data});
+      localStorage.setItem(persistKey, JSON.stringify(store));
+      alert('Screenshot saved to localStorage.');
+    }catch(e){ alert('Screenshot failed: '+e.message); }
+  }
+
+  // Print helper
+  function doPrint(){ window.print(); }
+
+  // Share via hash: encode top 3 issues + timestamp
+  function shareHash(){
+    const top = (state.results || []).slice().sort((a,b)=>b.count-a.count).filter(r=>r.count>0).slice(0,3);
+    const payload = top.map(r=>encodeURIComponent(r.id)).join(',');
+    const ts = Date.now();
+    const hash = `${payload}|${ts}`;
+    location.hash = btoa(unescape(encodeURIComponent(hash)));
+    alert('Hash copied to URL. You can copy the full URL now.');
+  }
+
+  function parseHashOnLoad(){
+    if(!location.hash) return;
+    try{
+      const raw = decodeURIComponent(escape(atob(location.hash.slice(1))));
+      const parts = raw.split('|');
+      const ids = parts.split(',').map(decodeURIComponent);
+      // Attempt to select matching results
+      if(state.results && state.results.length){
+        const matched = state.results.filter(r=> ids.includes(r.id));
+        if(matched.length){
+          state.results = state.results.map(r=> r ); // no-op
+          renderResults();
+          alert('Loaded shared audit showing top issues.');
+        }
+      }
+    }catch(e){}
+  }
+
+  // Utilities: color parsing & contrast
+  function parseColor(css){
+    // handles rgb/rgba and hex
+    css = css.trim();
+    if(css.startsWith('rgb')){
+      const parts = css.match(/rgba?\(([^)]+)\)/)[1].split(',').map(s=>parseFloat(s.trim()));
+      return {r:parts, g:parts[1], b:parts[2], a: parts[3]===undefined?1:parts[3]};
+    }
+    if(css.startsWith('#')){
+      let hex = css.slice(1);
+      if(hex.length===3){ hex = hex.split('').map(h=>h+h).join(''); }
+      const int = parseInt(hex,16);
+      return {r:(int>>16)&255, g:(int>>8)&255, b:int&255, a:1};
+    }
+    // fallback: create temp element, apply color, get computed rgb
+    const tmp = document.createElement('span'); tmp.style.color = css; document.body.appendChild(tmp);
+    const cs = getComputedStyle(tmp).color; document.body.removeChild(tmp);
+    if(cs && cs.startsWith('rgb')) return parseColor(cs);
+    return {r:255,g:255,b:255,a:1};
+  }
+  function luminance(c){
+    const srgb = [c.r/255,c.g/255,c.b/255].map(v=> v<=0.03928? v/12.92 : Math.pow((v+0.055)/1.055,2.4));
+    return 0.2126*srgb+0.7152*srgb[1]+0.0722*srgb[2];
+  }
+  function contrastRatio(c1,c2){
+    const L1 = luminance(c1)+0.05; const L2 = luminance(c2)+0.05;
+    return L1> L2 ? L1/L2 : L2/L1;
+  }
+  function findBackgroundColor(el){
+    let node = el;
+    while(node && node !== document.documentElement){
+      const bg = getComputedStyle(node).backgroundColor;
+      if(bg && bg!=='transparent' && bg!=='rgba(0, 0, 0, 0)' && bg!=='initial') return bg;
+      node = node.parentElement;
+    }
+    return getComputedStyle(document.documentElement).backgroundColor || '#fff';
+  }
+
+  // Focus visible check heuristic
+  function hasVisibleFocusStyle(el){
+    const orig = el;
+    try{
+      const before = getComputedStyle(el);
+      // simulate focus by checking :focus style? not available; heuristic: check if outline style on computed is not none
+      return (before.outlineStyle && before.outlineStyle!=='none') || (parseFloat(before.boxShadow.replace(/[^0-9\.\-]/g,''))>0);
+    }catch(e){ return false; }
+  }
+
+  // Small helpers
+  function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // Query selector by nodePath fallback
+  function querySelectorByNodePath(path){
+    return queryByPath(path);
+  }
+
+  // Event bindings
+  auditBtn.addEventListener('click', ()=> { auditBtn.disabled=true; setTimeout(()=>{ runAudit(); auditBtn.disabled=false; },50);});
+  hcToggle.addEventListener('change', e=>{
+    if(e.target.checked){ document.documentElement.classList.add('high-contrast'); document.body.classList.add('hc'); } else { document.documentElement.classList.remove('high-contrast'); document.body.classList.remove('hc'); }
+  });
+  fontRange.addEventListener('input', e=> {
+    document.documentElement.style.setProperty('--font-scale',(e.target.value/100)+'rem');
+  });
+  undoBtn.addEventListener('click', undo);
+  redoBtn.addEventListener('click', redo);
+  screenshotBtn.addEventListener('click', saveScreenshot);
+  printBtn.addEventListener('click', doPrint);
+  shareBtn.addEventListener('click', shareHash);
+  clearBtn.addEventListener('click', ()=>{ localStorage.removeItem(persistKey); state.results=[]; renderResults(); alert('Cleared saved audits.'); });
+
+  noteInput.addEventListener('keydown', e=>{
+    if(e.key==='Enter'){
+      const txt = noteInput.value.trim();
+      if(!txt || state.selected===null) return;
+      const r = state.results[state.selected];
+      r._note = r._note || [];
+      r._note.push({txt,ts:Date.now()});
+      noteInput.value='';
+      pushHistory();
+      saveState();
+      renderResults();
+    }
+  });
+
+  // Initial run on load
+  loadState();
+  setTimeout(()=> { auditBtn.click(); },150);
+
+  // Expose some state for debugging (not needed but helpful)
+  window.AuditorPro = {runAudit, state};
+
+  // Ensure keyboard activation for buttons (Enter/Space)
+  document.addEventListener('keydown', e=>{
+    if(e.target && e.target.getAttribute && e.target.getAttribute('role')==='button'){
+      if(e.key==='Enter' || e.key===' ') { e.preventDefault(); e.target.click(); }
+    }
+  });
+
+})();
+</script>
+</body>
+</html>

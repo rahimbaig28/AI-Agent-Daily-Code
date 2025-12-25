@@ -18,3 +18,5 @@ Accessibility Auditor Pro
 - **Implementation notes**: Use getComputedStyle for contrast calc, querySelectorAll for checks, Canvas for screenshot (toDataURL saved as base64 in storage).
 - **Testable scenarios**: Load non-accessible page → audit shows errors → apply high-contrast → share URL → print matches PDF.
 - Max ~800 LOC: Efficient JS (no frameworks), semantic HTML5, CSS Grid/Flexbox.
+
+(Generated: 2025-12-25T04:36:33.791084Z, seed=32761, theme=accessibility helpers, extras=undo/redo, print-friendly view, share via URL hash, kind=html)
