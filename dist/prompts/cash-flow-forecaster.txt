@@ -15,3 +15,5 @@ Cash Flow Forecaster
 - Share feature: generate URL-safe hash of current balance/forecast (base64 encode summary dict), print/copy to clipboard sim via print.
 - Init: create JSON if missing, load sample data (3 incomes, 5 expenses).
 - Keep under 800 lines: simple curses panels, no external deps.
+
+(Generated: 2025-12-26T04:33:28.370377Z, seed=61263, theme=finance & budgeting, extras=ARIA-compliant components, share via URL hash, responsive grid, kind=py)
