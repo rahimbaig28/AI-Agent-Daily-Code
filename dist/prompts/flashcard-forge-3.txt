@@ -16,3 +16,5 @@ Flashcard Forge
 - Handle empty deck: Suggest "python flashcard.py add".
 - Error handling: Validate JSON, handle missing file (auto-create []), Ctrl+C graceful exit.
 - Testable: Run "add" (2 cards), "study" (reviews them), "export" (check JSON), "stats".
+
+(Generated: 2025-12-26T08:26:26.187407Z, seed=28961, theme=learning & study tools, extras=export/import JSON, responsive grid, print-friendly view, kind=py)
