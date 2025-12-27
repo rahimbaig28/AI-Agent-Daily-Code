@@ -15,3 +15,5 @@ Expense Splitter Pro
 - Validation: Prevent negative balance warnings, duplicate descriptions, incomplete splits.
 - Responsive design: Mobile-first, grid layout, touch-friendly buttons (>44px).
 - Testable features: Add 3-split grocery expense, toggle themes, export/import, print preview, verify 50/30/20 pie updates on new income.
+
+(Generated: 2025-12-27T01:25:19.414804Z, seed=33447, theme=finance & budgeting, extras=offline-first with localStorage, export/import JSON, print-friendly view, kind=html)
