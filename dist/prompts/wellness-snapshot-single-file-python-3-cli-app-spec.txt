@@ -93,3 +93,5 @@ Wellness Snapshot — single-file Python 3 CLI app spec
   - Simple CSV export option.
 
 End of spec.
+
+(Generated: 2025-12-28T04:42:43.719158Z, seed=38756, theme=health & wellness, extras=ARIA-compliant components, dark/light auto theme, share via URL hash, kind=py)
