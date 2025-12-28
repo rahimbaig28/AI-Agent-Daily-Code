@@ -59,3 +59,5 @@ Pocket Sprint Planner
   - Light/dark theme toggle saved to settings.  
   - Small statistics dashboard: weekly average focus score chart using simple canvas (client-side only).  
   - Tiny motivational microcopy that rotates per new sprint start.
+
+(Generated: 2025-12-28T01:45:42.374114Z, seed=34611, theme=personal productivity, extras=ARIA-compliant components, responsive grid, offline-first with localStorage, kind=html)
