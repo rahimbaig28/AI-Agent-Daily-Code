@@ -11,3 +11,5 @@ Flashcard Forge
 - Progress upload: Drag text/PDF/HTML files to import as new cards (parse simple text splits on newlines).
 - Responsive: Mobile-first, cards stack vertically <600px; touch-swipe to flip.
 - Test features: Add 5 cards, reorder via drag, study 10 flips, switch themes, import text file, verify localStorage persists after refresh.
+
+(Generated: 2025-12-29T01:44:17.128045Z, seed=39675, theme=learning & study tools, extras=offline-first with localStorage, dark/light auto theme, drag-and-drop, kind=html)

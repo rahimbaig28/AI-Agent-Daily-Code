@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2025-12-29T01:44:55.145425Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flashcard Forge</title>
+  <style>
+    :root {
+      --bg-primary: #ffffff;
+      --bg-secondary: #f8fafc;
+      --bg-card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0, 0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0,0,0.1);
+      --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --border: #334155;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      background: var(--bg-primary);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      z-index: 100;
+      flex-wrap: wrap;
+    }
+
+    .nav h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-right: auto;
+    }
+
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+    }
+
+    .btn:focus {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    select, input, textarea {
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .deck-selector {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .stats {
+      margin-left: auto;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 600px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      .nav, .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      cursor: grab;
+      user-select: none;
+      position: relative;
+      min-height: 120px;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card.study-mode {
+      min-height: 300px;
+      max-width: 500px;
+      margin: 2rem auto;
+      cursor: pointer;
+    }
+
+    .card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-content {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 2rem;
+      border-radius: calc(var(--radius) - 4px);
+    }
+
+    .card-content.back {
+      transform: rotateY(180deg);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .card-index {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .card-text {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      padding: 2rem;
+      border-radius: var(--radius);
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9) translateY(20px);
+      transition: var(--transition);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .modal.active .modal-content {
+      transform: scale(1) translateY(0);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: var(--text-secondary);
+    }
+
+    .empty-state svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .study-controls {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .drag-placeholder {
+      background: var(--accent);
+      opacity: 0.3;
+      border: 2px dashed var(--accent);
+      min-height: 120px;
+    }
+
+    .drop-zone {
+      min-height: 200px;
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+      color: var(--text-secondary);
+      transition: var(--transition);
+      margin-bottom: 2rem;
+    }
+
+    .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.05);
+    }
+
+    @keyframes flip {
+      0% { transform: perspective(1000px) rotateY(0deg); }
+      50% { transform: perspective(1000px) rotateY(90deg); }
+      100% { transform: perspective(1000px) rotateY(180deg); }
+    }
+
+    .flip-anim {
+      animation: flip 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    [draggable="true"] {
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav" role="banner" aria-label="Main navigation">
+    <h1>🛠️ Flashcard Forge</h1>
+    <button class="btn btn-primary" id="addCard" aria-label="Add new card">+ Add Card</button>
+    <button class="btn" id="studyToggle" aria-label="Toggle study mode">📚 Study</button>
+    <div class="deck-selector">
+      <label for="deckSelect">Deck:</label>
+      <select id="deckSelect" aria-label="Select deck"></select>
+      <button class="btn" id="newDeck" aria-label="Create new deck">+ New Deck</button>
+      <button class="btn" id="deleteDeck" aria-label="Delete current deck">🗑️</button>
+    </div>
+    <div class="stats" id="stats" aria-live="polite"></div>
+    <button class="btn" id="themeToggle" aria-label="Toggle theme">🌙</button>
+  </nav>
+
+  <div class="container">
+    <div class="drop-zone" id="dropZone">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      <p>Drop notes here or click Add to start your first deck!</p>
+    </div>
+
+    <div class="grid" id="cardGrid"></div>
+  </div>
+
+  <!-- Add/Edit Card Modal -->
+  <div class="modal" id="cardModal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <h2 id="modalTitle">Add Card</h2>
+      <form id="cardForm">
+        <div class="form-group">
+          <label for="front">Question (Front)</label>
+          <textarea id="front" required rows="3" aria-describedby="front-help"></textarea>
+          <small id="front-help" class="sr-only">Enter the question or term</small>
+        </div>
+        <div class="form-group">
+          <label for="back">Answer (Back)</label>
+          <textarea id="back" required rows="3" aria-describedby="back-help"></textarea>
+          <small id="back-help" class="sr-only">Enter the answer or definition</small>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" class="btn" id="cancelCard">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Card</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- New Deck Modal -->
+  <div class="modal" id="deckModal" role="dialog" aria-labelledby="deckModalTitle" aria-hidden="true">
+    <div class="modal-content">
+      <h2 id="deckModalTitle">New Deck</h2>
+      <form id="deckForm">
+        <div class="form-group">
+          <label for="deckName">Deck Name</label>
+          <input type="text" id="deckName" required>
+        </div>
+        <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+          <button type="button" class="btn" id="cancelDeck">Cancel</button>
+          <button type="submit" class="btn btn-primary">Create Deck</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    class FlashcardForge {
+      constructor() {
+        this.currentDeck = 'default';
+        this.cards = {};
+        this.studyMode = false;
+        this.studyIndex = 0;
+        this.studyStats = { correct: 0, total: 0 };
+        this.dragData = null;
+        this.autoSaveTimer = null;
+        this.init();
+      }
+
+      init() {
+        this.loadData();
+        this.bindEvents();
+        this.updateDeckSelect();
+        this.render();
+        this.startAutoSave();
+        this.updateTheme();
+        this.updateStats();
+      }
+
+      loadData() {
+        const data = localStorage.getItem('flashcardForge');
+        if (data) {
+          const parsed = JSON.parse(data);
+          this.cards = parsed.cards || {};
+          this.currentDeck = parsed.currentDeck || 'default';
+        }
+        if (!this.cards[this.currentDeck]) {
+          this.cards[this.currentDeck] = [];
+        }
+      }
+
+      saveData() {
+        localStorage.setItem('flashcardForge', JSON.stringify({
+          cards: this.cards,
+          currentDeck: this.currentDeck
+        }));
+      }
+
+      startAutoSave() {
+        this.autoSaveTimer = setInterval(() => {
+          this.saveData();
+        }, 10000);
+      }
+
+      bindEvents() {
+        // Navigation
+        document.getElementById('addCard').addEventListener('click', () => this.openCardModal());
+        document.getElementById('studyToggle').addEventListener('click', () => this.toggleStudyMode());
+        document.getElementById('newDeck').addEventListener('click', () => this.openDeckModal());
+        document.getElementById('deleteDeck').addEventListener('click', () => this.deleteDeck());
+        document.getElementById('deckSelect').addEventListener('change', (e) => {
+          this.currentDeck = e.target.value;
+          this.render();
+        });
+        document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+
+        // Forms
+        document.getElementById('cardForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.saveCard();
+        });
+        document.getElementById('deckForm').addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.createDeck();
+        });
+        document.getElementById('cancelCard').addEventListener('click', () => this.closeCardModal());
+        document.getElementById('cancelDeck').addEventListener('click', () => this.closeDeckModal());
+
+        // Drop zone
+        const dropZone = document.getElementById('dropZone');
+        dropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
+        dropZone.addEventListener('drop', (e) => this.handleDrop(e));
+        dropZone.addEventListener('click', () => this.openCardModal());
+
+        // Keyboard
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+
+        // Resize for responsive
+        window.addEventListener('resize', () => this.render());
+      }
+
+      handleDragOver(e) {
+        e.preventDefault();
+        e.currentTarget.classList.add('drag-over');
+      }
+
+      handleDrop(e) {
+        e.preventDefault();
+        e.currentTarget.classList.remove('drag-over');
+        
+        const files = Array.from(e.dataTransfer.files);
+        files.forEach(file => {
+          if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              const content = ev.target.result;
+              this.parseTextToCards(content);
+            };
+            reader.readAsText(file);
+          }
+        });
+      }
+
+      parseTextToCards(text) {
+        const lines = text.split('\n').filter(line => line.trim());
+        for (let i = 0; i < lines.length - 1; i += 2) {
+          const front = lines[i].trim();
+          const back = lines[i + 1]?.trim() || '';
+          if (front && back) {
+            this.cards[this.currentDeck].push({ front, back, id: Date.now() + Math.random() });
+          }
+        }
+        this.render();
+        this.saveData();
+      }
+
+      openCardModal(editCard = null) {
+        const modal = document.getElementById('cardModal');
+        const front = document.getElementById('front');
+        const back = document.getElementById('back');
+        const title = document.getElementById('modalTitle');
+
+        if (editCard) {
+          title.textContent = 'Edit Card';
+          front.value = editCard.front;
+          back.value = editCard.back;
+        } else {
+          title.textContent = 'Add Card';
+          front.value = '';
+          back.value = '';
+        }
+
+        front.focus();
+        modal.classList.add('active');
+        modal.setAttribute('aria-hidden', 'false');
+      }
+
+      closeCardModal() {
+        const modal = document.getElementById('cardModal');
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.getElementById('cardForm').reset();
+      }
+
+      saveCard() {
+        const front = document.getElementById('front').value.trim();
+        const back = document.getElementById('back').value.trim();
+        
+        if (!front || !back) return;
+
+        const editingIndex = this.getEditingIndex();
+        if (editingIndex !== -1) {
+          this.cards[this.currentDeck][editingIndex] = { 
+            ...this.cards[this.currentDeck][editingIndex], 
+            front, 
+            back 
+          };
+        } else {
+          this.cards[this.currentDeck].push({ front, back, id: Date.now() + Math.random() });
+        }
+
+        this.closeCardModal();
+        this.render();
+        this.saveData();
+      }
+
+      getEditingIndex() {
+        // Simple editing via data attribute on card
+        const editingCard = document.querySelector('.card[data-editing]');
+        if (editingCard) {
+          return parseInt(editingCard.dataset.index);
+        }
+        return -1;
+      }
+
+      openDeckModal() {
+        document.getElementById('deckModal').classList.add('active');
+        document.getElementById('deckName').focus();
+      }
+
+      closeDeckModal() {
+        document.getElementById('deckModal').classList.remove('active');
+        document.getElementById('deckForm').reset();
+      }
+
+      createDeck() {
+        const name = document.getElementById('deckName').value.trim();
+        if (name && !this.cards[name]) {
+          this.cards[name] = [];
+          this.currentDeck = name;
+          this.closeDeckModal();
+          this.updateDeckSelect();
+          this.render();
+          this.saveData();
+        }
+      }
+
+      deleteDeck() {
+        if (confirm(`Delete deck "${this.currentDeck}"? This cannot be undone.`)) {
+          delete this.cards[this.currentDeck];
+          this.currentDeck = Object.keys(this.cards)[0] || 'default';
+          if (!this.cards[this.currentDeck]) {
+            this.cards[this.currentDeck] = [];
+          }
+          this.updateDeckSelect();
+          this.render();
+          this.saveData();
+        }
+      }
+
+      updateDeckSelect() {
+        const select = document.getElementById('deckSelect');
+        const decks = Object.keys(this.cards);
+        select.innerHTML = decks.map(deck => 
+          `<option value="${deck}" ${deck === this.currentDeck ? 'selected' : ''}>${deck} (${this.cards[deck].length})</option>`
+        ).join('');
+      }
+
+      toggleStudyMode() {
+        this.studyMode = !this.studyMode;
+        document.getElementById('studyToggle').textContent = this.studyMode ? '📋 Edit' : '📚 Study';
+        this.studyIndex = 0;
+        this.studyStats = { correct: 0, total: 0 };
+        this.render();
+      }
+
+      updateStats() {
+        const statsEl = document.getElementById('stats');
+        if (this.studyMode && this.cards[this.currentDeck].length) {
+          statsEl.textContent = `${this.studyStats.correct}/${this.studyStats.total}`;
+        } else {
+          statsEl.textContent = `${this.cards[this.currentDeck].length} cards`;
+        }
+      }
+
+      handleKeydown(e) {
+        if (this.studyMode) {
+          if (e.code === 'Space') {
+            e.preventDefault();
+            this.flipCard();
+          } else if (e.code === 'Enter' && e.key === 'Enter') {
+            e.preventDefault();
+            this.markCorrect();
+          } else if (e.code === 'KeyN') {
+            e.preventDefault();
+            this.markIncorrect();
+          } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            this.prevCard();
+          } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            this.nextCard();
+          }
+        }
+
+        if (e.code === 'Escape') {
+          this.closeCardModal();
+          this.closeDeckModal();
+        }
+
+        if (e.code === 'KeyE' && e.ctrlKey) {
+          e.preventDefault();
+          const card = document.querySelector('.card:focus');
+          if (card) {
+            const index = parseInt(card.dataset.index);
+            this.editCard(index);
+          }
+        }
+      }
+
+      flipCard() {
+        const cardEl = document.querySelector('.card.study-mode');
+        if (cardEl) {
+          cardEl.classList.toggle('flipped');
+          cardEl.classList.add('flip-anim');
+          setTimeout(() => cardEl.classList.remove('flip-anim'), 600);
+        }
+      }
+
+      markCorrect() {
+        this.studyStats.correct++;
+        this.studyStats.total++;
+        this.nextCard();
+        this.updateStats();
+      }
+
+      markIncorrect() {
+        this.studyStats.total++;
+        this.nextCard();
+        this.updateStats();
+      }
+
+      nextCard() {
+        this.studyIndex = (this.studyIndex + 1) % this.cards[this.currentDeck].length;
+        this.render();
+      }
+
+      prevCard() {
+        this.studyIndex = (this.studyIndex - 1 + this.cards[this.currentDeck].length) % this.cards[this.currentDeck].length;
+        this.render();
+      }
+
+      editCard(index) {
+        this.openCardModal(this.cards[this.currentDeck][index]);
+      }
+
+      deleteCard(index) {
+        if (confirm('Delete this card?')) {
+          this.cards[this.currentDeck].splice(index, 1);
+          this.render();
+          this.saveData();
+        }
+      }
+
+      toggleTheme() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        localStorage.setItem('theme', isDark ? 'light' : 'dark');
+      }
+
+      updateTheme() {
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          document.getElementById('themeToggle').textContent = '☀️';
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.getElementById('themeToggle').textContent = '🌙';
+        }
+      }
+
+      handleDragStart(e, index) {
+        this.dragData = { index, deck: this.currentDeck };
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', index.toString());
+      }
+
+      handleDragEnd() {
+        this.dragData = null;
+        document.querySelectorAll('.drag-placeholder').forEach(el => el.remove());
+      }
+
+      render() {
+        const grid = document.getElementById('cardGrid');
+        const dropZone = document.getElementById('dropZone');
+
+        if (this.studyMode) {
+          grid.innerHTML = this.renderStudyMode();
+        } else {
+          if (this.cards[this.currentDeck].length === 0) {
+            dropZone.style.display = 'block';
+            grid.innerHTML = '';
+          } else {
+            dropZone.style.display = 'none';
+            grid.innerHTML = this.cards[this.currentDeck].map((card, index) => this.renderCard(card, index)).join('');
+          }
+        }
+
+        this.updateDeckSelect();
+        this.updateStats();
+      }
+
+      renderStudyMode() {
+        if (!this.cards[this.currentDeck].length) return '';
+        
+        const card = this.cards[this.currentDeck][this.studyIndex];
+        const isFlipped = card.flipped || false;
+        
+        return `
+          <div class="card study-mode ${isFlipped ? 'flipped' : ''}" 
+               tabindex="0" 
+               role="button" 
+               aria-label="Flashcard ${this.studyIndex + 1} of ${this.cards[this.currentDeck].length}"
+               aria-pressed="${isFlipped}">
+            <div class="card-content">
+              <div class="card-title">${card.front}</div>
+            </div>
+            <div class="card-content back">
+              <div class="card-title">${card.back}</div>
+            </div>
+          </div>
+          <div class="study-controls">
+            <button class="btn" tabindex="0">← Prev</button>
+            <button class="btn btn-primary" tabindex="0">N (Wrong)</button>
+            <button class="btn btn-primary" tabindex="0">Enter (Correct)</button>
+            <button class="btn" tabindex="0">Next →</button>
+          </div>
+        `;
+      }
+
+      renderCard(card, index) {
+        return `
+          <div class="card" 
+               draggable="true"
+               tabindex="0"
+               data-index="${index}"
+               aria-label="Flashcard ${index + 1}: ${card.front.substring(0, 50)}..."
+               role="button">
+            <div class="card-header">
+              <span class="card-index">${index + 1}</span>
+              <div class="card-actions">
+                <button class="btn" onclick="forge.editCard(${index})" aria-label="Edit card">✏️</button>
+                <button class="btn" onclick="forge.deleteCard(${index}); event.stopPropagation()" aria-label="Delete card">🗑️</button>
+              </div>
+            </div>
+            <div class="card-title">${card.front}</div>
+            <div class="card-text">${card.back.substring(0, 100)}${card.back.length > 100 ? '...' : ''}</div>
+          </div>
+        `;
+      }
+    }
+
+    // Touch support for mobile flip
+    document.addEventListener('touchstart', (e) => {
+      if (e.target.closest('.card.study-mode')) {
+        const card = e.target.closest('.card');
+        let startX = e.touches[0].clientX;
+        
+        e.currentTarget.addEventListener('touchmove', moveHandler = (move) => {
+          const currentX = move.touches[0].clientX;
+          const diff = startX - currentX;
+          if (Math.abs(diff) > 50) {
+            forge.flipCard();
+            e.currentTarget.removeEventListener('touchmove', moveHandler);
+          }
+        }, { once: true });
+      }
+    }, { passive: true });
+
+    // Global card interactions
+    document.addEventListener('click', (e) => {
+      const card = e.target.closest('.card:not(.study-mode)');
+      if (card) {
+        card.focus();
+      }
+
+      const studyCard = e.target.closest('.card.study-mode');
+      if (studyCard) {
+        forge.flipCard();
+      }
+    });
+
+    // Drag and drop for cards
+    document.addEventListener('dragstart', (e) => {
+      if (e.target.classList.contains('card')) {
+        const index = parseInt(e.target.dataset.index);
+        forge.handleDragStart(e, index);
+      }
+    });
+
+    document.addEventListener('dragend', () => {
+      forge.handleDragEnd();
+    });
+
+    // Study controls
+    document.addEventListener('click', (e) => {
+      if (e.target.textContent === 'Enter (Correct)') forge.markCorrect();
+      if (e.target.textContent === 'N (Wrong)') forge.markIncorrect();
+      if (e.target.textContent.includes('Prev')) forge.prevCard();
+      if (e.target.textContent.includes('Next')) forge.nextCard();
+    });
+
+    // Initialize app
+    const forge = new FlashcardForge();
+
+    // Expose for onclick handlers
+    window.forge = forge;
+  </script>
+</body>
+</html>

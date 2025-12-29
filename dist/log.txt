@@ -410,3 +410,7 @@
 [2025-12-28] Skipping run: daily quota reached (count=2, target=2).
 [2025-12-28] Skipping run: daily quota reached (count=2, target=2).
 [2025-12-28] Skipping run: daily quota reached (count=2, target=2).
+[2025-12-29] New day: target_runs=5
+[2025-12-29] Proceeding with run #1 of target 5.
+[2025-12-29T01:44:17.128045Z] Prompt OK  seed=39675  theme=learning & study tools  extras=offline-first with localStorage, dark/light auto theme, drag-and-drop  title='Flashcard Forge'  slug=flashcard-forge  kind=html
+[2025-12-29T01:44:17.128045Z] Build OK  file=flashcard-forge.html  kind=html  required_kind=html  
