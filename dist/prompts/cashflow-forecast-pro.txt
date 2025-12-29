@@ -14,3 +14,5 @@ CashFlow Forecast Pro
 - Error handling: try/except for JSON load/save, input validation (retry on invalid float/date), graceful quit saves data.
 - Testable: add sample data on first run; quit/re-run preserves; forecast accurate for sample (e.g., $1000 income, -$300 food shows +surplus).
 - Under 800 LOC: concise functions for load/save/print_table/forecast/pie_chart/hash_state.
+
+(Generated: 2025-12-29T08:29:09.102140Z, seed=71560, theme=finance & budgeting, extras=print-friendly view, keyboard-first UX, share via URL hash, kind=py)
