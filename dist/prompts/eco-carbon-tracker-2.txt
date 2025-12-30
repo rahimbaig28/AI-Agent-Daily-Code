@@ -29,3 +29,5 @@ Eco Carbon Tracker
 - **Data structure:** JSON array of days [{date, activities:[{name, co2e, id}], total}]
 - **Edge cases:** Offline-first, graceful localStorage quota error, mobile touch support for drag
 - Total impl <800 LOC, testable: add activity, see total update, export/import, share via hash
+
+(Generated: 2025-12-30T04:37:43.491367Z, seed=10139, theme=environment & sustainability, extras=drag-and-drop, export/import JSON, share via URL hash, kind=html)
