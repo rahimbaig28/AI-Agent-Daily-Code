@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-01T13:31:06.769893Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hydration Hero Tracker</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #1e293b;
+      --text-secondary: #64748b;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --border: #e2e8f0;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --ring-bg: #e2e8f0;
+      --ring-fill: var(--accent);
+      --btn-tap: rgba(59,130,246,0.1);
+    }
+    [data-theme="dark"] {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --text: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --border: #334155;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.3);
+      --ring-bg: #334155;
+      --ring-fill: var(--accent);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+    .title { font-size: 1.5rem; font-weight: 700; }
+    .theme-toggle, .settings-btn { 
+      width: 48px; height: 48px; 
+      border: none; background: var(--accent); 
+      color: white; border-radius: 50%; 
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s ease; font-size: 1.2rem;
+    }
+    .theme-toggle:hover, .settings-btn:hover { background: var(--accent-hover); transform: scale(1.05); }
+    .theme-toggle:focus-visible, .settings-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    main { padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 2rem; }
+    .progress-ring { position: relative; width: 200px; height: 200px; }
+    .ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .ring-bg { fill: none; stroke: var(--ring-bg); stroke-width: 12; }
+    .ring-fill { fill: none; stroke: var(--ring-fill); stroke-width: 12; stroke-linecap: round; stroke-dasharray: 471; stroke-dashoffset: 471; transition: stroke-dashoffset 0.3s ease; }
+    .progress-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; font-size: 1.4rem; font-weight: 600; }
+    .log-btn { 
+      width: 80px; height: 80px; border-radius: 50%; 
+      border: none; background: var(--accent); color: white; 
+      font-size: 1.8rem; font-weight: 700; cursor: pointer;
+      box-shadow: var(--shadow); transition: all 0.2s ease;
+    }
+    .log-btn:hover:not(:disabled) { background: var(--accent-hover); transform: scale(1.1); }
+    .log-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .log-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 1rem; width: 100%; max-width: 400px; text-align: center; }
+    .stat { background: var(--surface); padding: 1rem; border-radius: 12px; box-shadow: var(--shadow); }
+    .stat-value { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-label { font-size: 0.9rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; }
+    .reminder { position: fixed; top: 20px; right: 20px; background: var(--warning); color: white; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: var(--shadow); transform: translateX(100%); opacity: 0; transition: all 0.3s ease; z-index: 1000; }
+    .reminder.show { transform: translateX(0); opacity: 1; }
+    .history { background: var(--surface); border-top: 1px solid var(--border); padding: 1rem; max-height: 200px; overflow-y: auto; }
+    .history-list { list-style: none; }
+    .history-item { display: flex; justify-content: space-between; padding: 0.75rem; margin-bottom: 0.5rem; background: var(--bg); border-radius: 8px; font-size: 0.9rem; }
+    .history-time { color: var(--text-secondary); }
+    .history-vol { font-weight: 600; color: var(--accent); }
+    .undo-redo { display: flex; gap: 0.5rem; justify-content: center; margin-top: 1rem; }
+    .undo-btn, .redo-btn { padding: 0.5rem 1rem; border: 1px solid var(--border); background: var(--bg); color: var(--text); border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .undo-btn:disabled, .redo-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+    .modal.show { opacity: 1; visibility: visible; }
+    .modal-content { background: var(--surface); padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%; box-shadow: var(--shadow); max-height: 90vh; overflow-y: auto; }
+    .modal-row { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
+    .modal-row label { font-weight: 600; }
+    .modal-row input { padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; background: var(--bg); color: var(--text); }
+    .modal-row input:focus { outline: 2px solid var(--accent); border-color: var(--accent); }
+    .modal-actions { display: flex; gap: 1rem; justify-content: flex-end; }
+    .btn-primary { background: var(--accent); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-weight: 600; }
+    .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; }
+    .tip { text-align: center; font-style: italic; color: var(--text-secondary); margin: 1rem 0; padding: 1rem; background: var(--bg); border-radius: 8px; }
+    @media (max-width: 480px) {
+      .progress-ring { width: 160px; height: 160px; }
+      .progress-text { font-size: 1.2rem; }
+      .log-btn { width: 72px; height: 72px; font-size: 1.6rem; }
+      main { padding: 1rem; }
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+  </style>
+</head>
+<body>
+  <header class="header" role="banner">
+    <h1 class="title">🥤 Hydration Hero</h1>
+    <div>
+      <button class="theme-toggle" aria-label="Toggle theme" data-theme-toggle>🌙</button>
+      <button class="settings-btn" aria-label="Settings" data-settings>⚙️</button>
+    </div>
+  </header>
+
+  <main role="main">
+    <div class="progress-ring" role="img" aria-label="Progress ring">
+      <svg class="ring-svg" viewBox="0 0 150 150">
+        <circle class="ring-bg" cx="75" cy="75" r="75"></circle>
+        <circle class="ring-fill" cx="75" cy="75" r="75"></circle>
+      </svg>
+      <div class="progress-text" aria-live="polite">
+        <div id="current-oz">0</div>
+        <div id="goal-oz">/ 100oz</div>
+      </div>
+    </div>
+    
+    <button class="log-btn" id="log-btn" aria-label="Log a glass of water">+1</button>
+    
+    <div class="stats" role="status" aria-live="polite">
+      <div class="stat">
+        <div class="stat-value" id="glasses">0</div>
+        <div class="stat-label">Glasses</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="streak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="percent">0%</div>
+        <div class="stat-label">Goal</div>
+      </div>
+    </div>
+    
+    <div class="tip" id="tip" aria-live="polite"></div>
+  </main>
+
+  <footer class="history" role="region" aria-label="Log history">
+    <h2 class="sr-only">Today's log history</h2>
+    <ul class="history-list" id="history-list" role="log" aria-live="polite"></ul>
+    <div class="undo-redo">
+      <button class="undo-btn" id="undo-btn" disabled>↶ Undo</button>
+      <button class="redo-btn" id="redo-btn" disabled>↷ Redo</button>
+    </div>
+  </footer>
+
+  <div class="reminder" id="reminder" role="alert" aria-live="assertive">
+    ⏰ Time to drink water!
+  </div>
+
+  <div class="modal" id="settings-modal" role="dialog" aria-labelledby="modal-title" aria-hidden="true">
+    <div class="modal-content">
+      <h2 id="modal-title">Settings</h2>
+      <div class="modal-row">
+        <label for="goal-input">Daily Goal (oz)</label>
+        <input id="goal-input" type="number" min="1" max="500" value="100">
+      </div>
+      <div class="modal-row">
+        <label for="glass-input">Glass Size (oz)</label>
+        <input id="glass-input" type="number" min="1" max="100" value="8">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="cancel-btn">Cancel</button>
+        <button class="btn-primary" id="save-btn">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let state = {
+      logs: [],
+      settings: { goal: 100, glassSize: 8 },
+      undoStack: [],
+      redoStack: [],
+      currentDay: getTodayKey(),
+      streak: 0
+    };
+
+    // DOM elements
+    const els = {
+      logBtn: document.getElementById('log-btn'),
+      currentOz: document.getElementById('current-oz'),
+      goalOz: document.getElementById('goal-oz'),
+      glasses: document.getElementById('glasses'),
+      streakEl: document.getElementById('streak'),
+      percent: document.getElementById('percent'),
+      ringFill: document.querySelector('.ring-fill'),
+      historyList: document.getElementById('history-list'),
+      undoBtn: document.getElementById('undo-btn'),
+      redoBtn: document.getElementById('redo-btn'),
+      reminder: document.getElementById('reminder'),
+      tip: document.getElementById('tip'),
+      themeToggle: document.querySelector('[data-theme-toggle]'),
+      settingsBtn: document.querySelector('[data-settings]'),
+      settingsModal: document.getElementById('settings-modal'),
+      goalInput: document.getElementById('goal-input'),
+      glassInput: document.getElementById('glass-input'),
+      saveBtn: document.getElementById('save-btn'),
+      cancelBtn: document.getElementById('cancel-btn')
+    };
+
+    const quotes = [
+      "Water is the driving force of all nature. – Leonardo da Vinci",
+      "Hydration is key to peak performance!",
+      "Stay hydrated to stay amazing.",
+      "Your body thanks you for every sip!",
+      "Pure water is the world's first and foremost medicine. – Slovakian Proverb"
+    ];
+
+    const milestones = {
+      64: "Great job! 64oz is 8 glasses – you're crushing it! 💪",
+      80: "Awesome! 80% to goal – keep it flowing! 🌊",
+      100: "Hydration Hero! 🎉 You hit your daily goal!"
+    };
+
+    // Utils
+    function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+    function saveState() { localStorage.setItem('hydration-hero', JSON.stringify(state)); }
+    function loadState() {
+      const saved = localStorage.getItem('hydration-hero');
+      if (saved) Object.assign(state, JSON.parse(saved));
+      const today = getTodayKey();
+      if (state.currentDay !== today) {
+        state.logs = [];
+        state.currentDay = today;
+        state.streak = state.streak > 0 ? state.streak + 1 : 1;
+      }
+      updateUI();
+    }
+    function debounce(fn, delay) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), delay);
+      };
+    }
+
+    // Theme
+    function initTheme() {
+      const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      els.themeToggle.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+    }
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      els.themeToggle.textContent = next === 'dark' ? '☀️' : '🌙';
+    }
+
+    // Progress ring
+    function updateRing(progress) {
+      const circumference = 471;
+      const offset = circumference - (progress * circumference / 100);
+      els.ringFill.style.strokeDashoffset = offset;
+    }
+
+    // Calculations
+    function getTotalOz() { return state.logs.reduce((sum, log) => sum + log.volume, 0); }
+    function getGlassesCount() { return state.logs.length; }
+    function getProgress() {
+      return Math.min(100, (getTotalOz() / state.settings.goal) * 100);
+    }
+
+    // UI Updates
+    function updateUI() {
+      const total = getTotalOz();
+      const glasses = getGlassesCount();
+      const progress = getProgress();
+
+      els.currentOz.textContent = Math.round(total);
+      els.goalOz.textContent = `/ ${state.settings.goal}oz`;
+      els.glasses.textContent = glasses;
+      els.streakEl.textContent = state.streak;
+      els.percent.textContent = `${Math.round(progress)}%`;
+      updateRing(progress);
+      updateHistory();
+      updateUndoRedo();
+
+      // Milestone tip
+      const milestone = Object.keys(milestones).find(m => total >= m && total < (parseInt(m) + state.settings.glassSize));
+      els.tip.textContent = milestone ? milestones[milestone] : quotes[Math.floor(Math.random() * quotes.length)];
+
+      els.logBtn.disabled = progress >= 100;
+    }
+
+    function updateHistory() {
+      els.historyList.innerHTML = state.logs.map(log => 
+        `<li class="history-item" data-id="${log.id}">
+          <span class="history-time">${formatTime(log.time)}</span>
+          <span class="history-vol">${log.volume}oz</span>
+        </li>`
+      ).reverse().join('');
+    }
+
+    function updateUndoRedo() {
+      els.undoBtn.disabled = state.undoStack.length === 0;
+      els.redoBtn.disabled = state.redoStack.length === 0;
+    }
+
+    function formatTime(timestamp) {
+      return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    // Logging
+    function logGlass() {
+      if (getProgress() >= 100) return;
+      
+      const log = {
+        id: Date.now(),
+        volume: state.settings.glassSize,
+        time: Date.now()
+      };
+      
+      state.logs.push(log);
+      state.undoStack.push({ action: 'add', log });
+      state.redoStack = [];
+      
+      if (state.undoStack.length > 10) state.undoStack.shift();
+      updateUI();
+      saveState();
+    }
+
+    function undo() {
+      if (state.undoStack.length === 0) return;
+      const action = state.undoStack.pop();
+      state.redoStack.unshift(action);
+      
+      if (action.action === 'add') {
+        const index = state.logs.findIndex(l => l.id === action.log.id);
+        state.logs.splice(index, 1);
+      } else {
+        state.logs.push(action.log);
+      }
+      
+      if (state.redoStack.length > 10) state.redoStack.pop();
+      updateUI();
+      saveState();
+    }
+
+    function redo() {
+      if (state.redoStack.length === 0) return;
+      const action = state.redoStack.shift();
+      state.undoStack.push(action);
+      
+      if (action.action === 'add') {
+        state.logs.push(action.log);
+      } else {
+        const index = state.logs.findIndex(l => l.id === action.log.id);
+        state.logs.splice(index, 1);
+      }
+      
+      if (state.undoStack.length > 10) state.undoStack.shift();
+      updateUI();
+      saveState();
+    }
+
+    // Modal
+    function openSettings() {
+      els.goalInput.value = state.settings.goal;
+      els.glassInput.value = state.settings.glassSize;
+      els.settingsModal.classList.add('show');
+      els.settingsModal.setAttribute('aria-hidden', 'false');
+      els.goalInput.focus();
+    }
+    function closeSettings() {
+      els.settingsModal.classList.remove('show');
+      els.settingsModal.setAttribute('aria-hidden', 'true');
+    }
+    function saveSettings() {
+      const goal = parseInt(els.goalInput.value);
+      const glass = parseInt(els.glassInput.value);
+      if (goal >= 1 && goal <= 500 && glass >= 1 && glass <= 100) {
+        state.settings.goal = goal;
+        state.settings.glassSize = glass;
+        updateUI();
+        saveState();
+        closeSettings();
+      }
+    }
+
+    // Reminders
+    function showReminder() {
+      els.reminder.classList.add('show');
+      setTimeout(() => els.reminder.classList.remove('show'), 3000);
+    }
+
+    // Event listeners
+    els.logBtn.addEventListener('click', logGlass);
+    els.themeToggle.addEventListener('click', toggleTheme);
+    els.settingsBtn.addEventListener('click', openSettings);
+    els.undoBtn.addEventListener('click', undo);
+    els.redoBtn.addEventListener('click', redo);
+    els.cancelBtn.addEventListener('click', closeSettings);
+    els.saveBtn.addEventListener('click', saveSettings);
+
+    // Keyboard
+    document.addEventListener('keydown', e => {
+      if (e.target.closest('.modal')) return;
+      
+      switch(e.key) {
+        case 'Enter':
+        case ' ':
+          if (document.activeElement === els.logBtn) {
+            e.preventDefault();
+            logGlass();
+          }
+          break;
+        case 'g':
+        case 'G':
+          e.preventDefault();
+          openSettings();
+          break;
+        case 'Escape':
+          closeSettings();
+          break;
+        case 'z':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            undo();
+          }
+          break;
+        case 'y':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            redo();
+          }
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          els.logBtn.focus();
+          break;
+      }
+    });
+
+    // Modal keyboard trap
+    els.settingsModal.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeSettings();
+        return;
+      }
+      if (e.key === 'Enter' && document.activeElement === els.saveBtn) {
+        saveSettings();
+      }
+    });
+
+    // Auto-save
+    const debouncedSave = debounce(saveState, 30000);
+    window.addEventListener('beforeunload', saveState);
+
+    // Reminders every 2 hours
+    setInterval(() => {
+      const now = new Date().getHours();
+      if (now % 2 === 0 && getTotalOz() < state.settings.goal * 0.5) {
+        showReminder();
+      }
+    }, 60000); // Check every minute
+
+    // Init
+    loadState();
+    initTheme();
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+      if (!localStorage.getItem('theme')) {
+        document.documentElement.setAttribute('data-theme', e.matches ? 'dark' : 'light');
+        els.themeToggle.textContent = e.matches ? '☀️' : '🌙';
+      }
+    });
+  </script>
+</body>
+</html>
