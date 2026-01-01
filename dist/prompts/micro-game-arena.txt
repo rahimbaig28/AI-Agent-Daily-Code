@@ -15,3 +15,5 @@ Micro Game Arena
 - **Print-friendly**: CSS @media print hides controls, shows score table only.
 - **Testable features**: Console logs game events; shareable URL hash encodes current game/high score.
 - Total impl <800 LOC: Canvas for games, flexbox layout, minimal DOM updates.
+
+(Generated: 2026-01-01T01:46:30.464470Z, seed=23868, theme=micro games, extras=export/import JSON, drag-and-drop, print-friendly view, kind=html)

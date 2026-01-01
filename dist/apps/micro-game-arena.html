@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-01T01:47:06.554632Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro Game Arena</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #000; 
+            color: #00FF41; 
+            font-family: 'Courier New', monospace; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; font-size: 2.5rem; margin-bottom: 20px; text-shadow: 0 0 10px #00FF41; }
+        .controls { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap; }
+        button { 
+            background: transparent; 
+            border: 2px solid #00FF41; 
+            color: #00FF41; 
+            padding: 10px 20px; 
+            font-family: inherit; 
+            cursor: pointer; 
+            border-radius: 5px; 
+            transition: all 0.3s; 
+        }
+        button:hover { background: #00FF41; color: #000; box-shadow: 0 0 20px #00FF41; }
+        .game-tabs { 
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 10px; 
+            justify-content: center; 
+            margin-bottom: 20px; 
+            min-height: 60px;
+        }
+        .tab { 
+            padding: 15px 25px; 
+            border: 2px solid #00FF41; 
+            cursor: grab; 
+            border-radius: 5px; 
+            background: rgba(0,255,65,0.1); 
+            transition: all 0.3s;
+            user-select: none;
+        }
+        .tab:hover { box-shadow: 0 0 20px #00FF41; }
+        .tab.dragging { opacity: 0.5; transform: rotate(5deg); }
+        .tab-placeholder { height: 60px; border: 2px dashed #00FF41; border-radius: 5px; flex: 1; min-width: 150px; }
+        .game-arena { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 500px; 
+            border: 2px solid #00FF41; 
+            border-radius: 10px; 
+            padding: 20px; 
+            background: rgba(0,255,65,0.05);
+        }
+        canvas { 
+            border: 1px solid #00FF41; 
+            background: #111; 
+            max-width: 100%; 
+            height: auto; 
+            box-shadow: 0 0 30px #00FF41;
+        }
+        .game-ui { text-align: center; font-size: 1.2rem; margin: 10px 0; }
+        .hidden { display: none !important; }
+        #dropZone { 
+            border: 2px dashed #00FF41; 
+            padding: 40px; 
+            text-align: center; 
+            margin: 20px 0; 
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        #dropZone.dragover { background: rgba(0,255,65,0.1); }
+        @media (max-width: 768px) { 
+            .container { padding: 10px; } 
+            h1 { font-size: 2rem; }
+            canvas { width: 100% !important; height: auto !important; }
+        }
+        @media (max-width: 320px) { .container { padding: 5px; } }
+        @media print { 
+            .controls, .game-tabs, #dropZone { display: none; }
+            .game-arena { border: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏟️ MICRO GAME ARENA</h1>
+        <div class="controls">
+            <button onclick="exportData()">💾 Export JSON</button>
+            <button onclick="clearData()">🗑️ Clear Data</button>
+            <input type="file" id="importFile" accept=".json" style="display:none;" onchange="importData(event)">
+            <button onclick="document.getElementById('importFile').click()">📁 Import JSON</button>
+        </div>
+        <div class="game-tabs" id="gameTabs"></div>
+        <div class="game-arena">
+            <div id="dropZone">
+                <p>Drag & drop JSON file here or use Import button</p>
+            </div>
+            <div id="gameContainer">
+                <canvas id="gameCanvas" width="600" height="400" tabindex="1"></canvas>
+                <div id="gameUI" class="game-ui"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game order and data
+        const GAMES = ['snake', 'pong', 'memory', 'guesser'];
+        let gameOrder = [...GAMES];
+        let currentGame = 'snake';
+        let highScores = {};
+        let gameStates = {};
+        let isDragging = null;
+
+        // Initialize
+        function init() {
+            loadData();
+            renderTabs();
+            selectGame(currentGame);
+            setupDragDrop();
+            updateHash();
+            console.log('Micro Game Arena initialized');
+        }
+
+        // Data persistence
+        function loadData() {
+            const data = JSON.parse(localStorage.getItem('microGameArena') || '{}');
+            gameOrder = data.gameOrder || [...GAMES];
+            highScores = data.highScores || {};
+            gameStates = data.gameStates || {};
+        }
+
+        function saveData() {
+            localStorage.setItem('microGameArena', JSON.stringify({
+                gameOrder, highScores, gameStates, currentGame
+            }));
+        }
+
+        function clearData() {
+            if (confirm('Clear all data?')) {
+                localStorage.removeItem('microGameArena');
+                highScores = {};
+                gameStates = {};
+                gameOrder = [...GAMES];
+                currentGame = 'snake';
+                renderTabs();
+                selectGame('snake');
+                saveData();
+                console.log('Data cleared');
+            }
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify({gameOrder, highScores, gameStates}, null, 2);
+            const blob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'micro-game-arena.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            console.log('Data exported');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        gameOrder = data.gameOrder || [...GAMES];
+                        highScores = data.highScores || {};
+                        gameStates = data.gameStates || {};
+                        renderTabs();
+                        selectGame(currentGame);
+                        saveData();
+                        console.log('Data imported');
+                    } catch (err) {
+                        alert('Invalid JSON file');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // Drag & Drop for tabs
+        function setupDragDrop() {
+            const dropZone = document.getElementById('dropZone');
+            ['dragover', 'dragenter'].forEach(event => {
+                dropZone.addEventListener(event, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add('dragover');
+                });
+            });
+            ['dragleave', 'drop'].forEach(event => {
+                dropZone.addEventListener(event, e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove('dragover');
+                    if (event === 'drop') importDroppedFile(e);
+                });
+            });
+        }
+
+        function importDroppedFile(e) {
+            const file = e.dataTransfer.files[0];
+            if (file && file.name.endsWith('.json')) {
+                const reader = new FileReader();
+                reader.onload = (e) => importData({target: {files: [file]}});
+                reader.readAsText(file);
+            }
+        }
+
+        // Game tabs
+        function renderTabs() {
+            const tabs = document.getElementById('gameTabs');
+            tabs.innerHTML = gameOrder.map((game, i) => 
+                `<div class="tab" draggable="true" data-game="${game}" onclick="selectGame('${game}')">${getGameTitle(game)}</div>`
+            ).join('');
+            
+            // Add drag listeners
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('dragstart', e => {
+                    isDragging = e.target.dataset.game;
+                    e.target.classList.add('dragging');
+                });
+                tab.addEventListener('dragend', e => {
+                    e.target.classList.remove('dragging');
+                    isDragging = null;
+                });
+                tab.addEventListener('dragover', e => e.preventDefault());
+                tab.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (isDragging) {
+                        const fromIdx = gameOrder.indexOf(isDragging);
+                        const toIdx = gameOrder.indexOf(e.target.dataset.game);
+                        moveArrayItem(gameOrder, fromIdx, toIdx);
+                        renderTabs();
+                        saveData();
+                    }
+                });
+            });
+        }
+
+        function moveArrayItem(arr, from, to) {
+            const item = arr.splice(from, 1)[0];
+            arr.splice(to, 0, item);
+        }
+
+        function getGameTitle(game) {
+            const titles = {
+                snake: '🐍 Snake',
+                pong: '🏓 Pong', 
+                memory: '🧠 Memory',
+                guesser: '🔢 Guesser'
+            };
+            return titles[game];
+        }
+
+        // Game selection
+        function selectGame(game) {
+            currentGame = game;
+            document.getElementById('dropZone').classList.add('hidden');
+            document.querySelectorAll('.tab').forEach(t => t.style.borderColor = '#00FF41');
+            document.querySelector(`[data-game="${game}"]`).style.borderColor = '#fff';
+            startGame(game);
+            saveData();
+            updateHash();
+            console.log(`Selected game: ${game}`);
+        }
+
+        function updateHash() {
+            const hash = btoa(JSON.stringify({currentGame, highScores[currentGame]}));
+            window.location.hash = hash;
+        }
+
+        // Canvas setup
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const ui = document.getElementById('gameUI');
+
+        function resizeCanvas() {
+            const maxW = Math.min(window.innerWidth - 40, 800);
+            const maxH = Math.min(window.innerHeight * 0.6, 600);
+            const size = Math.min(maxW, maxH);
+            canvas.width = size;
+            canvas.height = size * 0.666; // 3:2 aspect
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Input handling
+        const keys = {};
+        window.addEventListener('keydown', e => {
+            keys[e.key.toLowerCase()] = true;
+            if (e.key === 'Enter') e.preventDefault();
+        });
+        window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
+
+        canvas.addEventListener('mousemove', e => {
+            if (currentGame === 'pong') {
+                const rect = canvas.getBoundingClientRect();
+                pong.playerY = (e.clientY - rect.top) / rect.height * canvas.height;
+            }
+        });
+
+        canvas.addEventListener('touchmove', e => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            if (currentGame === 'pong') {
+                pong.playerY = (touch.clientY - rect.top) / rect.height * canvas.height;
+            }
+        }, {passive: false});
+
+        // Snake Game
+        const snake = {
+            init() {
+                this.grid = 20;
+                this.cols = Math.floor(canvas.width / this.grid);
+                this.rows = Math.floor(canvas.height / this.grid);
+                this.reset();
+            },
+            reset() {
+                this.x = Math.floor(this.cols/2);
+                this.y = Math.floor(this.rows/2);
+                this.dx = 1; this.dy = 0;
+                this.tail = [{x: this.x-1, y: this.y}];
+                this.food = this.randomFood();
+                this.score = 0;
+                this.gameOver = false;
+            },
+            randomFood() {
+                return {
+                    x: Math.floor(Math.random() * this.cols),
+                    y: Math.floor(Math.random() * this.rows)
+                };
+            },
+            update() {
+                if (this.gameOver) return;
+                
+                this.x += this.dx;
+                this.y += this.dy;
+                
+                // Wall collision
+                if (this.x < 0 || this.x >= this.cols || this.y < 0 || this.y >= this.rows) {
+                    this.gameOver = true;
+                    return;
+                }
+                
+                // Self collision
+                for (let seg of this.tail) {
+                    if (this.x === seg.x && this.y === seg.y) {
+                        this.gameOver = true;
+                        return;
+                    }
+                }
+                
+                this.tail.push({x: this.x, y: this.y});
+                
+                // Food collision
+                if (this.x === this.food.x && this.y === this.food.y) {
+                    this.score += 10;
+                    this.food = this.randomFood();
+                } else {
+                    this.tail.shift();
+                }
+            },
+            draw() {
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Grid
+                ctx.strokeStyle = '#333';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= this.cols; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(i * this.grid, 0);
+                    ctx.lineTo(i * this.grid, canvas.height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i <= this.rows; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i * this.grid);
+                    ctx.lineTo(canvas.width, i * this.grid);
+                    ctx.stroke();
+                }
+                
+                // Food
+                ctx.fillStyle = '#ff0040';
+                ctx.fillRect(this.food.x * this.grid + 2, this.food.y * this.grid + 2, 
+                           this.grid - 4, this.grid - 4);
+                
+                // Snake
+                ctx.fillStyle = '#00FF41';
+                for (let seg of this.tail) {
+                    ctx.fillRect(seg.x * this.grid + 1, seg.y * this.grid + 1, 
+                               this.grid - 2, this.grid - 2);
+                }
+                
+                if (this.gameOver) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 36px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
+                }
+            },
+            handleInput() {
+                if (this.gameOver) {
+                    if (keys[' '] || keys['enter']) {
+                        this.reset();
+                        updateHighScore('snake', this.score);
+                    }
+                    return;
+                }
+                
+                const dirs = { arrowleft: [-1,0], arrowright: [1,0], arrowup: [0,-1], arrowdown: [0,1],
+                             a: [-1,0], d: [1,0], w: [0,-1], s: [0,1] };
+                for (let [key, dir] of Object.entries(dirs)) {
+                    if (keys[key]) {
+                        this.dx = dir[0];
+                        this.dy = dir[1];
+                        break;
+                    }
+                }
+            }
+        };
+
+        // Pong Game
+        const pong = {
+            init() {
+                this.reset();
+            },
+            reset() {
+                this.playerY = canvas.height / 2 - 50;
+                this.aiY = canvas.height / 2 - 50;
+                this.ballX = canvas.width / 2;
+                this.ballY = canvas.height / 2;
+                this.ballDX = 5 * (Math.random() > 0.5 ? 1 : -1);
+                this.ballDY = (Math.random() - 0.5) * 10;
+                this.playerScore = 0;
+                this.aiScore = 0;
+                this.winner = null;
+            },
+            update() {
+                if (this.winner) return;
+                
+                // Ball movement
+                this.ballX += this.ballDX;
+                this.ballY += this.ballDY;
+                
+                // Ball collision with top/bottom
+                if (this.ballY <= 0 || this.ballY >= canvas.height) {
+                    this.ballDY *= -1;
+                }
+                
+                // Player paddle
+                const playerPaddle = {x: 20, y: this.playerY, w: 15, h: 100};
+                if (this.ballX <= playerPaddle.x + playerPaddle.w && 
+                    this.ballY > playerPaddle.y && this.ballY < playerPaddle.y + playerPaddle.h) {
+                    this.ballDX *= -1;
+                    this.ballDY += (this.ballY - (playerPaddle.y + playerPaddle.h/2)) * 0.2;
+                }
+                
+                // AI paddle (simple)
+                const targetY = this.ballY - 50;
+                this.aiY += (targetY - this.aiY) * 0.1;
+                const aiPaddle = {x: canvas.width - 35, y: this.aiY, w: 15, h: 100};
+                if (this.ballX >= aiPaddle.x - aiPaddle.w && 
+                    this.ballY > aiPaddle.y && this.ballY < aiPaddle.y + aiPaddle.h) {
+                    this.ballDX *= -1;
+                    this.ballDY += (this.ballY - (aiPaddle.y + aiPaddle.h/2)) * 0.2;
+                }
+                
+                // Scoring
+                if (this.ballX < 0) {
+                    this.aiScore++;
+                    if (this.aiScore >= 5) this.winner = 'AI';
+                    else this.resetBall();
+                } else if (this.ballX > canvas.width) {
+                    this.playerScore++;
+                    if (this.playerScore >= 5) this.winner = 'Player';
+                    else this.resetBall();
+                }
+            },
+            resetBall() {
+                this.ballX = canvas.width / 2;
+                this.ballY = canvas.height / 2;
+                this.ballDX *= -1;
+            },
+            draw() {
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Center line
+                ctx.strokeStyle = '#00FF41';
+                ctx.lineWidth = 4;
+                ctx.setLineDash([10, 10]);
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/2, 0);
+                ctx.lineTo(canvas.width/2, canvas.height);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Paddles
+                ctx.fillStyle = '#00FF41';
+                ctx.fillRect(20, this.playerY, 15, 100);
+                ctx.fillRect(canvas.width - 35, this.aiY, 15, 100);
+                
+                // Ball
+                ctx.beginPath();
+                ctx.arc(this.ballX, this.ballY, 8, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Scores
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 48px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(this.playerScore, canvas.width * 0.25, 60);
+                ctx.fillText(this.aiScore, canvas.width * 0.75, 60);
+                
+                if (this.winner) {
+                    ctx.font = 'bold 36px monospace';
+                    ctx.fillText(`${this.winner} WINS!`, canvas.width/2, canvas.height/2);
+                    ctx.font = '24px monospace';
+                    ctx.fillText('ENTER to restart', canvas.width/2, canvas.height/2 + 40);
+                }
+            },
+            handleInput() {
+                if (this.winner && keys['enter']) {
+                    this.reset();
+                    updateHighScore('pong', this.playerScore);
+                }
+            }
+        };
+
+        // Memory Game
+        const memory = {
+            init() {
+                this.grid = 4;
+                this.size = 80;
+                this.reset();
+            },
+            reset() {
+                const pairs = Array(8).fill().map((_, i) => [i, i]).flat();
+                this.cards = pairs.sort(() => Math.random() - 0.5).map((v, i) => ({
+                    id: i, value: v, flipped: false, matched: false
+                }));
+                this.flipped = [];
+                this.moves = 0;
+                this.matches = 0;
+                this.timer = 0;
+                this.gameWon = false;
+            },
+            update(dt) {
+                if (this.gameWon) return;
+                this.timer += dt;
+                
+                if (this.flipped.length === 2) {
+                    this.moves++;
+                    if (this.flipped[0].value === this.flipped[1].value) {
+                        this.flipped.forEach(c => c.matched = true);
+                        this.matches++;
+                        if (this.matches === 8) {
+                            this.gameWon = true;
+                            updateHighScore('memory', Math.floor(1000 / (this.moves + this.timer)));
+                        }
+                    } else {
+                        setTimeout(() => this.flipped.forEach(c => c.flipped = false), 1000);
+                    }
+                    this.flipped = [];
+                }
+            },
+            getCard(x, y) {
+                const col = Math.floor(x / this.size);
+                const row = Math.floor(y / this.size);
+                if (col >= 0 && col < this.grid && row >= 0 && row < this.grid) {
+                    return this.cards[row * this.grid + col];
+                }
+            },
+            handleClick(x, y) {
+                if (this.gameWon) {
+                    this.reset();
+                    return;
+                }
+                const card = this.getCard(x, y);
+                if (card && !card.flipped && !card.matched && this.flipped.length < 2) {
+                    card.flipped = true;
+                    this.flipped.push(card);
+                }
+            },
+            draw() {
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const startX = (canvas.width - this.grid * this.size) / 2;
+                const startY = (canvas.height - this.grid * this.size) / 2;
+                
+                this.cards.forEach((card, i) => {
+                    const x = startX + (i % this.grid) * this.size;
+                    const y = startY + Math.floor(i / this.grid) * this.size;
+                    
+                    ctx.fillStyle = card.flipped || card.matched ? '#00FF41' : '#333';
+                    ctx.fillRect(x, y, this.size, this.size);
+                    ctx.strokeStyle = '#00FF41';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x, y, this.size, this.size);
+                    
+                    if (card.flipped || card.matched) {
+                        ctx.fillStyle = '#000';
+                        ctx.font = 'bold 32px monospace';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(String.fromCharCode(65 + card.value), 
+                                   x + this.size/2, y + this.size/2);
+                    }
+                });
+                
+                if (this.gameWon) {
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 36px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('YOU WON!', canvas.width/2, canvas.height/2);
+                }
+            }
+        };
+
+        // Number Guesser
+        const guesser = {
+            init() {
+                this.reset();
+            },
+            reset() {
+                this.target = Math.floor(Math.random() * 100) + 1;
+                this.attempts = 5;
+                this.guesses = [];
+                this.streak = (localStorage.getItem('guesserStreak') || 0) | 0;
+                this.gameWon = false;
+            },
+            guess(num) {
+                if (this.gameWon || this.attempts <= 0) return;
+                
+                this.guesses.push(num);
+                this.attempts--;
+                
+                if (num === this.target) {
+                    this.gameWon = true;
+                    this.streak++;
+                    localStorage.setItem('guesserStreak', this.streak);
+                    updateHighScore('guesser', this.streak);
+                }
+            },
+            getHint(num) {
+                const diff = Math.abs(num - this.target);
+                if (diff === 0) return 'CORRECT!';
+                if (diff <= 5) return '🔥 BURNING HOT';
+                if (diff <= 15) return '🥵 HOT';
+                if (diff <= 30) return '🌡️ WARM';
+                return '🧊 COLD';
+            },
+            draw() {
+                ctx.fillStyle = '#111';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 28px monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                ctx.fillText(`Guess 1-100 (${this.attempts} tries left)`, canvas.width/2, canvas.height/2 - 100);
+                
+                if (this.guesses.length > 0) {
+                    const lastGuess = this.guesses[this.guesses.length - 1];
+                    ctx.font = '24px monospace';
+                    ctx.fillStyle = this.gameWon ? '#00FF41' : '#ffaa00';
+                    ctx.fillText(this.getHint(lastGuess), canvas.width/2, canvas.height/2);
+                }
+                
+                if (this.gameWon) {
+                    ctx.fillStyle = '#00FF41';
+                    ctx.font = 'bold 36px monospace';
+                    ctx.fillText(`CORRECT! ${this.target}`, canvas.width/2, canvas.height/2 + 60);
+                    ctx.font = '24px monospace';
+                    ctx.fillText(`Streak: ${this.streak}`, canvas.width/2, canvas.height/2 + 100);
+                } else if (this.attempts === 0) {
+                    ctx.fillStyle = '#ff4444';
+                    ctx.font = 'bold 36px monospace';
+                    ctx.fillText(`GAME OVER: ${this.target}`, canvas.width/2, canvas.height/2 + 60);
+                }
+            },
+            handleInput() {
+                if (this.gameWon || this.attempts <= 0) {
+                    if (keys['enter'] || keys[' ']) this.reset();
+                    return;
+                }
+            }
+        };
+
+        // Game state management
+        const games = { snake, pong, memory, guesser };
+
+        function startGame(gameName) {
+            games[gameName].init();
+            canvas.focus();
+        }
+
+        function updateHighScore(game, score) {
+            if (!highScores[game] || score > highScores[game]) {
+                highScores[game] = score;
+                saveData();
+                updateHash();
+                console.log(`New high score in ${game}: ${score}`);
+            }
+        }
+
+        // Main game loop
+        let lastTime = 0;
+        function gameLoop(time) {
+            const dt = (time - lastTime) / 1000;
+            lastTime = time;
+            
+            const game = games[currentGame];
+            game.handleInput();
+            game.update(dt);
+            game.draw();
+            
+            ui.innerHTML = `
+                <div>High Score: ${highScores[currentGame] || 0}</div>
+                ${currentGame === 'guesser' ? `<div>Streak: ${guesser.streak}</div>` : ''}
+            `;
+            
+            requestAnimationFrame(gameLoop);
+        }
+
+        // Mouse/Touch input for canvas
+        canvas.addEventListener('click', e => {
+            const rect = canvas.getBoundingClientRect();
+            const x = (e.clientX - rect.left) / rect.width * canvas.width;
+            const y = (e.clientY - rect.top) / rect.height * canvas.height;
+            
+            if (currentGame === 'memory') {
+                memory.handleClick(x, y);
+            }
+        });
+
+        canvas.addEventListener('touchstart', e => {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            const x = (touch.clientX - rect.left) / rect.width * canvas.width;
+            const y = (touch.clientY - rect.top) / rect.height * canvas.height;
+            
+            if (currentGame === 'memory') {
+                memory.handleClick(x, y);
+            }
+        }, {passive: false});
+
+        // Keyboard navigation
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const idx = gameOrder.indexOf(currentGame);
+                const nextGame = gameOrder[(idx + 1) % gameOrder.length];
+                selectGame(nextGame);
+            }
+            if (e.key === 'Escape') {
+                canvas.blur();
+            }
+        });
+
+        // Load hash state
+        window.addEventListener('hashchange', () => {
+            try {
+                const hash = window.location.hash.slice(1);
+                if (hash) {
+                    const state = JSON.parse(atob(hash));
+                    currentGame = state.currentGame || 'snake';
+                    renderTabs();
+                    selectGame(currentGame);
+                }
+            } catch (e) {}
+        });
+
+        // Start everything
+        init();
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
