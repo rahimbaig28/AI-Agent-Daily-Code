@@ -12,3 +12,5 @@ CashFlow Goal Tracker
 - Current month auto-detects from datetime.date.today().
 - Error handling: invalid inputs reprompt, file locks prevented via atomic json write (temp file + rename).
 - Testable: start empty, add 3 income/5 expenses, set goal 1000, verify summary/net/bar; hash stable for same data.
+
+(Generated: 2026-01-01T08:27:10.698756Z, seed=64750, theme=finance & budgeting, extras=print-friendly view, share via URL hash, keyboard-first UX, kind=py)
