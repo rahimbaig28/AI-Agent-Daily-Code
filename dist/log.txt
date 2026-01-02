@@ -476,3 +476,4 @@
 [2026-01-02T01:38:45.274931Z] Build validation failed (html): Missing <!DOCTYPE html> at top.. Attempting auto-fix.
 [2026-01-02T01:38:45.274931Z] Build FAILED: RuntimeError: Final html validation failed after fix attempt: Missing <!DOCTYPE html> at top.; Missing required tag: <body>
 [2026-01-02] Skipping run: daily quota reached (count=1, target=1).
+[2026-01-02] Skipping run: daily quota reached (count=1, target=1).
