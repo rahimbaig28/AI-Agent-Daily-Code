@@ -470,3 +470,9 @@
 [2026-01-01T13:30:33.016893Z] Build OK  file=hydration-hero-tracker.html  kind=html  required_kind=html  
 [2026-01-01] Skipping run: daily quota reached (count=5, target=5).
 [2026-01-01] Skipping run: daily quota reached (count=5, target=5).
+[2026-01-02] New day: target_runs=1
+[2026-01-02] Proceeding with run #1 of target 1.
+[2026-01-02T01:38:45.274931Z] Prompt OK  seed=25358  theme=micro games  extras=ARIA-compliant components, keyboard-first UX, drag-and-drop  title='Micro Game Arena'  slug=micro-game-arena  kind=py
+[2026-01-02T01:38:45.274931Z] Build validation failed (html): Missing <!DOCTYPE html> at top.. Attempting auto-fix.
+[2026-01-02T01:38:45.274931Z] Build FAILED: RuntimeError: Final html validation failed after fix attempt: Missing <!DOCTYPE html> at top.; Missing required tag: <body>
+[2026-01-02] Skipping run: daily quota reached (count=1, target=1).
