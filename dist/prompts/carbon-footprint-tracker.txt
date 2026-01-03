@@ -19,3 +19,5 @@ Carbon Footprint Tracker
 • Delete individual entries or clear all data (with confirmation)
 • Tips section: displays sustainability suggestions based on user's highest-emission categories
 • Estimated impact display: compare user's footprint to average household baseline
+
+(Generated: 2026-01-03T08:25:16.966304Z, seed=39106, theme=environment & sustainability, extras=export/import JSON, offline-first with localStorage, share via URL hash, kind=html)
