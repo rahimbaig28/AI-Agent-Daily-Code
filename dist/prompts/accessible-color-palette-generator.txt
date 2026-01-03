@@ -14,3 +14,5 @@ Accessible Color Palette Generator
 - Testable outputs: print palettes to terminal, export JSON/URL, validate 10+ predefined test cases (e.g., dark mode, high-contrast).
 - Error handling: validate hex inputs, graceful curses fallback to basic CLI if terminal unsupported.
 - Keep under 800 lines: use compact curses panels, simple WCAG contrast formula (relative luminance math).
+
+(Generated: 2026-01-03T12:36:52.395149Z, seed=23087, theme=accessibility helpers, extras=share via URL hash, ARIA-compliant components, drag-and-drop, kind=py)
