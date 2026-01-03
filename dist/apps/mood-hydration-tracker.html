@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-03T04:31:51.603694Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mood & Hydration Tracker</title>
+  <style>
+    :root {
+      --bg-primary: #f0f8ff;
+      --bg-secondary: #e0f7fa;
+      --accent-blue: #4fc3f7;
+      --accent-green: #81c784;
+      --text-primary: #1a237e;
+      --text-secondary: #455a64;
+      --border: #b0bec5;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --high-contrast-bg: #fff;
+      --high-contrast-text: #000;
+    }
+    [data-high-contrast="true"] {
+      --bg-primary: var(--high-contrast-bg);
+      --bg-secondary: #f5f5f5;
+      --accent-blue: #1976d2;
+      --accent-green: #388e3c;
+      --text-primary: var(--high-contrast-text);
+      --text-secondary: #333;
+      --border: #ccc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+      color: var(--text-primary);
+      min-height: 100vh;
+      padding: 1rem;
+      line-height: 1.5;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; margin-bottom: 2rem; color: var(--accent-blue); }
+    .toolbar {
+      display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; justify-content: center;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem; border: none; border-radius: 25px; background: var(--accent-blue);
+      color: white; cursor: pointer; font-size: 0.9rem; transition: all 0.3s; font-weight: 500;
+    }
+    .btn:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+    .btn-small { padding: 0.5rem 1rem; font-size: 0.8rem; }
+    .btn-success { background: var(--accent-green); }
+    .section { background: white; border-radius: 20px; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow); }
+    .mood-logger { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-bottom: 1rem; }
+    .mood-btn {
+      width: 60px; height: 60px; font-size: 2rem; border: 3px solid transparent; border-radius: 50%;
+      background: white; cursor: pointer; transition: all 0.3s; box-shadow: var(--shadow);
+    }
+    .mood-btn:hover { transform: scale(1.1); border-color: var(--accent-blue); }
+    .mood-btn.active { background: var(--accent-blue); color: white; transform: scale(1.1); }
+    #mood-note { width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 10px; font-size: 1rem; }
+    .hydration { display: grid; grid-template-columns: repeat(auto-fit, minmax(50px, 1fr)); gap: 0.75rem; margin-bottom: 1rem; }
+    .glass {
+      aspect-ratio: 1; border-radius: 50% 50% 30% 30%; background: linear-gradient(145deg, #e3f2fd, #bbdefb);
+      border: 3px solid var(--border); cursor: pointer; transition: all 0.3s; position: relative;
+      display: flex; align-items: flex-end; padding-bottom: 10%; overflow: hidden;
+    }
+    .glass:hover { transform: scale(1.05); }
+    .glass.filled { background: linear-gradient(145deg, var(--accent-green), #66bb6a); border-color: var(--accent-green); }
+    .glass::after {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(255,255,255,0.3);
+      transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s;
+    }
+    .glass.filled::after { transform: scaleY(1); }
+    .dashboard { text-align: center; }
+    .streak { font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem; }
+    .total-water { font-size: 2rem; color: var(--accent-blue); margin-bottom: 1rem; }
+    #progress-circle { width: 120px; height: 120px; margin: 0 auto 1rem; }
+    .weekly-chart { margin-top: 1rem; }
+    canvas { max-width: 100%; height: 200px; background: white; border-radius: 10px; padding: 1rem; }
+    .day-nav { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1rem; }
+    .print-only { display: none; }
+    @media print {
+      body { background: white !important; color: black !important; }
+      .toolbar, .btn, .mood-btn, .glass { display: none !important; }
+      .print-only { display: block !important; }
+      .section { box-shadow: none; margin: 0; padding: 1rem; break-inside: avoid; }
+      canvas { height: 300px !important; }
+    }
+    @media (max-width: 600px) {
+      .container { padding: 0.5rem; }
+      .mood-logger { gap: 0.5rem; }
+      .mood-btn { width: 50px; height: 50px; font-size: 1.5rem; }
+      .hydration { grid-template-columns: repeat(4, 1fr); gap: 0.5rem; }
+    }
+    [hidden] { display: none !important; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌊 Mood & Hydration Tracker 💙</h1>
+    
+    <div class="toolbar" role="toolbar" aria-label="App controls">
+      <button class="btn" id="undoBtn" aria-label="Undo last action" disabled>↶ Undo</button>
+      <button class="btn" id="redoBtn" aria-label="Redo last action" disabled>↷ Redo</button>
+      <button class="btn" id="exportBtn">📥 Export</button>
+      <input type="file" id="importBtn" accept=".json" hidden aria-label="Import data file">
+      <button class="btn btn-small" id="printBtn">🖨️ Print</button>
+      <button class="btn btn-small" id="highContrastBtn" aria-label="Toggle high contrast">HC</button>
+      <button class="btn btn-small" id="notifyBtn">🔔 Reminders</button>
+    </div>
+
+    <div class="section">
+      <h2>📊 Dashboard</h2>
+      <div class="dashboard" aria-live="polite">
+        <div class="streak" id="streak">Streak: 0 days</div>
+        <div class="total-water" id="totalWater">0ml</div>
+        <svg id="progress-circle" viewBox="0 0 100 100" role="img" aria-label="Hydration progress">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#e0e0e0" stroke-width="10"></circle>
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="10" stroke-linecap="round"
+                  pathLength="1" stroke-dasharray="0 1" id="progressArc"></circle>
+        </svg>
+        <div class="day-nav" role="tablist">
+          <button class="btn btn-small" data-week-offset="-1" aria-selected="false">← Week</button>
+          <span id="currentWeek" aria-label="Current week"></span>
+          <button class="btn btn-small" data-week-offset="1" aria-selected="false">Week →</button>
+        </div>
+        <canvas id="moodChart" class="weekly-chart" width="400" height="200" role="img" aria-label="Weekly mood trend"></canvas>
+        <div class="print-only" id="printSummary"></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>😊 Daily Mood</h2>
+      <div class="mood-logger" role="radiogroup" aria-label="Select mood">
+        <button class="mood-btn" data-mood="5" aria-label="Very happy 😊" tabindex="-1">😊</button>
+        <button class="mood-btn" data-mood="4" aria-label="Happy 😌" tabindex="-1">😌</button>
+        <button class="mood-btn" data-mood="3" aria-label="Neutral 😐" tabindex="-1">😐</button>
+        <button class="mood-btn" data-mood="2" aria-label="Sad 😔" tabindex="-1">😔</button>
+        <button class="mood-btn" data-mood="1" aria-label="Very sad 😢" tabindex="-1">😢</button>
+      </div>
+      <input type="text" id="mood-note" placeholder="Add note (optional)..." maxlength="200">
+      <button class="btn btn-success" id="logMoodBtn">Log Mood</button>
+    </div>
+
+    <div class="section">
+      <h2>💧 Hydration (250ml/glass)</h2>
+      <div class="hydration" role="grid" aria-label="Water glasses">
+        <!-- 8 glasses generated by JS -->
+      </div>
+      <div style="text-align: center;">
+        <label for="glassSize">Glass size: </label>
+        <input type="number" id="glassSize" value="250" min="100" max="500" style="width: 80px;">
+        <span>ml</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    class TrackerApp {
+      constructor() {
+        this.data = { moods: {}, hydration: {}, glassSize: 250 };
+        this.history = [];
+        this.historyIndex = -1;
+        this.weekOffset = 0;
+        this.moodScores = { '😊': 5, '😌': 4, '😐': 3, '😔': 2, '😢': 1 };
+        this.init();
+      }
+
+      init() {
+        this.loadData();
+        this.bindEvents();
+        this.renderAll();
+        this.requestNotificationPermission();
+      }
+
+      loadData() {
+        const saved = localStorage.getItem('moodHydrationTracker');
+        if (saved) Object.assign(this.data, JSON.parse(saved));
+      }
+
+      saveData() {
+        localStorage.setItem('moodHydrationTracker', JSON.stringify(this.data));
+      }
+
+      pushHistory() {
+        this.history = this.history.slice(0, this.historyIndex + 1);
+        this.history.push(JSON.parse(JSON.stringify(this.data)));
+        this.historyIndex++;
+        if (this.history.length > 50) this.history.shift();
+        this.updateUndoRedo();
+      }
+
+      updateUndoRedo() {
+        document.getElementById('undoBtn').disabled = this.historyIndex <= 0;
+        document.getElementById('redoBtn').disabled = this.historyIndex >= this.history.length - 1;
+      }
+
+      bindEvents() {
+        // Toolbar
+        document.getElementById('undoBtn').onclick = () => this.undo();
+        document.getElementById('redoBtn').onclick = () => this.redo();
+        document.getElementById('exportBtn').onclick = () => this.exportData();
+        document.getElementById('importBtn').onchange = (e) => this.importData(e.target.files[0]);
+        document.getElementById('printBtn').onclick = () => window.print();
+        document.getElementById('highContrastBtn').onclick = () => {
+          document.documentElement.toggleAttribute('data-high-contrast');
+          document.getElementById('highContrastBtn').textContent = 
+            document.documentElement.hasAttribute('data-high-contrast') ? 'NC' : 'HC';
+        };
+        document.getElementById('notifyBtn').onclick = () => this.toggleNotifications();
+
+        // Mood
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+          btn.onclick = () => this.selectMood(btn.dataset.mood, btn.textContent);
+          btn.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') btn.onclick(); };
+        });
+        document.getElementById('mood-note').onkeydown = (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); this.logMood(); }
+        };
+        document.getElementById('logMoodBtn').onclick = () => this.logMood();
+
+        // Hydration
+        document.getElementById('glassSize').onchange = (e) => {
+          this.data.glassSize = +e.target.value;
+          this.saveData();
+        };
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+          if (e.ctrlKey || e.metaKey) {
+            if (e.key === 'z') { e.preventDefault(); this.undo(); }
+            if (e.key === 'y') { e.preventDefault(); this.redo(); }
+          }
+        });
+
+        // Week navigation
+        document.querySelectorAll('[data-week-offset]').forEach(btn => {
+          btn.onclick = () => {
+            this.weekOffset += +btn.dataset.weekOffset;
+            this.renderDashboard();
+          };
+        });
+
+        // Focus management for accessibility
+        document.querySelector('.mood-btn').tabIndex = 0;
+      }
+
+      getTodayKey() {
+        return new Date().toISOString().split('T')[0];
+      }
+
+      selectMood(score, emoji) {
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.dataset.mood === score);
+          btn.tabIndex = btn.classList.contains('active') ? 0 : -1;
+        });
+        document.getElementById('mood-note').focus();
+        this.selectedMood = { score: +score, emoji };
+      }
+
+      logMood() {
+        if (!this.selectedMood) return;
+        const today = this.getTodayKey();
+        this.pushHistory();
+        if (!this.data.moods[today]) this.data.moods[today] = [];
+        this.data.moods[today].push({
+          score: this.selectedMood.score,
+          emoji: this.selectedMood.emoji,
+          note: document.getElementById('mood-note').value,
+          time: new Date().toLocaleTimeString()
+        });
+        document.getElementById('mood-note').value = '';
+        delete this.selectedMood;
+        document.querySelectorAll('.mood-btn').forEach(btn => {
+          btn.classList.remove('active');
+          btn.tabIndex = -1;
+        });
+        document.querySelector('.mood-btn').tabIndex = 0;
+        this.saveData();
+        this.renderDashboard();
+        document.querySelector('[aria-live="polite"]').textContent = `Mood logged: ${this.selectedMood.emoji}`;
+      }
+
+      createGlasses() {
+        const container = document.querySelector('.hydration');
+        container.innerHTML = '';
+        for (let i = 0; i < 8; i++) {
+          const glass = document.createElement('div');
+          glass.className = 'glass';
+          glass.setAttribute('role', 'button');
+          glass.setAttribute('tabindex', '0');
+          glass.setAttribute('aria-label', `Glass ${i+1} (${this.data.glassSize}ml)`);
+          glass.onclick = () => this.logWater();
+          glass.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') glass.onclick(); };
+          container.appendChild(glass);
+        }
+        this.renderHydration();
+      }
+
+      logWater() {
+        const today = this.getTodayKey();
+        this.pushHistory();
+        if (!this.data.hydration[today]) this.data.hydration[today] = 0;
+        this.data.hydration[today] += this.data.glassSize;
+        this.saveData();
+        this.renderHydration();
+        this.renderDashboard();
+        if (Notification.permission === 'granted') {
+          new Notification('Hydration logged!', { body: `+${this.data.glassSize}ml` });
+        }
+      }
+
+      renderHydration() {
+        const today = this.getTodayKey();
+        const todayWater = this.data.hydration[today] || 0;
+        const glasses = document.querySelectorAll('.glass');
+        const filledCount = Math.min(8, Math.floor(todayWater / this.data.glassSize));
+        glasses.forEach((glass, i) => {
+          glass.classList.toggle('filled', i < filledCount);
+        });
+      }
+
+      renderDashboard() {
+        const today = this.getTodayKey();
+        const todayWater = this.data.hydration[today] || 0;
+        const todayMoods = this.data.moods[today] || [];
+
+        // Streak
+        let streak = 0;
+        let current = new Date();
+        while (streak < 30) {
+          const dateKey = current.toISOString().split('T')[0];
+          if ((this.data.moods[dateKey]?.length > 0 || 0) && (this.data.hydration[dateKey] || 0) > 1000) streak++;
+          else break;
+          current.setDate(current.getDate() - 1);
+        }
+        document.getElementById('streak').textContent = `Streak: ${streak} days`;
+
+        // Water
+        document.getElementById('totalWater').textContent = `${todayWater}ml`;
+        const progress = Math.min(1, todayWater / 2000);
+        document.getElementById('progressArc').style.strokeDasharray = `${progress} 1`;
+        document.getElementById('progress-circle').style.color = progress > 0.8 ? 'var(--accent-green)' : 'var(--accent-blue)';
+
+        // Chart
+        this.renderMoodChart();
+
+        // Week label
+        const now = new Date();
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay() + this.weekOffset * 7);
+        document.getElementById('currentWeek').textContent = 
+          `Week of ${weekStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+      }
+
+      renderMoodChart() {
+        const canvas = document.getElementById('moodChart');
+        const ctx = canvas.getContext('2d');
+        const now = new Date();
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay() + this.weekOffset * 7);
+        
+        const weekData = [];
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(weekStart);
+          date.setDate(weekStart.getDate() + i);
+          const dateKey = date.toISOString().split('T')[0];
+          const moods = this.data.moods[dateKey] || [];
+          const avg = moods.length ? moods.reduce((sum, m) => sum + m.score, 0) / moods.length : 0;
+          weekData.push(avg);
+        }
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const barWidth = (canvas.width - 40) / 7;
+        const maxHeight = canvas.height - 40;
+        const maxMood = 5;
+
+        ctx.fillStyle = '#f5f5f5';
+        ctx.fillRect(20, 20, canvas.width - 40, maxHeight);
+
+        weekData.forEach((avg, i) => {
+          const barHeight = (avg / maxMood) * maxHeight;
+          ctx.fillStyle = `hsl(${120 - avg * 24}, 70%, ${50 + avg * 10}%)`;
+          ctx.fillRect(20 + i * barWidth, canvas.height - 20 - barHeight, barWidth - 4, barHeight);
+          
+          // Labels
+          ctx.fillStyle = '#666';
+          ctx.font = '12px sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(['S','M','T','W','T','F','S'][i], 20 + i * barWidth + barWidth/2, canvas.height - 5);
+          if (avg > 0) {
+            ctx.fillText(avg.toFixed(1), 20 + i * barWidth + barWidth/2, canvas.height - 30 - barHeight);
+          }
+        });
+      }
+
+      renderAll() {
+        this.createGlasses();
+        this.renderDashboard();
+        document.getElementById('glassSize').value = this.data.glassSize;
+      }
+
+      undo() {
+        if (this.historyIndex > 0) {
+          this.historyIndex--;
+          Object.assign(this.data, this.history[this.historyIndex]);
+          this.saveData();
+          this.renderAll();
+          this.updateUndoRedo();
+        }
+      }
+
+      redo() {
+        if (this.historyIndex < this.history.length - 1) {
+          this.historyIndex++;
+          Object.assign(this.data, this.history[this.historyIndex]);
+          this.saveData();
+          this.renderAll();
+          this.updateUndoRedo();
+        }
+      }
+
+      exportData() {
+        const dataStr = JSON.stringify(this.data, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `mood-hydration-${this.getTodayKey()}.json`;
+        a.click();
+      }
+
+      importData(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const imported = JSON.parse(e.target.result);
+            Object.assign(this.data, imported);
+            this.saveData();
+            this.renderAll();
+          } catch (err) {
+            alert('Invalid JSON file');
+          }
+        };
+        reader.readAsText(file);
+      }
+
+      async requestNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'default') {
+          const permission = await Notification.requestPermission();
+        }
+      }
+
+      toggleNotifications() {
+        if (Notification.permission === 'granted') {
+          Notification.permission = 'default';
+          document.getElementById('notifyBtn').textContent = '🔔 Reminders';
+        } else {
+          this.requestNotificationPermission();
+          document.getElementById('notifyBtn').textContent = '✅ Enabled';
+        }
+      }
+    }
+
+    // Initialize app
+    new TrackerApp();
+
+    // Print summary
+    window.matchMedia('print').addListener(() => {
+      if (window.matchMedia('print').matches) {
+        setTimeout(() => {
+          const app = window.trackerApp; // Make accessible globally if needed
+          document.getElementById('printSummary').innerHTML = `
+            <h3>Summary</h3>
+            <p>Total mood entries: ${Object.values(app.data.moods).flat().length}</p>
+            <p>Total hydration: ${Object.values(app.data.hydration).reduce((a,b)=>a+(b||0),0)}ml</p>
+          `;
+        }, 100);
+      }
+    });
+  </script>
+</body>
+</html>
