@@ -15,3 +15,5 @@ Expense Forecaster Pro
 - Accessibility: semantic HTML (sections, labels, roles), focus outlines, screen-reader friendly (live regions for updates), skip links.
 - Polish: smooth CSS transitions/animations (<0.3s), mobile swipe for delete, PWA-like manifest in <head> for offline install, error toasts for invalid inputs.
 - Testable features: add 5 tx, edit budget, toggle theme, export/import, verify forecast updates, keyboard-only flow, responsive at 320px/768px.
+
+(Generated: 2026-01-05T04:55:40.505667Z, seed=26433, theme=finance & budgeting, extras=offline-first with localStorage, export/import JSON, keyboard-first UX, kind=html)
