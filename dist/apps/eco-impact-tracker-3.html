@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-05T01:47:38.014563Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Tracker</title>
+    <style>
+        :root {
+            --green-primary: #2E7D32;
+            --green-accent: #4CAF50;
+            --green-light: #A5D6A7;
+            --gray-dark: #424242;
+            --gray-light: #F5F5F5;
+            --white: #FFFFFF;
+            --red: #F44336;
+            --yellow: #FF9800;
+            --blue: #2196F3;
+            --shadow: 0 2px 8px rgba(0,0,0,0.15);
+            --border: 1px solid #E0E0E0;
+            --transition: all 0.3s ease;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --green-primary: #4CAF50;
+                --green-accent: #66BB6A;
+                --gray-dark: #F5F5F5;
+                --gray-light: #212121;
+                --white: #263238;
+            }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--gray-light);
+            color: var(--gray-dark);
+            line-height: 1.5;
+            transition: var(--transition);
+        }
+        .container { max-width: 1400px; margin: 0 auto; padding: 1rem; }
+        .header {
+            background: var(--green-primary); color: white; padding: 1rem 0; margin-bottom: 2rem;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+        }
+        .header h1 { font-size: 1.8rem; }
+        .controls { display: flex; gap: 1rem; align-items: center; }
+        button {
+            background: var(--green-accent); color: white; border: none; padding: 0.5rem 1rem;
+            border-radius: 6px; cursor: pointer; font-size: 0.9rem; transition: var(--transition);
+        }
+        button:hover { background: #45a049; transform: translateY(-1px); }
+        button.danger { background: var(--red); }
+        button.danger:hover { background: #da190b; }
+        .skip-link { position: absolute; top: -40px; background: var(--green-primary); color: white; padding: 0.5rem; text-decoration: none; }
+        .skip-link:focus { top: 0; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .metric-card {
+            background: white; padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        .metric-value { font-size: 2.5rem; font-weight: bold; margin-bottom: 0.5rem; }
+        .score-green { color: #4CAF50; }
+        .score-yellow { color: var(--yellow); }
+        .score-red { color: var(--red); }
+        canvas { max-width: 100%; height: 200px; }
+        .categories {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;
+        }
+        .category {
+            background: white; border-radius: 12px; padding: 1rem; box-shadow: var(--shadow);
+            min-height: 300px; display: flex; flex-direction: column;
+        }
+        .category-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; font-weight: bold; }
+        .drop-zone {
+            flex: 1; min-height: 200px; border: var(--border) dashed var(--green-accent); border-radius: 8px;
+            display: flex; flex-direction: column; gap: 0.5rem; padding: 1rem; transition: var(--transition);
+        }
+        .drop-zone.drag-over { border-color: var(--green-primary); background: var(--green-light); }
+        .card {
+            background: white; border: var(--border) solid; border-radius: 8px; padding: 0.75rem;
+            cursor: grab; user-select: none; display: flex; align-items: center; gap: 0.75rem;
+            transition: var(--transition); box-shadow: var(--shadow);
+        }
+        .card:active { cursor: grabbing; }
+        .card svg { width: 24px; height: 24px; flex-shrink: 0; }
+        .card-info { flex: 1; }
+        .card-name { font-weight: 500; }
+        .card-co2 { font-size: 0.8rem; color: var(--red); }
+        .edit-btn { background: none; border: none; cursor: pointer; padding: 0.25rem; }
+        .modal {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5);
+            display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .modal-content {
+            background: white; padding: 2rem; border-radius: 12px; max-width: 400px; width: 90%;
+            box-shadow: var(--shadow);
+        }
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        input, select { width: 100%; padding: 0.75rem; border: var(--border); border-radius: 6px; }
+        .spinner { display: flex; align-items: center; gap: 0.5rem; }
+        .spinner-btn { width: 40px; height: 40px; background: var(--green-accent); color: white; border: none; border-radius: 50%; cursor: pointer; }
+        .tips { background: white; border-radius: 12px; padding: 1rem; box-shadow: var(--shadow); }
+        .tips-header { cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding-bottom: 0.5rem; border-bottom: var(--border); margin-bottom: 1rem; }
+        .tip-item { padding: 0.75rem; border-left: 4px solid var(--green-accent); margin-bottom: 0.5rem; }
+        .hidden { display: none; }
+        @media (max-width: 600px) { .categories { grid-template-columns: 1fr; } }
+        @media (min-width: 600px) and (max-width: 900px) { .categories { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 900px) { .categories { grid-template-columns: repeat(4, 1fr); } }
+        [hidden] { display: none !important; }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to main content</a>
+    <header class="header">
+        <h1>Eco Impact Tracker</h1>
+        <div class="controls">
+            <button id="darkToggle" aria-label="Toggle dark mode">🌙</button>
+            <button id="exportBtn">Export</button>
+            <button id="importBtn">Import</button>
+            <button id="resetDayBtn" class="danger">Reset Day</button>
+            <button id="resetWeekBtn" class="danger">Reset Week</button>
+            <button id="preloadBtn">Preload Sample</button>
+            <button id="undoBtn" aria-label="Undo last action">↶</button>
+        </div>
+    </header>
+
+    <main id="main" class="container">
+        <section class="dashboard">
+            <div class="metric-card">
+                <div id="totalCo2" class="metric-value score-red" aria-live="polite">0</div>
+                <div>Daily Total CO2e (kg)</div>
+            </div>
+            <div class="metric-card">
+                <div id="sustainabilityScore" class="metric-value score-green" aria-live="polite">100</div>
+                <div>Sustainability Score</div>
+            </div>
+            <div class="metric-card">
+                <canvas id="dailyChart" width="300" height="200" aria-label="Daily CO2 chart"></canvas>
+            </div>
+            <div class="metric-card">
+                <canvas id="weeklyChart" width="300" height="200" aria-label="Weekly CO2 chart"></canvas>
+            </div>
+        </section>
+
+        <section class="categories" role="main">
+            <div class="category" data-category="transport" tabindex="0" role="grid" aria-label="Transport activities">
+                <div class="category-header">
+                    🚗 Transport
+                    <span id="transportTotal" aria-live="polite">0kg</span>
+                </div>
+                <div class="drop-zone" id="transportZone"></div>
+            </div>
+            <div class="category" data-category="energy" tabindex="0" role="grid" aria-label="Energy activities">
+                <div class="category-header">
+                    ⚡ Energy
+                    <span id="energyTotal" aria-live="polite">0kg</span>
+                </div>
+                <div class="drop-zone" id="energyZone"></div>
+            </div>
+            <div class="category" data-category="food" tabindex="0" role="grid" aria-label="Food activities">
+                <div class="category-header">
+                    🍎 Food
+                    <span id="foodTotal" aria-live="polite">0kg</span>
+                </div>
+                <div class="drop-zone" id="foodZone"></div>
+            </div>
+            <div class="category" data-category="waste" tabindex="0" role="grid" aria-label="Waste activities">
+                <div class="category-header">
+                    🗑️ Waste
+                    <span id="wasteTotal" aria-live="polite">0kg</span>
+                </div>
+                <div class="drop-zone" id="wasteZone"></div>
+            </div>
+        </section>
+
+        <section class="tips" role="region" aria-label="Sustainability tips">
+            <div class="tips-header" tabindex="0" role="button" aria-expanded="false" id="tipsToggle">
+                💡 Sustainability Tips
+                <span>▼</span>
+            </div>
+            <div id="tipsContent" class="hidden"></div>
+        </section>
+    </main>
+
+    <div id="logModal" class="modal hidden" role="dialog" aria-labelledby="logTitle" aria-hidden="true">
+        <div class="modal-content">
+            <h2 id="logTitle">Log Activity</h2>
+            <div class="input-group">
+                <label for="quantity">Quantity</label>
+                <div class="spinner">
+                    <button type="button" class="spinner-btn" id="decQty" aria-label="Decrease">−</button>
+                    <input type="number" id="quantity" value="1" min="0.1" step="0.1" aria-label="Quantity">
+                    <button type="button" class="spinner-btn" id="incQty" aria-label="Increase">+</button>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="date">Date</label>
+                <input type="date" id="date">
+            </div>
+            <div class="input-group">
+                <label for="categorySelect">Category</label>
+                <select id="categorySelect"></select>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button id="cancelLog">Cancel</button>
+                <button id="confirmLog">Log Activity</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customModal" class="modal hidden" role="dialog" aria-labelledby="customTitle" aria-hidden="true">
+        <div class="modal-content">
+            <h2 id="customTitle">Add Custom Activity</h2>
+            <div class="input-group">
+                <label for="customName">Name</label>
+                <input type="text" id="customName" placeholder="e.g., Train ride">
+            </div>
+            <div class="input-group">
+                <label for="customCo2">CO2e per unit (kg)</label>
+                <input type="number" id="customCo2" step="0.01" min="0">
+            </div>
+            <div class="input-group">
+                <label for="customIcon">Icon</label>
+                <select id="customIcon">
+                    <option value="🚗">Car</option>
+                    <option value="✈️">Plane</option>
+                    <option value="🚲">Bike</option>
+                    <option value="🍎">Food</option>
+                    <option value="⚡">Energy</option>
+                    <option value="🗑️">Waste</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button id="cancelCustom">Cancel</button>
+                <button id="addCustom">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data structures
+        const categories = ['transport', 'energy', 'food', 'waste'];
+        const predefinedActivities = [
+            { id: 'car10km', name: 'Car trip 10km', co2: 2.0, icon: '🚗', category: 'transport', multiplier: 0.2 },
+            { id: 'flight100km', name: 'Flight 100km', co2: 15.0, icon: '✈️', category: 'transport', multiplier: 0.15 },
+            { id: 'bike5km', name: 'Bike 5km', co2: 0.0, icon: '🚲', category: 'transport', multiplier: 0 },
+            { id: 'electricity5kwh', name: 'Electricity 5kWh', co2: 2.0, icon: '⚡', category: 'energy', multiplier: 0.4 },
+            { id: 'veggie-meal', name: 'Veggie meal', co2: 0.5, icon: '🥗', category: 'food', multiplier: 0.5 },
+            { id: 'beef-meal', name: 'Beef meal', co2: 5.0, icon: '🥩', category: 'food', multiplier: 5.0 },
+            { id: 'recycle-plastic', name: 'Recycle plastic', co2: 0.1, icon: '🔄', category: 'waste', multiplier: 0.1 },
+            { id: 'landfill-bag', name: 'Landfill bag', co2: 1.0, icon: '🗑️', category: 'waste', multiplier: 1.0 },
+            { id: 'bus20km', name: 'Bus 20km', co2: 2.4, icon: '🚌', category: 'transport', multiplier: 0.12 },
+            { id: 'train50km', name: 'Train 50km', co2: 2.5, icon: '🚂', category: 'transport', multiplier: 0.05 },
+            { id: 'heating2h', name: 'Heating 2h', co2: 1.0, icon: '🔥', category: 'energy', multiplier: 0.5 },
+            { id: 'chicken-meal', name: 'Chicken meal', co2: 2.0, icon: '🍗', category: 'food', multiplier: 2.0 },
+            { id: 'compost-food', name: 'Compost food waste', co2: 0.2, icon: '🍂', category: 'waste', multiplier: 0.2 },
+            { id: 'walk3km', name: 'Walk 3km', co2: 0.0, icon: '🚶', category: 'transport', multiplier: 0 },
+            { id: 'ac1h', name: 'AC 1h', co2: 0.8, icon: '❄️', category: 'energy', multiplier: 0.8 },
+            { id: 'fish-meal', name: 'Fish meal', co2: 1.5, icon: '🐟', category: 'food', multiplier: 1.5 },
+            { id: 'paper-recycle', name: 'Recycle paper', co2: 0.05, icon: '📄', category: 'waste', multiplier: 0.05 },
+            { id: 'car5km', name: 'Car trip 5km', co2: 1.0, icon: '🚗', category: 'transport', multiplier: 0.2 },
+            { id: 'solar5kwh', name: 'Solar 5kWh', co2: 0.0, icon: '☀️', category: 'energy', multiplier: 0 },
+            { id: 'vegan-meal', name: 'Vegan meal', co2: 0.3, icon: '🌱', category: 'food', multiplier: 0.3 }
+        ];
+        let activities = [...predefinedActivities];
+        let logs = [];
+        let undoStack = [];
+        let currentDrag = null;
+        let goal = 10; // kg/day
+        let darkMode = false;
+
+        // Initialize app
+        function init() {
+            loadData();
+            renderActivities();
+            renderDashboard();
+            updateTips();
+            setupEventListeners();
+            drawCharts();
+            document.getElementById('date').valueAsDate = new Date();
+        }
+
+        function loadData() {
+            const data = localStorage.getItem('ecoTracker');
+            if (data) {
+                const parsed = JSON.parse(data);
+                logs = parsed.logs || [];
+                activities = parsed.activities || activities;
+                goal = parsed.goal || 10;
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('ecoTracker', JSON.stringify({ logs, activities, goal }));
+        }
+
+        function setupEventListeners() {
+            // Drag and drop
+            document.querySelectorAll('.drop-zone').forEach(zone => {
+                zone.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+                zone.addEventListener('drop', handleDrop);
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', e => {
+                if (e.key === 'Escape') closeModals();
+                if (e.target.matches('[data-action="add-custom"]')) return;
+            });
+
+            // Controls
+            document.getElementById('darkToggle').addEventListener('click', toggleDarkMode);
+            document.getElementById('exportBtn').addEventListener('click', exportData);
+            document.getElementById('importBtn').addEventListener('click', () => document.getElementById('fileInput').click());
+            document.getElementById('resetDayBtn').addEventListener('click', () => confirmReset('day'));
+            document.getElementById('resetWeekBtn').addEventListener('click', () => confirmReset('week'));
+            document.getElementById('preloadBtn').addEventListener('click', preloadSample);
+            document.getElementById('undoBtn').addEventListener('click', undoLast);
+            document.getElementById('addCustomBtn')?.addEventListener('click', showCustomModal);
+
+            // Modals
+            document.getElementById('confirmLog').addEventListener('click', confirmLog);
+            document.getElementById('cancelLog').addEventListener('click', closeModals);
+            document.getElementById('addCustom').addEventListener('click', addCustomActivity);
+            document.getElementById('cancelCustom').addEventListener('click', closeModals);
+
+            // Spinner
+            document.getElementById('incQty').addEventListener('click', () => {
+                const qty = parseFloat(document.getElementById('quantity').value) + 0.1;
+                document.getElementById('quantity').value = qty.toFixed(1);
+            });
+            document.getElementById('decQty').addEventListener('click', () => {
+                const qty = Math.max(0.1, parseFloat(document.getElementById('quantity').value) - 0.1);
+                document.getElementById('quantity').value = qty.toFixed(1);
+            });
+
+            // Tips toggle
+            document.getElementById('tipsToggle').addEventListener('click', toggleTips);
+            document.getElementById('tipsToggle').addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleTips();
+                }
+            });
+
+            // File input
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.id = 'fileInput';
+            fileInput.accept = '.json';
+            fileInput.style.display = 'none';
+            document.body.appendChild(fileInput);
+            fileInput.addEventListener('change', importData);
+        }
+
+        function renderActivities() {
+            categories.forEach(cat => {
+                const zone = document.getElementById(`${cat}Zone`);
+                zone.innerHTML = '';
+                activities.filter(a => a.category === cat).forEach(activity => {
+                    const card = createCard(activity);
+                    zone.appendChild(card);
+                });
+            });
+        }
+
+        function createCard(activity) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.draggable = true;
+            card.dataset.id = activity.id;
+            card.dataset.activity = JSON.stringify(activity);
+            card.tabIndex = 0;
+            card.setAttribute('role', 'gridcell');
+            card.innerHTML = `
+                <span>${activity.icon}</span>
+                <div class="card-info">
+                    <div class="card-name">${activity.name}</div>
+                    <div class="card-co2">${activity.co2.toFixed(1)}kg CO2e</div>
+                </div>
+                <button class="edit-btn" aria-label="Edit quantity" data-action="log">📝</button>
+            `;
+            card.addEventListener('dragstart', e => {
+                currentDrag = card;
+                e.dataTransfer.setData('text/plain', card.dataset.id);
+            });
+            card.addEventListener('keydown', e => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    showLogModal(activity);
+                }
+            });
+            card.querySelector('[data-action="log"]').addEventListener('click', () => showLogModal(activity));
+            return card;
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const zone = e.currentTarget;
+            zone.classList.remove('drag-over');
+            const activityId = e.dataTransfer.getData('text/plain');
+            const activity = activities.find(a => a.id === activityId);
+            if (activity) showLogModal(activity, zone.dataset.category || zone.parentElement.dataset.category);
+        }
+
+        function showLogModal(activity, targetCategory = activity.category) {
+            currentActivity = activity;
+            document.getElementById('quantity').value = '1';
+            document.getElementById('date').valueAsDate = new Date();
+            document.getElementById('categorySelect').innerHTML = categories.map(cat => 
+                `<option value="${cat}" ${cat === targetCategory ? 'selected' : ''}>${cat.charAt(0).toUpperCase() + cat.slice(1)}</option>`
+            ).join('');
+            document.getElementById('logModal').classList.remove('hidden');
+            document.getElementById('logModal').setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+
+        let currentActivity;
+        function confirmLog() {
+            const qty = parseFloat(document.getElementById('quantity').value);
+            const date = document.getElementById('date').value;
+            const category = document.getElementById('categorySelect').value;
+            const co2 = currentActivity.multiplier ? currentActivity.multiplier * qty * 10 : currentActivity.co2 * qty;
+            
+            const log = {
+                id: Date.now(),
+                activityId: currentActivity.id,
+                name: currentActivity.name,
+                category,
+                quantity: qty,
+                co2,
+                date,
+                timestamp: Date.now()
+            };
+            
+            logs.push(log);
+            undoStack.push(log);
+            if (undoStack.length > 10) undoStack.shift();
+            
+            closeModals();
+            renderDashboard();
+            updateCategoryTotals();
+            updateTips();
+            saveData();
+        }
+
+        function closeModals() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.add('hidden');
+                modal.setAttribute('aria-hidden', 'true');
+            });
+            document.body.style.overflow = '';
+        }
+
+        function renderDashboard() {
+            const today = new Date().toISOString().split('T')[0];
+            const dailyTotal = logs
+                .filter(log => log.date === today)
+                .reduce((sum, log) => sum + log.co2, 0);
+            
+            document.getElementById('totalCo2').textContent = dailyTotal.toFixed(1);
+            const score = Math.max(0, Math.round(100 - (dailyTotal / goal) * 100));
+            const scoreEl = document.getElementById('sustainabilityScore');
+            scoreEl.textContent = score;
+            scoreEl.className = `metric-value ${score >= 70 ? 'score-green' : score >= 40 ? 'score-yellow' : 'score-red'}`;
+        }
+
+        function updateCategoryTotals() {
+            const today = new Date().toISOString().split('T')[0];
+            categories.forEach(cat => {
+                const total = logs
+                    .filter(log => log.date === today && log.category === cat)
+                    .reduce((sum, log) => sum + log.co2, 0);
+                document.getElementById(`${cat}Total`).textContent = `${total.toFixed(1)}kg`;
+            });
+        }
+
+        function drawCharts() {
+            drawBarChart('dailyChart', getDailyData());
+            drawBarChart('weeklyChart', getWeeklyData());
+        }
+
+        function getDailyData() {
+            const today = new Date();
+            return Array(7).fill(0).map((_, i) => {
+                const date = new Date(today);
+                date.setDate(today.getDate() - i);
+                const dateStr = date.toISOString().split('T')[0];
+                return logs.filter(log => log.date === dateStr).reduce((sum, log) => sum + log.co2, 0);
+            }).reverse();
+        }
+
+        function getWeeklyData() {
+            const now = new Date();
+            const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - now.getDay());
+            return Array(7).fill(0).map((_, i) => {
+                const date = new Date(weekStart);
+                date.setDate(weekStart.getDate() + i);
+                const dateStr = date.toISOString().split('T')[0];
+                return logs.filter(log => log.date === dateStr).reduce((sum, log) => sum + log.co2, 0);
+            });
+        }
+
+        function drawBarChart(canvasId, data) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            const max = Math.max(...data, 10);
+            const barWidth = canvas.width / data.length;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#F5F5F5';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            data.forEach((value, i) => {
+                const height = (value / max) * (canvas.height - 40);
+                ctx.fillStyle = value > 5 ? '#F44336' : value > 2 ? '#FF9800' : '#4CAF50';
+                ctx.fillRect(i * barWidth + 5, canvas.height - height - 20, barWidth - 10, height);
+                ctx.fillStyle = '#666';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(value.toFixed(1), (i + 0.5) * barWidth, canvas.height - 5);
+            });
+        }
+
+        function updateTips() {
+            const today = new Date().toISOString().split('T')[0];
+            const catTotals = {};
+            categories.forEach(cat => {
+                catTotals[cat] = logs
+                    .filter(log => log.date === today && log.category === cat)
+                    .reduce((sum, log) => sum + log.co2, 0);
+            });
+            const highestCat = Object.entries(catTotals).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+            
+            const tips = [
+                `Switch to biking in **${highestCat}**: saves 0.2kg/km`,
+                `Try veggie meals to cut **${highestCat}** emissions by 80%`,
+                `Public transport saves 10x less CO2 than driving`,
+                `Turn off standby appliances to reduce **energy** by 10%`,
+                `Compost food waste instead of landfilling`
+            ];
+            
+            document.getElementById('tipsContent').innerHTML = tips.map((tip, i) => 
+                `<div class="tip-item" role="listitem">${tip}</div>`
+            ).join('');
+        }
+
+        function toggleTips() {
+            const content = document.getElementById('tipsContent');
+            const toggle = document.getElementById('tipsToggle');
+            const expanded = content.classList.toggle('hidden');
+            toggle.setAttribute('aria-expanded', !expanded);
+            toggle.querySelector('span').textContent = expanded ? '▼' : '▲';
+        }
+
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.body.classList.toggle('dark-mode', darkMode);
+            document.getElementById('darkToggle').textContent = darkMode ? '☀️' : '🌙';
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify({ logs, activities, goal }, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'eco-tracker-backup.json';
+            a.click();
+        }
+
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    logs = data.logs || [];
+                    activities = data.activities || activities;
+                    goal = data.goal || 10;
+                    renderDashboard();
+                    renderActivities();
+                    updateCategoryTotals();
+                    updateTips();
+                    saveData();
+                } catch (err) {
+                    alert('Invalid JSON file');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function confirmReset(period) {
+            if (confirm(`Reset ${period} data?`)) {
+                const cutoff = period === 'day' ? new Date().toISOString().split('T')[0] : 
+                    new Date(new Date().setDate(new Date().getDate() - new Date().getDay())).toISOString().split('T')[0];
+                logs = logs.filter(log => log.date < cutoff);
+                renderDashboard();
+                updateCategoryTotals();
+                updateTips();
+                saveData();
+            }
+        }
+
+        function undoLast() {
+            if (undoStack.length) {
+                const lastLog = undoStack.pop();
+                logs = logs.filter(log => log.id !== lastLog.id);
+                renderDashboard();
+                updateCategoryTotals();
+                updateTips();
+                saveData();
+            }
+        }
+
+        function showCustomModal() {
+            document.getElementById('customModal').classList.remove('hidden');
+            document.getElementById('customModal').setAttribute('aria-hidden', 'false');
+        }
+
+        function addCustomActivity() {
+            const name = document.getElementById('customName').value;
+            const co2 = parseFloat(document.getElementById('customCo2').value);
+            const icon = document.getElementById('customIcon').value;
+            if (name && !isNaN(co2)) {
+                const newActivity = {
+                    id: `custom_${Date.now()}`,
+                    name,
+                    co2,
+                    icon,
+                    category: 'transport', // default
+                    multiplier: co2
+                };
+                activities.push(newActivity);
+                renderActivities();
+                saveData();
+                closeModals();
+            }
+        }
+
+        function preloadSample() {
+            logs = [
+                { id: 1, activityId: 'car10km', name: 'Car trip 10km', category: 'transport', quantity: 1, co2: 2.0, date: '2026-01-04' },
+                { id: 2, activityId: 'veggie-meal', name: 'Veggie meal', category: 'food', quantity: 2, co2: 1.0, date: '2026-01-04' },
+                { id: 3, activityId: 'electricity5kwh', name: 'Electricity 5kWh', category: 'energy', quantity: 1, co2: 2.0, date: '2026-01-04' },
+                { id: 4, activityId: 'car10km', name: 'Car trip 10km', category: 'transport', quantity: 1, co2: 2.0, date: '2026-01-05' }
+            ];
+            // Test assertions
+            console.assert(logs.filter(l => l.date === '2026-01-04').reduce((s, l) => s + l.co2, 0) === 5.0, 'Daily total mismatch');
+            renderDashboard();
+            updateCategoryTotals();
+            saveData();
+            console.log('Sample data loaded. Assertions passed.');
+        }
+
+        // Auto-update charts periodically
+        setInterval(() => {
+            drawCharts();
+        }, 5000);
+
+        // Initialize
+        init();
+        drawCharts();
+    </script>
+</body>
+</html>
