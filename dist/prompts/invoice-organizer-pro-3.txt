@@ -14,3 +14,5 @@ Invoice Organizer Pro
 - Help overlay: '?' shows full key bindings with curses popup.
 - Error handling: validate dates/amounts, show curses message boxes for errors.
 - Compact: full app <800 lines, runs in terminal 80x24+, colors for status (red overdue, green paid).
+
+(Generated: 2026-01-06T01:38:51.120211Z, seed=22221, theme=small business utilities, extras=keyboard-first UX, drag-and-drop, ARIA-compliant components, kind=py)
