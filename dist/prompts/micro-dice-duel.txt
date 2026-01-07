@@ -11,3 +11,5 @@ Micro Dice Duel
 - CLI args: --help shows usage; ESC quits safely saving state.
 - Responsive: 60 FPS loop, clear screen each update, accessible colors (high contrast), arrow/WASD symmetry.
 - Under 800 LOC: Compact curses grid (20x10 chars), simple collision/adjacency checks (king surround = 4+ adjacent own dice).
+
+(Generated: 2026-01-07T01:38:25.769964Z, seed=80245, theme=micro games, extras=drag-and-drop, print-friendly view, keyboard-first UX, kind=py)
