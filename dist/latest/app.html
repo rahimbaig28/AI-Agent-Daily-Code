@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-07T04:39:57.073809Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accessibility Auditor Pro</title>
+<style>
+* {box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.5;color:#333;background:#f8f9fa}
+:root{--text-size:1;--contrast:1}
+@media(prefers-reduced-motion:no-preference){.focus-visible{outline:2px solid #0066cc;outline-offset:2px}}
+
+.nav{position:fixed;top:0;left:0;right:0;background:#fff;border-bottom:1px solid #ddd;z-index:1000;display:flex;flex-wrap:wrap;padding:0.5rem;gap:0.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.1)}
+.nav button,.nav input[type=range]{padding:0.75rem 1rem;border:1px solid #ccc;border-radius:4px;background:#fff;cursor:pointer;font-size:14px;min-height:44px;flex:1;min-width:80px}
+.nav button:hover,.nav button:focus-visible{background:#f0f8ff}
+.nav button.active{background:#0066cc;color:#fff;border-color:#0066cc}
+@media(max-width:600px){.nav{flex-direction:column;padding:0.25rem}}
+@media(max-width:600px){.nav button{min-width:auto;flex:none}}
+
+.main{padding:60px 1rem 60px;max-width:1200px;margin:0 auto}
+.results{display:grid;gap:1rem;padding:1rem 0;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;padding:1.5rem;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
+.card h3{margin:0 0 1rem;font-size:1.2em}
+.severity{display:inline-block;padding:0.25rem 0.75rem;border-radius:20px;font-size:0.85em;font-weight:600}
+.critical{background:#d32f2f;color:#fff}
+.high{background:#f57c00;color:#fff}
+.medium{background:#ff9800;color:#fff}
+.low{background:#4caf50;color:#fff}
+.count{font-size:2em;font-weight:700;color:#0066cc;display:block;margin:0.5rem 0}
+.fix-btn{background:#4caf50;color:#fff;border:none;padding:0.5rem 1rem;border-radius:4px;cursor:pointer;font-size:14px}
+.fix-btn:hover{background:#45a049}
+.preview-toggle{display:flex;gap:0.5rem;align-items:center;margin-top:1rem}
+.preview-toggle input[type=checkbox]{width:auto}
+
+.status{position:fixed;bottom:0;left:0;right:0;background:#333;color:#fff;padding:1rem;text-align:center;font-weight:600;font-size:1.1em}
+.score{font-size:1.5em;margin-left:0.5rem}
+
+.settings{display:flex;gap:1rem;align-items:center;margin:1rem 0;flex-wrap:wrap}
+.settings label{font-weight:600}
+.settings input[type=range]{width:120px}
+
+@media print{.nav,.status{display:none}.main{padding:0}.results{grid-template-columns:1fr}.card{border:1px solid #000;margin-bottom:1rem}.no-print{display:none}}
+
+.high-contrast{filter:contrast(var(--contrast))}
+.resize{font-size:calc(16px * var(--text-size))}
+@media(max-width:480px){.results{grid-template-columns:1fr}.card{padding:1rem}}
+
+kbd{display:inline-block;padding:0.2em 0.4em;font:13px monospace;background:#f5f5f5;border-radius:3px;border:1px solid #ccc}
+</style>
+</head>
+<body>
+<nav class="nav" role="menubar" aria-label="Main navigation">
+<button id="scan" role="menuitem" aria-label="Scan current page">Scan Page</button>
+<button id="focus" role="menuitem" aria-label="Check focus order">Check Focus</button>
+<button id="report" role="menuitem" aria-label="Generate report">Generate Report</button>
+<button id="print" role="menuitem" aria-label="Print view">Print View</button>
+<button id="share" role="menuitem" aria-label="Share audit">Share</button>
+<div class="settings">
+<label for="textsize">Text:</label><input type="range" id="textsize" min="1.25" max="2" step="0.25" value="1" aria-label="Text size">
+<label for="contrast">Contrast:</label><input type="range" id="contrast" min="1" max="2" step="0.1" value="1" aria-label="Contrast">
+<label for="preview">Preview:</label><input type="checkbox" id="preview" aria-label="Live preview">
+</div>
+</nav>
+
+<main class="main" role="main">
+<div class="results" id="results" aria-live="polite" aria-atomic="true"></div>
+<div id="loading" style="display:none;text-align:center;padding:2rem">Scanning...</div>
+</main>
+
+<div class="status" id="status" role="status" aria-live="polite">Ready</div>
+
+<script>
+class AccessibilityAuditor {
+constructor() {
+this.stateHistory=[];this.currentState=0;this.originalDOM=null;this.isScanning=false;
+this.init();
+}
+init(){this.bindEvents();this.loadSettings();this.updateStatus('Ready');}
+bindEvents(){
+document.getElementById('scan').onclick=()=>this.scan();
+document.getElementById('focus').onclick=()=>this.checkFocus();
+document.getElementById('report').onclick=()=>this.generateReport();
+document.getElementById('print').onclick=()=>window.print();
+document.getElementById('share').onclick=()=>this.share();
+document.getElementById('textsize').oninput=e=>this.setTextSize(e.target.value);
+document.getElementById('contrast').oninput=e=>this.setContrast(e.target.value);
+document.getElementById('preview').onchange=e=>this.togglePreview(e.target.checked);
+document.addEventListener('keydown',e=>this.handleKey(e));
+window.addEventListener('hashchange',()=>this.loadFromHash());
+this.saveState();
+}
+scan(){
+if(this.isScanning)return;this.isScanning=true;
+document.getElementById('loading').style.display='block';
+document.getElementById('results').innerHTML='';
+setTimeout(()=>{
+this.originalDOM=document.documentElement.outerHTML;
+const issues=this.auditPage();
+this.displayResults(issues);
+this.calculateScore(issues);
+this.saveState();
+this.isScanning=false;
+document.getElementById('loading').style.display='none';
+this.updateStatus(`Scan complete: ${issues.length} issues found`);
+},500);
+}
+auditPage(){
+const issues=[];
+const selectors=[
+{type:'Images missing alt',sel:'img:not([alt]):not([alt=""])',severity:'high',fix:el=>'el.setAttribute("alt","Image")'},
+{type:'Links with no text',sel:'a:not(:empty):not([aria-label]):empty,a[href]:empty',severity:'high',fix:el=>'el.setAttribute("aria-label","Link")'},
+{type:'Buttons with no text',sel:'button:not([aria-label]):empty,input[type="button"]:not([aria-label]),input[type="submit"]:not([aria-label])',severity:'high',fix:el=>'el.setAttribute("aria-label","Button")'},
+{type:'No page title',sel:'title',severity:'critical',fix:()=>!document.title&&document.head.insertAdjacentHTML('beforeend','<title>Page Title</title>'),count:()=>document.title?'0':'1'},
+{type:'Missing lang attr',sel:'html:not([lang])',severity:'high',fix:()=>document.documentElement.setAttribute('lang','en')},
+{type:'Heading skip',sel:null,severity:'medium',check:()=>this.checkHeadings()},
+{type:'Low contrast',sel:null,severity:'medium',check:()=>this.checkContrast()},
+{type:'No ARIA on interactive',sel:'[tabindex]:not([role]):not(button):not(input):not(select):not(textarea):not([role])',severity:'medium',fix:el=>'el.setAttribute("role","button")'},
+{type:'Empty links',sel:'a[href]:empty:not([aria-label]):not([title])',severity:'high',fix:el=>'el.setAttribute("aria-label","Link")'}
+];
+selectors.forEach(s=>{
+let els=document.querySelectorAll(s.sel||'*');
+if(s.check){const res=s.check();if(res.count)els=[...els,res.example||[]];else return;}
+const count=els.length;
+if(count>0){
+issues.push({...s,count,elements:Array.from(els)});
+}
+});
+return issues;
+}
+checkHeadings(){
+const heads=Array.from(document.querySelectorAll('h1,h2,h3,h4,h5,h6')).map(h=>parseInt(h.tagName[1]));
+let prev=0;
+for(let level of heads){
+if(level>prev+1)return{count:1,example:[],type:'Heading skip detected'};
+prev=level;
+}
+return{count:0};
+}
+checkContrast(){
+let issues=0;
+document.querySelectorAll('*').forEach(el=>{
+const style=window.getComputedStyle(el);
+const fg=parseFloat(getComputedStyle(document.body).color.match(/[\d.]+/g)[0]);
+const bg=parseFloat(getComputedStyle(document.body).backgroundColor.match(/[\d.]+/g)[0]);
+if(fg-bg<3.5)issues++; // Simplified contrast check
+});
+return issues>5?{count:issues,example:[document.body]}:{count:0};
+}
+checkFocus(){
+const focusables=document.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+let orderOK=true;
+focusables.forEach((el,i)=>{
+const rect=el.getBoundingClientRect();
+if(rect.top<0||rect.left<0)orderOK=false;
+});
+const issues=orderOK?[]:[{type:'Focus order issues',count:focusables.length,severity:'medium'}];
+this.displayResults(issues);
+this.updateStatus(`Focus check: ${orderOK?'OK':'Issues found'}`);
+}
+displayResults(issues){
+const container=document.getElementById('results');
+issues.forEach(issue=>{
+const card=document.createElement('div');
+card.className='card';
+card.innerHTML=`
+<h3>${issue.type}</h3>
+<span class="count">${issue.count}</span>
+<span class="severity ${issue.severity}">${issue.severity.toUpperCase()}</span>
+<button class="fix-btn" data-issue="${issues.indexOf(issue)}">Fix All</button>
+<div class="preview-toggle">
+<label><input type="checkbox" data-preview="${issues.indexOf(issue)}"> Live Preview</label>
+</div>
+`;
+container.appendChild(card);
+card.querySelector('.fix-btn').onclick=()=>this.applyFix(issue);
+card.querySelector('[type="checkbox"]').onchange=e=>this.togglePreviewForIssue(issues.indexOf(issue),e.target.checked);
+});
+}
+applyFix(issue){
+issue.elements.forEach(el=>{
+if(issue.fix)issue.fix(el);
+});
+this.saveState();
+document.getElementById('preview').checked=true;
+this.updateStatus(`Fixed ${issue.count} ${issue.type}`);
+}
+togglePreview(enabled){
+document.documentElement.classList.toggle('high-contrast',enabled);
+}
+togglePreviewForIssue(index,enabled){
+if(enabled)this.applyFix(issues[index]);
+}
+calculateScore(issues){
+const severityScore={'critical':4,'high':3,'medium':2,'low':1};
+let total=0;
+issues.forEach(i=>total+=severityScore[i.severity||'low']*i.count);
+const score=Math.max(65-total*2,0);
+const letter=score>=90?'A':score>=80?'B':score>=70?'C':score>=60?'D':'F';
+document.getElementById('status').innerHTML=`Score: <span class="score">${letter}</span> (${Math.round(score)}%)`;
+return letter;
+}
+setTextSize(size){
+document.documentElement.style.setProperty('--text-size',size);
+localStorage.setItem('textSize',size);
+}
+setContrast(value){
+document.documentElement.style.setProperty('--contrast',value);
+localStorage.setItem('contrast',value);
+}
+updateStatus(msg){
+document.getElementById('status').textContent=msg;
+setTimeout(()=>document.getElementById('status').textContent='Ready',3000);
+}
+saveState(){
+const state={dom:document.documentElement.outerHTML,issues:this.auditPage()};
+this.stateHistory=this.stateHistory.slice(-49);
+this.stateHistory.push(state);
+localStorage.setItem('history',JSON.stringify(this.stateHistory.slice(-10)));
+this.currentState=this.stateHistory.length-1;
+}
+undo(){
+if(this.currentState>0){
+this.currentState--;
+document.open();
+document.write(this.stateHistory[this.currentState].dom);
+document.close();
+this.displayResults(this.stateHistory[this.currentState].issues);
+}
+}
+redo(){
+if(this.currentState<this.stateHistory.length-1){
+this.currentState++;
+document.open();
+document.write(this.stateHistory[this.currentState].dom);
+document.close();
+this.displayResults(this.stateHistory[this.currentState].issues);
+}
+}
+generateReport(){
+const issues=this.auditPage();
+const score=this.calculateScore(issues);
+const report=window.open('','_blank');
+report.document.write(`
+<!DOCTYPE html><html><head><title>Accessibility Report</title>
+<style>body{font-family:sans-serif;max-width:800px;margin:0 auto;padding:20px}
+table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px}
+th{background:#f2f2f2}</style></head><body>
+<h1>Accessibility Audit Report</h1>
+<h2>Score: ${score}</h2>
+<table><tr><th>Issue</th><th>Count</th><th>Severity</th></tr>
+${issues.map(i=>`<tr><td>${i.type}</td><td>${i.count}</td><td>${i.severity}</td></tr>`).join('')}
+</table></body></html>`);
+report.document.close();
+}
+share(){
+const state={issues:this.auditPage().map(i=>({type:i.type,count:i.count})),score:this.calculateScore(this.auditPage())};
+const hash=btoa(JSON.stringify(state));
+window.location.hash=hash;
+navigator.clipboard.writeText(window.location.href).then(()=>this.updateStatus('Share URL copied'));
+}
+loadFromHash(){
+try{
+const hash=location.hash.slice(1);
+if(hash){
+const state=JSON.parse(atob(hash));
+this.displayResults(state.issues);
+document.getElementById('status').innerHTML=`Loaded: Score ${state.score}`;
+}
+}catch(e){}
+}
+loadSettings(){
+const textSize=localStorage.getItem('textSize')||'1';
+const contrast=localStorage.getItem('contrast')||'1';
+document.getElementById('textsize').value=textSize;
+document.getElementById('contrast').value=contrast;
+this.setTextSize(textSize);
+this.setContrast(contrast);
+}
+handleKey(e){
+if(e.ctrlKey&&e.key==='Enter'){e.preventDefault();this.scan();}
+if(e.ctrlKey&&e.key==='z'){e.preventDefault();this.undo();}
+if(e.ctrlKey&&e.shiftKey&&e.key==='Z'){e.preventDefault();this.redo();}
+if(e.key==='Escape')document.activeElement.blur();
+}
+}
+new AccessibilityAuditor();
+</script>
+</body>
+</html>
