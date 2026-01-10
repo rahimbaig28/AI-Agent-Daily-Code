@@ -1,0 +1,1805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-10T08:26:13.480559Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <title>EcoHabits Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --bg-alt: #ffffff;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --accent: #22c55e;
+      --accent-soft: rgba(34,197,94,0.12);
+      --danger: #ef4444;
+      --border: #e5e7eb;
+      --shadow-soft: 0 1px 3px rgba(15,23,42,0.12);
+      --focus: #2563eb;
+    }
+    [data-theme="dark"] {
+      --bg: #020617;
+      --bg-alt: #020617;
+      --text: #f9fafb;
+      --text-muted: #9ca3af;
+      --accent: #22c55e;
+      --accent-soft: rgba(34,197,94,0.18);
+      --danger: #fb7185;
+      --border: #1f2937;
+      --shadow-soft: 0 1px 4px rgba(0,0,0,0.65);
+      --focus: #60a5fa;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    button, input, select, textarea {
+      font: inherit;
+    }
+    button {
+      cursor: pointer;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245,245,247,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    [data-theme="dark"] header {
+      background: rgba(2,6,23,0.92);
+    }
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.6rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .title-block {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .app-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .app-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .theme-toggle {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--bg-alt);
+      padding: 0.2rem 0.6rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .theme-toggle span {
+      font-size: 0.85rem;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 0.05rem 0.3rem;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      border: 1px solid rgba(34,197,94,0.4);
+    }
+    main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0.75rem 1rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+    section {
+      background: var(--bg-alt);
+      border-radius: 0.75rem;
+      box-shadow: var(--shadow-soft);
+      padding: 0.9rem 0.9rem 1rem;
+      border: 1px solid var(--border);
+    }
+    section h2 {
+      font-size: 0.95rem;
+      margin: 0 0 0.3rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.4rem;
+    }
+    section h2 span.label {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .section-description {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+
+    .chip-group {
+      display: inline-flex;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.12);
+      padding: 0.15rem;
+    }
+    .chip {
+      border-radius: 999px;
+      border: none;
+      padding: 0.2rem 0.6rem;
+      background: transparent;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .chip.active {
+      background: var(--bg-alt);
+      color: var(--text);
+      font-weight: 500;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .btn {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      padding: 0.3rem 0.7rem;
+      background: var(--bg-alt);
+      font-size: 0.8rem;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      box-shadow: var(--shadow-soft);
+    }
+    .btn-primary {
+      border-color: transparent;
+      background: var(--accent);
+      color: #022c22;
+    }
+    .btn-ghost {
+      border-style: dashed;
+      background: transparent;
+    }
+    .btn-danger {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: transparent;
+    }
+    .btn-icon {
+      padding: 0.25rem 0.45rem;
+      border-radius: 999px;
+      min-width: 0;
+      justify-content: center;
+    }
+
+    .btn:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible {
+      outline: 2px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .input-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-width: 0;
+    }
+    .field label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      border-radius: 0.45rem;
+      border: 1px solid var(--border);
+      padding: 0.25rem 0.4rem;
+      font-size: 0.8rem;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+    .field-inline {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .error-text {
+      font-size: 0.7rem;
+      color: var(--danger);
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1fr);
+      gap: 0.5rem;
+    }
+    .card {
+      border-radius: 0.75rem;
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.55rem;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      position: relative;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.4rem;
+      align-items: center;
+    }
+    .habit-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .tag {
+      border-radius: 999px;
+      padding: 0.05rem 0.45rem;
+      font-size: 0.7rem;
+      border: 1px solid transparent;
+      color: #0f172a;
+      background: rgba(148,163,184,0.22);
+      white-space: nowrap;
+    }
+    .tag-muted {
+      color: var(--text-muted);
+      background: transparent;
+      border-color: var(--border);
+    }
+    .tag-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.2rem;
+    }
+    .small-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .log-entry-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .log-entry {
+      border-radius: 0.55rem;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.45rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      background: var(--bg);
+    }
+    .log-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      min-width: 0;
+    }
+    .log-title {
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+    .log-meta {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .log-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 0.4rem;
+    }
+    .kpi {
+      border-radius: 0.65rem;
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.5rem;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .kpi-label {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+    .kpi-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .category-list,
+    .leaderboard-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.4rem;
+    }
+    .category-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.78rem;
+    }
+    .bar-track {
+      width: 100%;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: rgba(148,163,184,0.22);
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .leader-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.4rem;
+      border-radius: 0.6rem;
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.45rem;
+      background: var(--bg);
+    }
+    .leader-main {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.78rem;
+    }
+    .leader-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .leader-score {
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.78rem;
+    }
+    .table th,
+    .table td {
+      padding: 0.3rem 0.25rem;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      vertical-align: middle;
+    }
+    .table th {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+    .table-actions {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      border-radius: 999px;
+      font-size: 0.7rem;
+      padding: 0.05rem 0.45rem;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+    .status-badge.active {
+      background: var(--accent-soft);
+      color: var(--accent);
+      border-color: rgba(34,197,94,0.45);
+    }
+
+    .two-columns {
+      display: grid;
+      grid-template-columns: minmax(0,1fr);
+      gap: 0.6rem;
+    }
+
+    .textarea-readonly {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.75rem;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .drop-zone {
+      border-radius: 0.75rem;
+      border: 1px dashed var(--border);
+      padding: 0.7rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--bg);
+    }
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      color: var(--accent);
+    }
+
+    .status-bar {
+      margin-top: 0.4rem;
+      font-size: 0.75rem;
+      min-height: 1em;
+    }
+    .status-bar span {
+      display: inline-block;
+      padding: 0.1rem 0.3rem;
+      border-radius: 999px;
+    }
+    .status-success {
+      color: var(--accent);
+      background: var(--accent-soft);
+    }
+    .status-error {
+      color: var(--danger);
+      background: rgba(248,113,113,0.12);
+    }
+
+    .drag-handle {
+      cursor: grab;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .card.dragging {
+      opacity: 0.6;
+      outline: 2px dashed var(--accent);
+    }
+    .card.drop-target {
+      outline: 2px dashed var(--accent);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 480px) {
+      .card-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+    @media (min-width: 768px) {
+      main {
+        grid-template-columns: 1.1fr 1fr;
+        grid-template-areas:
+          "day impact"
+          "habits data";
+      }
+      #day-log-section {
+        grid-area: day;
+      }
+      #impact-section {
+        grid-area: impact;
+      }
+      #habit-section {
+        grid-area: habits;
+      }
+      #data-section {
+        grid-area: data;
+      }
+      .card-grid {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+    }
+    @media (min-width: 1024px) {
+      main {
+        gap: 1.1rem;
+      }
+      .card-grid {
+        grid-template-columns: repeat(3,minmax(0,1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app" id="app-root">
+  <header>
+    <div class="header-inner">
+      <div class="title-block">
+        <div class="app-title">EcoHabits Dashboard</div>
+        <div class="app-subtitle">Track your daily eco-positive habits &amp; CO₂e impact</div>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Toggle theme">
+          <span id="theme-toggle-icon">☀</span>
+          <span id="theme-toggle-label">Light</span>
+        </button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section id="day-log-section" aria-labelledby="day-log-heading">
+      <h2 id="day-log-heading">
+        Day Log
+        <span class="label">Quick capture</span>
+      </h2>
+      <p class="section-description">
+        Choose a day and log your eco-friendly actions. Reorder cards to match your routine.
+      </p>
+      <div class="stack">
+        <div class="row" aria-label="Date navigation">
+          <div class="field">
+            <label for="selected-date">Date</label>
+            <input type="date" id="selected-date">
+          </div>
+          <button class="btn btn-icon" id="prev-day-btn" type="button" aria-label="Previous day">←</button>
+          <button class="btn btn-icon" id="next-day-btn" type="button" aria-label="Next day">→</button>
+          <button class="btn" id="today-btn" type="button">Today</button>
+        </div>
+
+        <div>
+          <div class="row" style="justify-content: space-between; margin-bottom: 0.25rem;">
+            <span class="small-text">Quick log</span>
+            <span class="small-text">Drag to reorder · Use Move up/down for keyboard</span>
+          </div>
+          <div id="quick-log-grid" class="card-grid" aria-label="Quick log habits"></div>
+        </div>
+
+        <div>
+          <div class="row" style="justify-content: space-between; margin-bottom: 0.25rem;">
+            <span class="small-text">Entries for selected day</span>
+          </div>
+          <div id="daily-log-container">
+            <div class="small-text">No entries yet for this day. Log something above.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="impact-section" aria-labelledby="impact-heading">
+      <h2 id="impact-heading">
+        Impact Summary
+        <span class="label">CO₂e overview</span>
+      </h2>
+      <p class="section-description">
+        Explore your environmental impact over today, this week, or this month.
+      </p>
+      <div class="stack">
+        <div class="row" aria-label="Time range selection">
+          <div class="chip-group" role="radiogroup" aria-label="Impact range">
+            <button class="chip active" type="button" data-range="today" aria-pressed="true">Today</button>
+            <button class="chip" type="button" data-range="week" aria-pressed="false">This Week</button>
+            <button class="chip" type="button" data-range="month" aria-pressed="false">This Month</button>
+          </div>
+        </div>
+        <div class="kpi-strip" aria-label="Key impact metrics">
+          <div class="kpi">
+            <div class="kpi-label">Actions logged</div>
+            <div class="kpi-value" id="kpi-actions">0</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Total actions amount</div>
+            <div class="kpi-value" id="kpi-amount">0</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Total CO₂e avoided (kg)</div>
+            <div class="kpi-value" id="kpi-co2">0</div>
+          </div>
+        </div>
+
+        <div>
+          <div class="row" style="justify-content: space-between; margin-top: 0.5rem;">
+            <span class="small-text">By category</span>
+          </div>
+          <div id="category-breakdown" class="category-list"></div>
+        </div>
+
+        <div>
+          <div class="row" style="justify-content: space-between; margin-top: 0.5rem;">
+            <span class="small-text">Top habits</span>
+          </div>
+          <div id="habit-leaderboard" class="leaderboard-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="habit-section" aria-labelledby="habit-heading">
+      <h2 id="habit-heading">
+        Habit Manager
+        <span class="label">Configure habits</span>
+      </h2>
+      <p class="section-description">
+        Add, edit, activate, or archive eco habits. Adjust CO₂e factors to match your context.
+      </p>
+      <div class="stack">
+        <div aria-label="Habit list">
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Category</th>
+              <th scope="col">Unit</th>
+              <th scope="col">kg CO₂e / unit</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+            </thead>
+            <tbody id="habit-table-body"></tbody>
+          </table>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.9rem;margin:0.3rem 0 0.3rem;">Add / Edit Habit</h3>
+          <form id="habit-form">
+            <input type="hidden" id="habit-id">
+            <div class="two-columns">
+              <div class="field">
+                <label for="habit-name">Name<span aria-hidden="true">*</span></label>
+                <input type="text" id="habit-name" required>
+                <div class="error-text" id="habit-name-error"></div>
+              </div>
+              <div class="field">
+                <label for="habit-category">Category</label>
+                <select id="habit-category">
+                  <option value="Transport">Transport</option>
+                  <option value="Food">Food</option>
+                  <option value="Energy">Energy</option>
+                  <option value="Waste">Waste</option>
+                  <option value="Water">Water</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="habit-unit">Unit label</label>
+                <input type="text" id="habit-unit" placeholder="e.g., km biked">
+              </div>
+              <div class="field">
+                <label for="habit-co2">kg CO₂e per unit<span aria-hidden="true">*</span></label>
+                <input type="number" id="habit-co2" step="0.01" min="0" required>
+                <div class="error-text" id="habit-co2-error"></div>
+              </div>
+              <div class="field">
+                <label for="habit-default-amount">Default amount</label>
+                <input type="number" id="habit-default-amount" step="0.1" min="0">
+              </div>
+              <div class="field">
+                <label for="habit-color">Color</label>
+                <input type="color" id="habit-color" value="#22c55e">
+              </div>
+            </div>
+            <div class="row" style="margin-top:0.5rem;">
+              <button class="btn btn-primary" type="submit" id="habit-save-btn">Save habit</button>
+              <button class="btn btn-ghost" type="button" id="habit-reset-btn">Clear form</button>
+            </div>
+          </form>
+          <div class="status-bar" aria-live="polite" id="habit-status"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="data-section" aria-labelledby="data-heading">
+      <h2 id="data-heading">
+        Data Tools
+        <span class="label">Backup &amp; restore</span>
+      </h2>
+      <p class="section-description">
+        Export your data as JSON, download backups, or restore from a saved file.
+      </p>
+      <div class="stack">
+        <div class="two-columns">
+          <div>
+            <h3 style="font-size:0.9rem;margin:0.2rem 0 0.3rem;">Export JSON</h3>
+            <div class="row" style="margin-bottom:0.4rem;">
+              <button class="btn" type="button" id="export-btn">Export Data</button>
+              <button class="btn" type="button" id="download-btn">Download Export</button>
+            </div>
+            <div class="field">
+              <label for="export-textarea">Exported JSON (read-only)</label>
+              <textarea id="export-textarea" class="textarea-readonly" readonly></textarea>
+            </div>
+          </div>
+          <div>
+            <h3 style="font-size:0.9rem;margin:0.2rem 0 0.3rem;">Import JSON</h3>
+            <div class="field">
+              <label for="import-textarea">Paste JSON to import</label>
+              <textarea id="import-textarea"></textarea>
+            </div>
+            <div class="row" style="margin-top:0.3rem;">
+              <button class="btn btn-primary" type="button" id="import-btn">Import Data</button>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.9rem;margin:0.2rem 0 0.3rem;">File import</h3>
+          <div id="drop-zone" class="drop-zone" tabindex="0">
+            Drag &amp; drop a JSON backup here or choose a file.
+          </div>
+          <div class="row" style="margin-top:0.4rem;">
+            <div class="field">
+              <label for="file-input">Choose file</label>
+              <input type="file" id="file-input" accept="application/json">
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 style="font-size:0.9rem;margin:0.2rem 0 0.3rem;">App maintenance</h3>
+          <button class="btn btn-danger" type="button" id="reset-btn">Reset App</button>
+        </div>
+
+        <div class="status-bar" aria-live="polite" id="data-status"></div>
+      </div>
+    </section>
+  </main>
+  <div aria-live="polite" class="sr-only" id="global-live-region"></div>
+</div>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'ecohabits-dashboard-state-v1';
+
+  function uuid() {
+    return 'xxxxxx'.replace(/x/g, () =>
+      Math.floor(Math.random() * 36).toString(36)
+    );
+  }
+
+  function todayISO() {
+    return new Date().toISOString().slice(0,10);
+  }
+
+  function dateAddDays(iso, delta) {
+    const d = new Date(iso);
+    d.setDate(d.getDate() + delta);
+    return d.toISOString().slice(0,10);
+  }
+
+  function inRange(dateIso, startIso, endIso) {
+    return dateIso >= startIso && dateIso <= endIso;
+  }
+
+  function getRangeDates(baseIso, range) {
+    const base = new Date(baseIso);
+    const today = new Date(baseIso);
+    if (range === 'today') {
+      return { start: baseIso, end: baseIso };
+    }
+    if (range === 'week') {
+      const day = base.getDay();
+      const diffToMon = (day + 6) % 7;
+      const start = new Date(base);
+      start.setDate(base.getDate() - diffToMon);
+      const end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      return {
+        start: start.toISOString().slice(0,10),
+        end: end.toISOString().slice(0,10)
+      };
+    }
+    if (range === 'month') {
+      const start = new Date(base.getFullYear(), base.getMonth(), 1);
+      const end = new Date(base.getFullYear(), base.getMonth() + 1, 0);
+      return {
+        start: start.toISOString().slice(0,10),
+        end: end.toISOString().slice(0,10)
+      };
+    }
+    return { start: baseIso, end: baseIso };
+  }
+
+  const defaultHabits = [
+    {
+      id: uuid(),
+      name: 'Bike commute',
+      category: 'Transport',
+      unitLabel: 'km biked',
+      defaultAmount: 5,
+      co2PerUnit: 0.21,
+      color: '#22c55e',
+      isActive: true,
+      orderIndex: 0
+    },
+    {
+      id: uuid(),
+      name: 'Meat-free meal',
+      category: 'Food',
+      unitLabel: 'meals',
+      defaultAmount: 1,
+      co2PerUnit: 2.5,
+      color: '#f97316',
+      isActive: true,
+      orderIndex: 1
+    },
+    {
+      id: uuid(),
+      name: 'Air-dried laundry',
+      category: 'Energy',
+      unitLabel: 'loads',
+      defaultAmount: 1,
+      co2PerUnit: 1.2,
+      color: '#38bdf8',
+      isActive: true,
+      orderIndex: 2
+    },
+    {
+      id: uuid(),
+      name: 'Reusable mug',
+      category: 'Waste',
+      unitLabel: 'uses',
+      defaultAmount: 1,
+      co2PerUnit: 0.05,
+      color: '#a855f7',
+      isActive: false,
+      orderIndex: 3
+    }
+  ];
+
+  function createSampleLogs(habits) {
+    const logs = [];
+    const today = todayISO();
+    for (let offset = 0; offset < 4; offset++) {
+      const date = dateAddDays(today, -offset);
+      habits.forEach((habit, idx) => {
+        if (!habit.isActive && idx > 1) return;
+        const amount = habit.defaultAmount || 1;
+        logs.push({
+          id: uuid(),
+          habitId: habit.id,
+          date,
+          amount: amount + (idx === 0 ? offset : 0)
+        });
+      });
+    }
+    return logs;
+  }
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) throw new Error('no state');
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.habits) || !Array.isArray(parsed.logs)) {
+        throw new Error('invalid state shape');
+      }
+      if (!parsed.uiSettings) parsed.uiSettings = {};
+      if (!parsed.uiSettings.selectedDate) parsed.uiSettings.selectedDate = todayISO();
+      if (!parsed.uiSettings.selectedRange) parsed.uiSettings.selectedRange = 'today';
+      if (!parsed.uiSettings.theme) parsed.uiSettings.theme = 'auto';
+      parsed.habits.forEach((h, idx) => {
+        if (typeof h.orderIndex !== 'number') h.orderIndex = idx;
+      });
+      return parsed;
+    } catch (e) {
+      const habits = JSON.parse(JSON.stringify(defaultHabits));
+      const logs = createSampleLogs(habits);
+      const state = {
+        habits,
+        logs,
+        uiSettings: {
+          selectedDate: todayISO(),
+          selectedRange: 'today',
+          theme: 'auto'
+        }
+      };
+      saveState(state);
+      return state;
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('Failed to save state', e);
+    }
+  }
+
+  const state = loadState();
+
+  const selectedDateInput = document.getElementById('selected-date');
+  const prevDayBtn = document.getElementById('prev-day-btn');
+  const nextDayBtn = document.getElementById('next-day-btn');
+  const todayBtn = document.getElementById('today-btn');
+  const quickLogGrid = document.getElementById('quick-log-grid');
+  const dailyLogContainer = document.getElementById('daily-log-container');
+
+  const rangeChips = Array.from(document.querySelectorAll('.chip-group .chip'));
+  const kpiActions = document.getElementById('kpi-actions');
+  const kpiAmount = document.getElementById('kpi-amount');
+  const kpiCo2 = document.getElementById('kpi-co2');
+  const categoryBreakdown = document.getElementById('category-breakdown');
+  const habitLeaderboard = document.getElementById('habit-leaderboard');
+
+  const habitTableBody = document.getElementById('habit-table-body');
+  const habitForm = document.getElementById('habit-form');
+  const habitIdInput = document.getElementById('habit-id');
+  const habitNameInput = document.getElementById('habit-name');
+  const habitCategoryInput = document.getElementById('habit-category');
+  const habitUnitInput = document.getElementById('habit-unit');
+  const habitCo2Input = document.getElementById('habit-co2');
+  const habitDefaultAmountInput = document.getElementById('habit-default-amount');
+  const habitColorInput = document.getElementById('habit-color');
+  const habitSaveBtn = document.getElementById('habit-save-btn');
+  const habitResetBtn = document.getElementById('habit-reset-btn');
+  const habitStatus = document.getElementById('habit-status');
+  const habitNameError = document.getElementById('habit-name-error');
+  const habitCo2Error = document.getElementById('habit-co2-error');
+
+  const exportBtn = document.getElementById('export-btn');
+  const downloadBtn = document.getElementById('download-btn');
+  const exportTextarea = document.getElementById('export-textarea');
+  const importTextarea = document.getElementById('import-textarea');
+  const importBtn = document.getElementById('import-btn');
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  const resetBtn = document.getElementById('reset-btn');
+  const dataStatus = document.getElementById('data-status');
+
+  const themeToggle = document.getElementById('theme-toggle');
+  const themeToggleIcon = document.getElementById('theme-toggle-icon');
+  const themeToggleLabel = document.getElementById('theme-toggle-label');
+  const appRoot = document.getElementById('app-root');
+  const globalLiveRegion = document.getElementById('global-live-region');
+
+  function announce(message) {
+    globalLiveRegion.textContent = '';
+    setTimeout(() => {
+      globalLiveRegion.textContent = message;
+    }, 20);
+  }
+
+  function applyTheme(themeMode) {
+    let effective = themeMode;
+    if (themeMode === 'auto') {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        effective = 'dark';
+      } else {
+        effective = 'light';
+      }
+    }
+    if (effective === 'dark') {
+      appRoot.setAttribute('data-theme', 'dark');
+      themeToggleIcon.textContent = '☾';
+      themeToggleLabel.textContent = themeMode === 'auto' ? 'Auto · Dark' : 'Dark';
+    } else {
+      appRoot.setAttribute('data-theme', 'light');
+      themeToggleIcon.textContent = '☀';
+      themeToggleLabel.textContent = themeMode === 'auto' ? 'Auto · Light' : 'Light';
+    }
+  }
+
+  function updateThemeFromState() {
+    applyTheme(state.uiSettings.theme || 'auto');
+  }
+
+  function cycleTheme() {
+    const current = state.uiSettings.theme || 'auto';
+    const next = current === 'light' ? 'dark' : current === 'dark' ? 'auto' : 'light';
+    state.uiSettings.theme = next;
+    saveState(state);
+    applyTheme(next);
+    announce('Theme set to ' + next);
+  }
+
+  themeToggle.addEventListener('click', cycleTheme);
+  if (window.matchMedia) {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if ((state.uiSettings.theme || 'auto') === 'auto') {
+        applyTheme('auto');
+      }
+    });
+  }
+
+  function renderDate() {
+    selectedDateInput.value = state.uiSettings.selectedDate;
+  }
+
+  selectedDateInput.addEventListener('change', () => {
+    const val = selectedDateInput.value;
+    if (val) {
+      state.uiSettings.selectedDate = val;
+      saveState(state);
+      renderAll();
+    }
+  });
+
+  prevDayBtn.addEventListener('click', () => {
+    state.uiSettings.selectedDate = dateAddDays(state.uiSettings.selectedDate, -1);
+    saveState(state);
+    renderAll();
+  });
+  nextDayBtn.addEventListener('click', () => {
+    state.uiSettings.selectedDate = dateAddDays(state.uiSettings.selectedDate, 1);
+    saveState(state);
+    renderAll();
+  });
+  todayBtn.addEventListener('click', () => {
+    state.uiSettings.selectedDate = todayISO();
+    saveState(state);
+    renderAll();
+  });
+
+  let dragSrcId = null;
+
+  function renderQuickLog() {
+    quickLogGrid.innerHTML = '';
+    const habits = state.habits.slice().sort((a,b) => a.orderIndex - b.orderIndex);
+    const activeHabits = habits.filter(h => h.isActive);
+    activeHabits.forEach(habit => {
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.setAttribute('draggable', 'true');
+      card.dataset.habitId = habit.id;
+      card.addEventListener('dragstart', onHabitDragStart);
+      card.addEventListener('dragover', onHabitDragOver);
+      card.addEventListener('dragleave', onHabitDragLeave);
+      card.addEventListener('drop', onHabitDrop);
+      card.addEventListener('dragend', onHabitDragEnd);
+
+      const header = document.createElement('div');
+      header.className = 'card-header';
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+      left.style.gap = '0.1rem';
+
+      const nameEl = document.createElement('div');
+      nameEl.className = 'habit-name';
+      nameEl.textContent = habit.name;
+
+      const catTag = document.createElement('span');
+      catTag.className = 'tag tag-pill';
+      catTag.style.borderColor = habit.color;
+      catTag.style.background = habit.color + '20';
+      catTag.style.color = '#020617';
+      const dot = document.createElement('span');
+      dot.textContent = '●';
+      dot.style.color = habit.color;
+      dot.style.fontSize = '0.65rem';
+      const catText = document.createElement('span');
+      catText.textContent = habit.category;
+      catTag.appendChild(dot);
+      catTag.appendChild(catText);
+
+      left.appendChild(nameEl);
+      left.appendChild(catTag);
+
+      const right = document.createElement('div');
+      right.style.display = 'flex';
+      right.style.flexDirection = 'column';
+      right.style.alignItems = 'flex-end';
+      right.style.gap = '0.1rem';
+
+      const handle = document.createElement('button');
+      handle.type = 'button';
+      handle.className = 'btn btn-icon drag-handle';
+      handle.setAttribute('aria-label', 'Drag to reorder habit ' + habit.name);
+      handle.textContent = '⠿';
+      right.appendChild(handle);
+
+      const sortRow = document.createElement('div');
+      sortRow.className = 'row';
+      const upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.className = 'btn btn-icon';
+      upBtn.textContent = '↑';
+      upBtn.setAttribute('aria-label', 'Move habit up');
+      upBtn.addEventListener('click', () => moveHabitOrder(habit.id, -1));
+      const downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.className = 'btn btn-icon';
+      downBtn.textContent = '↓';
+      downBtn.setAttribute('aria-label', 'Move habit down');
+      downBtn.addEventListener('click', () => moveHabitOrder(habit.id, 1));
+      sortRow.appendChild(upBtn);
+      sortRow.appendChild(downBtn);
+      right.appendChild(sortRow);
+
+      header.appendChild(left);
+      header.appendChild(right);
+      card.appendChild(header);
+
+      const bodyRow = document.createElement('div');
+      bodyRow.className = 'row';
+      bodyRow.style.marginTop = '0.4rem';
+
+      const amountField = document.createElement('div');
+      amountField.className = 'field';
+      const amountLabel = document.createElement('label');
+      const amountId = 'amount-' + habit.id;
+      amountLabel.setAttribute('for', amountId);
+      amountLabel.textContent = 'Amount';
+      const amountInput = document.createElement('input');
+      amountInput.id = amountId;
+      amountInput.type = 'number';
+      amountInput.step = '0.1';
+      amountInput.min = '0';
+      if (habit.defaultAmount != null) amountInput.value = habit.defaultAmount;
+      amountField.appendChild(amountLabel);
+      amountField.appendChild(amountInput);
+
+      const unitLabel = document.createElement('div');
+      unitLabel.className = 'small-text';
+      unitLabel.textContent = habit.unitLabel || 'units';
+
+      const addBtn = document.createElement('button');
+      addBtn.className = 'btn btn-primary';
+      addBtn.type = 'button';
+      addBtn.textContent = 'Add';
+      addBtn.addEventListener('click', () => {
+        const amountVal = parseFloat(amountInput.value);
+        if (isNaN(amountVal) || amountVal <= 0) {
+          amountInput.focus();
+          return;
+        }
+        state.logs.push({
+          id: uuid(),
+          habitId: habit.id,
+          date: state.uiSettings.selectedDate,
+          amount: amountVal
+        });
+        saveState(state);
+        renderAll();
+        announce('Logged ' + amountVal + ' ' + (habit.unitLabel || '') + ' for ' + habit.name);
+      });
+
+      bodyRow.appendChild(amountField);
+      bodyRow.appendChild(unitLabel);
+      bodyRow.appendChild(addBtn);
+
+      card.appendChild(bodyRow);
+      quickLogGrid.appendChild(card);
+    });
+  }
+
+  function moveHabitOrder(habitId, delta) {
+    const sorted = state.habits.slice().sort((a,b) => a.orderIndex - b.orderIndex);
+    const idx = sorted.findIndex(h => h.id === habitId);
+    if (idx === -1) return;
+    const targetIdx = idx + delta;
+    if (targetIdx < 0 || targetIdx >= sorted.length) return;
+    const temp = sorted[idx].orderIndex;
+    sorted[idx].orderIndex = sorted[targetIdx].orderIndex;
+    sorted[targetIdx].orderIndex = temp;
+    sorted.forEach(h => {
+      const original = state.habits.find(x => x.id === h.id);
+      if (original) original.orderIndex = h.orderIndex;
+    });
+    saveState(state);
+    renderQuickLog();
+  }
+
+  function onHabitDragStart(e) {
+    const card = e.currentTarget;
+    dragSrcId = card.dataset.habitId;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  }
+  function onHabitDragOver(e) {
+    e.preventDefault();
+    const card = e.currentTarget;
+    card.classList.add('drop-target');
+    e.dataTransfer.dropEffect = 'move';
+  }
+  function onHabitDragLeave(e) {
+    e.currentTarget.classList.remove('drop-target');
+  }
+  function onHabitDrop(e) {
+    e.preventDefault();
+    const targetCard = e.currentTarget;
+    targetCard.classList.remove('drop-target');
+    const targetId = targetCard.dataset.habitId;
+    if (!dragSrcId || dragSrcId === targetId) return;
+    const habits = state.habits.slice().sort((a,b) => a.orderIndex - b.orderIndex);
+    const fromIdx = habits.findIndex(h => h.id === dragSrcId);
+    const toIdx = habits.findIndex(h => h.id === targetId);
+    if (fromIdx === -1 || toIdx === -1) return;
+    const [moved] = habits.splice(fromIdx,1);
+    habits.splice(toIdx,0,moved);
+    habits.forEach((h, i) => {
+      const original = state.habits.find(x => x.id === h.id);
+      if (original) original.orderIndex = i;
+    });
+    saveState(state);
+    renderQuickLog();
+  }
+  function onHabitDragEnd(e) {
+    const card = e.currentTarget;
+    card.classList.remove('dragging');
+    dragSrcId = null;
+    Array.from(quickLogGrid.children).forEach(c => c.classList.remove('drop-target'));
+  }
+
+  function renderDailyLog() {
+    const date = state.uiSettings.selectedDate;
+    const logs = state.logs.filter(l => l.date === date);
+    if (!logs.length) {
+      dailyLogContainer.innerHTML = '<div class="small-text">No entries yet for this day. Log something above.</div>';
+      return;
+    }
+    const habitsById = {};
+    state.habits.forEach(h => {habitsById[h.id] = h;});
+    const grouped = {};
+    logs.forEach(l => {
+      if (!grouped[l.habitId]) grouped[l.habitId] = [];
+      grouped[l.habitId].push(l);
+    });
+    const container = document.createElement('div');
+    container.className = 'log-entry-list';
+    Object.keys(grouped).forEach(habitId => {
+      const habit = habitsById[habitId];
+      const entries = grouped[habitId];
+      entries.forEach(entry => {
+        const co2 = (habit ? habit.co2PerUnit * entry.amount : 0);
+        const co2Rounded = Math.round(co2 * 10) / 10;
+        const row = document.createElement('div');
+        row.className = 'log-entry';
+
+        const main = document.createElement('div');
+        main.className = 'log-main';
+
+        const title = document.createElement('div');
+        title.className = 'log-title';
+        title.textContent = habit ? habit.name : 'Unknown habit';
+
+        const meta = document.createElement('div');
+        meta.className = 'log-meta';
+        meta.textContent = entry.amount + ' ' + (habit ? habit.unitLabel || 'units' : 'units') + ' · ' + co2Rounded + ' kg CO₂e';
+
+        main.appendChild(title);
+        main.appendChild(meta);
+
+        const actions = document.createElement('div');
+        actions.className = 'log-actions';
+
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-icon';
+        editBtn.type = 'button';
+        editBtn.textContent = '✎';
+        editBtn.setAttribute('aria-label', 'Edit entry');
+        editBtn.addEventListener('click', () => {
+          const newAmountStr = window.prompt('Update amount for ' + (habit ? habit.name : 'habit'), String(entry.amount));
+          if (newAmountStr == null) return;
+          const newAmount = parseFloat(newAmountStr);
+          if (isNaN(newAmount) || newAmount <= 0) {
+            alert('Please enter a positive number.');
+            return;
+          }
+          entry.amount = newAmount;
+          saveState(state);
+          renderAll();
+          announce('Updated entry amount');
+        });
+
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'btn btn-icon';
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = '✕';
+        deleteBtn.setAttribute('aria-label', 'Delete entry');
+        deleteBtn.addEventListener('click', () => {
+          if (!confirm('Delete this entry?')) return;
+          const idx = state.logs.findIndex(l => l.id === entry.id);
+          if (idx !== -1) {
+            state.logs.splice(idx, 1);
+            saveState(state);
+            renderAll();
+            announce('Entry deleted');
+          }
+        });
+
+        actions.appendChild(editBtn);
+        actions.appendChild(deleteBtn);
+
+        row.appendChild(main);
+        row.appendChild(actions);
+        container.appendChild(row);
+      });
+    });
+    dailyLogContainer.innerHTML = '';
+    dailyLogContainer.appendChild(container);
+  }
+
+  function renderImpact() {
+    const range = state.uiSettings.selectedRange || 'today';
+    const baseDate = state.uiSettings.selectedDate;
+    const { start, end } = getRangeDates(baseDate, range);
+    const logs = state.logs.filter(l => inRange(l.date, start, end));
+    const habitsById = {};
+    state.habits.forEach(h => {habitsById[h.id] = h;});
+
+    const totalActions = logs.length;
+    let totalAmount = 0;
+    let totalCo2 = 0;
+    const categoryCo2 = {};
+    const habitTotals = {};
+    logs.forEach(l => {
+      const habit = habitsById[l.habitId];
+      const amount = l.amount || 0;
+      const co2 = habit ? habit.co2PerUnit * amount : 0;
+      totalAmount += amount;
+      totalCo2 += co2;
+      const cat = habit ? habit.category || 'Other' : 'Other';
+      if (!categoryCo2[cat]) categoryCo2[cat] = 0;
+      categoryCo2[cat] += co2;
+      if (habit) {
+        if (!habitTotals[habit.id]) {
+          habitTotals[habit.id] = {
+            amount: 0,
+            co2: 0
+          };
+        }
+        habitTotals[habit.id].amount += amount;
+        habitTotals[habit.id].co2 += co2;
+      }
+    });
+    kpiActions.textContent = totalActions;
+    kpiAmount.textContent = Math.round(totalAmount * 10) / 10;
+    kpiCo2.textContent = Math.round(totalCo2 * 10) / 10;
+
+    categoryBreakdown.innerHTML = '';
+    const categories = Object.keys(categoryCo2).sort((a,b) => categoryCo2[b] - categoryCo2[a]);
+    const maxCo2 = categories.reduce((max, cat) => Math.max(max, categoryCo2[cat]), 0);
+    if (!categories.length) {
+      const empty = document.createElement('div');
+      empty.className = 'small-text';
+      empty.textContent = 'No data for selected range yet.';
+      categoryBreakdown.appendChild(empty);
+    } else {
+      categories.forEach(cat => {
+        const row = document.createElement('div');
+        row.className = 'category-row';
+        const header = document.createElement('div');
+        header.className = 'category-header';
+        const label = document.createElement('span');
+        label.textContent = cat;
+        const value = document.createElement('span');
+        value.textContent = (Math.round(categoryCo2[cat] * 10) / 10) + ' kg';
+        header.appendChild(label);
+        header.appendChild(value);
+        const barTrack = document.createElement('div');
+        barTrack.className = 'bar-track';
+        const barFill = document.createElement('div');
+        barFill.className = 'bar-fill';
+        const width = maxCo2 ? (categoryCo2[cat] / maxCo2) * 100 : 0;
+        barFill.style.width = width.toFixed(0) + '%';
+        barTrack.appendChild(barFill);
+        row.appendChild(header);
+        row.appendChild(barTrack);
+        categoryBreakdown.appendChild(row);
+      });
+    }
+
+    habitLeaderboard.innerHTML = '';
+    const habits = state.habits;
+    const entries = Object.keys(habitTotals).map(id => {
+      const h = habits.find(x => x.id === id);
+      return {
+        habitId: id,
+        name: h ? h.name : 'Unknown habit',
+        category: h ? h.category : 'Other',
+        unit: h ? h.unitLabel || 'units' : 'units',
+        amount: habitTotals[id].amount,
+        co2: habitTotals[id].co2
+      };
+    });
+    entries.sort((a,b) => b.co2 - a.co2);
+    const top3 = entries.slice(0,3);
+    if (!top3.length) {
+      const empty = document.createElement('div');
+      empty.className = 'small-text';
+      empty.textContent = 'Log some actions to see your top habits.';
+      habitLeaderboard.appendChild(empty);
+    } else {
+      top3.forEach((entry, idx) => {
+        const row = document.createElement('div');
+        row.className = 'leader-row';
+        const main = document.createElement('div');
+        main.className = 'leader-main';
+        const title = document.createElement('div');
+        title.textContent = (idx+1) + '. ' + entry.name;
+        const meta = document.createElement('div');
+        meta.className = 'leader-meta';
+        meta.textContent = entry.category + ' · ' + (Math.round(entry.amount*10)/10) + ' ' + entry.unit;
+        main.appendChild(title);
+        main.appendChild(meta);
+        const score = document.createElement('div');
+        score.className = 'leader-score';
+        score.textContent = (Math.round(entry.co2*10)/10) + ' kg';
+        row.appendChild(main);
+        row.appendChild(score);
+        habitLeaderboard.appendChild(row);
+      });
+    }
+  }
+
+  rangeChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const range = chip.dataset.range;
+      state.uiSettings.selectedRange = range;
+      saveState(state);
+      rangeChips.forEach(c => {
+        c.classList.toggle('active', c === chip);
+        c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+      });
+      renderImpact();
+    });
+  });
+
+  function renderHabitList() {
+    habitTableBody.innerHTML = '';
+    const habits = state.habits.slice().sort((a,b) => a.orderIndex - b.orderIndex);
+    habits.forEach(habit => {
+      const tr = document.createElement('tr');
+      const nameTd = document.createElement('td');
+      nameTd.textContent = habit.name;
+      const catTd = document.createElement('td');
+      catTd.textContent = habit.category;
+      const unitTd = document.createElement('td');
+      unitTd.textContent = habit.unitLabel || '';
+      const co2Td = document.createElement('td');
+      co2Td.textContent = habit.co2PerUnit;
+      const statusTd = document.createElement('td');
+      const status = document.createElement('span');
+      status.className = 'status-badge' + (habit.isActive ? ' active' : '');
+      status.textContent = habit.isActive ? 'Active' : 'Hidden';
+      statusTd.appendChild(status);
+      const actionsTd = document.createElement('td');
+      const actionsDiv = document.createElement('div');
+      actionsDiv.className = 'table-actions';
+
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn btn-icon';
+      editBtn.textContent = '✎';
+      editBtn.setAttribute('aria-label', 'Edit habit');
+      editBtn.addEventListener('click', () => {
+        loadHabitIntoForm(habit);
+      });
+
+      const toggleBtn = document.createElement('button');
+      toggleBtn.type = 'button';
+      toggleBtn.className = 'btn btn-icon';
+      toggleBtn.textContent = habit.isActive ? '👁' : '🚫';
+      toggleBtn.setAttribute('aria-label', habit.isActive ? 'Hide habit' : 'Activate habit');
+      toggleBtn.addEventListener('click', () => {
+        habit.isActive = !habit.isActive;
+        saveState(state);
+        renderAll();
+        announce('Habit ' + habit.name + ' ' + (habit.isActive ? 'activated' : 'hidden'));
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'btn btn-icon';
+      deleteBtn.textContent = '✕';
+      deleteBtn.setAttribute('aria-label', 'Delete habit');
+      deleteBtn.addEventListener('click', () => {
+        const hasLogs = state.logs.some(l => l.habitId === habit.id);
+        let msg = 'Delete habit "' + habit.name + '"?';
+        if (hasLogs) msg += ' This will also delete all associated log entries.';
+        if (!confirm(msg)) return;
+        state.habits = state.habits.filter(h => h.id !== habit.id);
+        state.logs = state.logs.filter(l => l.habitId !== habit.id);
+        saveState(state);
+        renderAll();
+        announce('Habit deleted');
+        if (habitIdInput.value === habit.id) {
+          clearHabitForm();
+        }
+      });
+
+      actionsDiv.appendChild(editBtn);
+      actionsDiv.appendChild(toggleBtn);
+      actionsDiv.appendChild(deleteBtn);
+      actionsTd.appendChild(actionsDiv);
+
+      tr.appendChild(nameTd);
+      tr.appendChild(catTd);
+      tr.appendChild(unitTd);
+      tr.appendChild(co2Td);
+      tr.appendChild(statusTd);
+      tr.appendChild(actionsTd);
+      habitTableBody.appendChild(tr);
+    });
+  }
+
+  function clearHabitForm() {
+    habitIdInput.value = '';
+    habitNameInput.value = '';
+    habitCategoryInput.value = 'Transport';
+    habitUnitInput.value = '';
+    habitCo2Input.value = '';
+    habitDefaultAmountInput.value = '';
+    habitColorInput.value = '#22c55e';
+    habitNameError.textContent = '';
+    habitCo2Error.textContent = '';
+    habitStatus.textContent = '';
+  }
+
+  function loadHabitIntoForm(habit) {
+    habitIdInput.value = habit.id;
+    habitNameInput.value = habit.name;
+    habitCategoryInput.value = habit.category || 'Other';
+    habitUnitInput.value = habit.unitLabel || '';
+    habitCo2Input.value = habit.co2PerUnit;
+    habitDefaultAmountInput.value = habit.defaultAmount != null ? habit.defaultAmount : '';
+    habitColorInput.value = habit.color || '#22c55e';
+    habitNameError.textContent = '';
+    habitCo2Error.textContent = '';
+    habitStatus.innerHTML = '<span class="status-success">Editing "' + habit.name + '"</span>';
+    habitNameInput.focus();
+  }
+
+  habitResetBtn.addEventListener('click', () => {
+    clearHabitForm();
+  });
+
+  habitForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    habitNameError.textContent = '';
+    habitCo2Error.textContent = '';
+    habitStatus.textContent = '';
+    let firstErrorEl = null;
+
+    const name = habitNameInput.value.trim();
+    const co2Str = habitCo2Input.value;
+    const co2 = parseFloat(co2Str);
+    if (!name) {
+      habitNameError.textContent = 'Name is required.';
+      firstErrorEl = firstErrorEl || habitNameInput;
+    }
+    if (co2Str === '' || isNaN(co2) || co2 < 0) {
+      habitCo2Error.textContent = 'CO₂e per unit must be a non-negative number.';
+      firstErrorEl = firstErrorEl || habitCo2Input;
+    }
+    if (firstErrorEl) {
+      firstErrorEl.focus();
+      return;
+    }
+
+    const existingId = habitIdInput.value;
+    if (existingId) {
+      const habit = state.habits.find(h => h.id === existingId);
+      if (habit) {
+        habit.name = name;
+        habit.category = habitCategoryInput.value;
+        habit.unitLabel = habitUnitInput.value.trim();
+        habit.co2PerUnit = co2;
+        const defAmountStr = habitDefaultAmountInput.value;
+        habit.defaultAmount = defAmountStr === '' ? null : parseFloat(defAmountStr);
+        habit.color = habitColorInput.value || '#22c55e';
+      }
+      habitStatus.innerHTML = '<span class="status-success">Habit updated.</span>';
+      announce('Habit updated');
+    } else {
+      const newHabit = {
+        id: uuid(),
+        name,
+        category: habitCategoryInput.value,
+        unitLabel: habitUnitInput.value.trim(),
+        co2PerUnit: co2,
+        defaultAmount: habitDefaultAmountInput.value === '' ? null : parseFloat(habitDefaultAmountInput.value),
+        color: habitColorInput.value || '#22c55e',
+        isActive: true,
+        orderIndex: state.habits.length
+      };
+      state.habits.push(newHabit);
+      habitStatus.innerHTML = '<span class="status-success">Habit created.</span>';
+      announce('Habit created');
+      clearHabitForm();
+    }
+    saveState(state);
+    renderAll();
+  });
+
+  function exportState() {
+    const json = JSON.stringify(state, null, 2);
+    exportTextarea.value = json;
+    exportTextarea.focus();
+    exportTextarea.select();
+    dataStatus.innerHTML = '<span class="status-success">Export ready.</span>';
+  }
+
+  exportBtn.addEventListener('click', exportState);
+
+  downloadBtn.addEventListener('click', () => {
+    exportState();
+    const blob = new Blob([exportTextarea.value], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ecohabits-backup.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    dataStatus.innerHTML = '<span class="status-success">Download started.</span>';
+  });
+
+  function validateImportedState(candidate) {
+    if (!candidate || typeof candidate !== 'object') return false;
+    if (!Array.isArray(candidate.habits) || !Array.isArray(candidate.logs)) return false;
+    if (!candidate.uiSettings || typeof candidate.uiSettings !== 'object') candidate.uiSettings = {};
+    if (!candidate.uiSettings.selectedDate) candidate.uiSettings.selectedDate = todayISO();
+    if (!candidate.uiSettings.selectedRange) candidate.uiSettings.selectedRange = 'today';
+    if (!candidate.uiSettings.theme) candidate.uiSettings.theme = 'auto';
+    candidate.habits.forEach((h, idx) => {
+      if (typeof h.orderIndex !== 'number') h.orderIndex = idx;
+      if (typeof h.isActive !== 'boolean') h.isActive = true;
+    });
+    return true;
+  }
+
+  function importStateFromJson(json) {
+    let parsed;
+    try {
+      parsed = JSON.parse(json);
+    } catch (e) {
+      dataStatus.innerHTML = '<span class="status-error">Invalid JSON: ' + e.message + '</span>';
+      return;
+    }
+    if (!validateImportedState(parsed)) {
+      dataStatus.innerHTML = '<span class="status-error">JSON does not match expected structure.</span>';
+      return;
+    }
+    if (!confirm('Replace current data with imported data?')) return;
+    state.habits = parsed.habits;
+    state.logs = parsed.logs;
+    state.uiSettings = parsed.uiSettings;
+    saveState(state);
+    updateThemeFromState();
+    renderAll();
+    dataStatus.innerHTML = '<span class="status-success">Data imported successfully.</span>';
+    announce('Data imported');
+  }
+
+  importBtn.addEventListener('click', () => {
+    const json = importTextarea.value.trim();
+    if (!json) {
+      dataStatus.innerHTML = '<span class="status-error">Paste JSON to import.</span>';
+      return;
+    }
+    importStateFromJson(json);
+  });
+
+  dropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropZone.classList.add('dragover');
+  });
+  dropZone.addEventListener('dragleave', () => {
+    dropZone.classList.remove('dragover');
+  });
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      importStateFromJson(ev.target.result);
+    };
+    reader.onerror = () => {
+      dataStatus.innerHTML = '<span class="status-error">Failed to read file.</span>';
+    };
+    reader.readAsText(file);
+  });
+  dropZone.addEventListener('click', () => {
+    fileInput.focus();
+  });
+  dropZone.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      fileInput.focus();
+    }
+  });
+
+  fileInput.addEventListener('change', () => {
+    const file = fileInput.files;
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      importStateFromJson(ev.target.result);
+    };
+    reader.onerror = () => {
+      dataStatus.innerHTML = '<span class="status-error">Failed to read file.</span>';
+    };
+    reader.readAsText(file);
+  });
+
+  resetBtn.addEventListener('click', () => {
+    if (!confirm('Reset app? This clears all data and reloads default demo data.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    location.reload();
+  });
+
+  function renderAll() {
+    renderDate();
+    renderQuickLog();
+    renderDailyLog();
+    renderImpact();
+    renderHabitList();
+  }
+
+  updateThemeFromState();
+  renderAll();
+})();
+</script>
+</body>
+</html>
