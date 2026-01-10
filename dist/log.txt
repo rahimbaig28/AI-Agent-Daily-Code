@@ -574,3 +574,6 @@
 [2026-01-10] Proceeding with run #1 of target 4.
 [2026-01-10T01:27:08.423279Z] Prompt OK  seed=99070  theme=finance & budgeting  extras=responsive grid, ARIA-compliant components, print-friendly view  title='CashFlow Canvas'  slug=cashflow-canvas  kind=html
 [2026-01-10T01:27:08.423279Z] Build OK  file=cashflow-canvas.html  kind=html  required_kind=html  
+[2026-01-10] Proceeding with run #2 of target 4.
+[2026-01-10T04:32:27.627137Z] Prompt OK  seed=86452  theme=learning & study tools  extras=print-friendly view, export/import JSON, dark/light auto theme  title='Vocabulary Flashcard Study System'  slug=vocabulary-flashcard-study-system  kind=py
+[2026-01-10T04:32:27.627137Z] Build OK  file=vocabulary-flashcard-study-system.py  kind=py  required_kind=py  

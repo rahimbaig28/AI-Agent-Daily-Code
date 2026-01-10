@@ -14,3 +14,5 @@ Vocabulary Flashcard Study System
 • Dark/light mode toggle: --theme flag (auto-detect terminal capability, store preference in config JSON)
 • Validate JSON deck files on load; graceful error messages for corrupt or missing files
 • Keep total code under 900 lines; focus on core study workflow over advanced features
+
+(Generated: 2026-01-10T04:32:27.627137Z, seed=86452, theme=learning & study tools, extras=print-friendly view, export/import JSON, dark/light auto theme, kind=py)
