@@ -168,3 +168,5 @@ Eco Footprint Tracker (CLI)
 - Testing hooks / demo data
   - Command: demo
     - Optional; populate current profile with a small fixed set of sample entries across different categories and dates for testing charts and summaries (guarded to not overwrite existing data without confirmation).
+
+(Generated: 2026-01-10T12:37:00.729128Z, seed=90086, theme=environment & sustainability, extras=ARIA-compliant components, offline-first with localStorage, responsive grid, kind=py)
