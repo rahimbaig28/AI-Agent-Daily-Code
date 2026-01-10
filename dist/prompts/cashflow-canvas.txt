@@ -208,3 +208,5 @@ CashFlow Canvas
     - Deleting an entry decreases totals.
     - Theme toggle persists across reloads.
     - Importing known JSON replaces sample data; exporting then reloading page keeps same state.
+
+(Generated: 2026-01-10T01:27:08.423279Z, seed=99070, theme=finance & budgeting, extras=responsive grid, ARIA-compliant components, print-friendly view, kind=html)
