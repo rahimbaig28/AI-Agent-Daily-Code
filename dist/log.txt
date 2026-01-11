@@ -592,3 +592,4 @@
 [2026-01-11T01:47:01.213047Z] Build OK  file=study-session-planner-cli.py  kind=py  required_kind=py  
 [2026-01-11] Skipping run: daily quota reached (count=1, target=1).
 [2026-01-11] Skipping run: daily quota reached (count=1, target=1).
+[2026-01-11] Skipping run: daily quota reached (count=1, target=1).
