@@ -590,3 +590,4 @@
 [2026-01-11] Proceeding with run #1 of target 1.
 [2026-01-11T01:47:01.213047Z] Prompt OK  seed=29048  theme=learning & study tools  extras=keyboard-first UX, print-friendly view, offline-first with localStorage  title='Study Session Planner CLI'  slug=study-session-planner-cli  kind=py
 [2026-01-11T01:47:01.213047Z] Build OK  file=study-session-planner-cli.py  kind=py  required_kind=py  
+[2026-01-11] Skipping run: daily quota reached (count=1, target=1).
