@@ -14,3 +14,5 @@ Micro Grid Puzzle
 - CLI args: "python gridgame.py --load <hash>" to load from shared hash.
 - Responsive grid: Auto-scale chars for 80x24+ terminals; center 5x5 view.
 - Testable: Solve sample puzzle in <20 moves; verify load/save with json dump; quit cleanly.
+
+(Generated: 2026-01-12T12:43:20.846048Z, seed=88550, theme=micro games, extras=responsive grid, ARIA-compliant components, share via URL hash, kind=py)
