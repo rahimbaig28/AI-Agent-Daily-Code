@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="auto" data-print-mode="off">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-12T04:51:00.512267Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8">
+<title>Pocket Ledger</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --bg-soft: #e9e9ef;
+  --text: #111111;
+  --text-muted: #555555;
+  --border: #d0d0dd;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --income: #15803d;
+  --income-soft: #dcfce7;
+  --expense: #b91c1c;
+  --expense-soft: #fee2e2;
+  --net-positive: #166534;
+  --net-negative: #b91c1c;
+  --focus: #fb923c;
+  --error: #b91c1c;
+  --warning-bg: #fef9c3;
+  --warning-text: #854d0e;
+  --shadow-soft: 0 1px 3px rgba(0,0,0,0.06);
+  --header-height: 3.25rem;
+  --radius: 4px;
+  --radius-pill: 999px;
+  --font: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #05060a;
+    --bg-alt: #0b0c12;
+    --bg-soft: #181926;
+    --text: #f9fafb;
+    --text-muted: #a1a1b5;
+    --border: #26273a;
+    --accent: #60a5fa;
+    --accent-soft: #1d3a63;
+    --income: #4ade80;
+    --income-soft: #064e3b;
+    --expense: #fb7185;
+    --expense-soft: #4c0519;
+    --net-positive: #4ade80;
+    --net-negative: #fb7185;
+    --focus: #fed7aa;
+    --error: #fecaca;
+    --warning-bg: #451a03;
+    --warning-text: #fed7aa;
+    --shadow-soft: 0 1px 3px rgba(0,0,0,0.35);
+  }
+}
+html[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --bg-soft: #e9e9ef;
+  --text: #111111;
+  --text-muted: #555555;
+  --border: #d0d0dd;
+  --accent: #2563eb;
+  --accent-soft: #dbeafe;
+  --income: #15803d;
+  --income-soft: #dcfce7;
+  --expense: #b91c1c;
+  --expense-soft: #fee2e2;
+  --net-positive: #166534;
+  --net-negative: #b91c1c;
+  --focus: #fb923c;
+  --error: #b91c1c;
+  --warning-bg: #fef9c3;
+  --warning-text: #854d0e;
+  --shadow-soft: 0 1px 3px rgba(0,0,0,0.06);
+}
+html[data-theme="dark"] {
+  --bg: #05060a;
+  --bg-alt: #0b0c12;
+  --bg-soft: #181926;
+  --text: #f9fafb;
+  --text-muted: #a1a1b5;
+  --border: #26273a;
+  --accent: #60a5fa;
+  --accent-soft: #1d3a63;
+  --income: #4ade80;
+  --income-soft: #064e3b;
+  --expense: #fb7185;
+  --expense-soft: #4c0519;
+  --net-positive: #4ade80;
+  --net-negative: #fb7185;
+  --focus: #fed7aa;
+  --error: #fecaca;
+  --warning-bg: #451a03;
+  --warning-text: #fed7aa;
+  --shadow-soft: 0 1px 3px rgba(0,0,0,0.35);
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg-alt);
+}
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+}
+button {
+  cursor: pointer;
+}
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  height: var(--header-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 0.75rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+}
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.app-title {
+  font-weight: 600;
+  margin-right: 0.75rem;
+}
+select,
+input[type="text"],
+input[type="number"],
+input[type="date"],
+textarea {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.4rem;
+  background: var(--bg);
+  color: var(--text);
+}
+select:disabled,
+input:disabled,
+textarea:disabled {
+  background: var(--bg-soft);
+  color: var(--text-muted);
+}
+.btn {
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  padding: 0.25rem 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.btn-ghost {
+  background: transparent;
+}
+.btn-pill {
+  border-radius: var(--radius-pill);
+}
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+.net-pill {
+  padding: 0.15rem 0.65rem;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.net-positive {
+  background: var(--income-soft);
+  color: var(--net-positive);
+  border-color: var(--income);
+}
+.net-negative {
+  background: var(--expense-soft);
+  color: var(--net-negative);
+  border-color: var(--expense);
+}
+header .group-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+header .group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+main {
+  padding: 0.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+  gap: 0.75rem;
+}
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.card {
+  background: var(--bg);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem 0.6rem 0.6rem;
+}
+.card-title {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+.card-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 0.4rem 0.5rem;
+}
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: minmax(0,1fr);
+  }
+}
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.radio-row {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+.radio-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.error-msg {
+  color: var(--error);
+  font-size: 0.72rem;
+}
+.form-error-summary {
+  color: var(--error);
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+.inline-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+}
+@media (max-width: 600px) {
+  .summary-grid {
+    grid-template-columns: repeat(2, minmax(0,1fr));
+  }
+}
+.summary-item {
+  padding: 0.35rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.summary-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.summary-value {
+  font-weight: 600;
+  margin-top: 0.1rem;
+}
+.summary-note {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.badge-income {
+  color: var(--income);
+}
+.badge-expense {
+  color: var(--expense);
+}
+.badge-neutral {
+  color: var(--text-muted);
+}
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+}
+.progress-label {
+  flex: 0 0 34%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.progress-bar-outer {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+.progress-bar-inner {
+  height: 100%;
+  border-radius: inherit;
+}
+.progress-meta {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: var(--text-muted);
+}
+.trend-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 40px;
+  margin-top: 0.3rem;
+}
+.trend-bar {
+  flex: 1;
+  border-radius: 2px 2px 0 0;
+  background: var(--income-soft);
+}
+.trend-bar.negative {
+  background: var(--expense-soft);
+}
+.trend-scale {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.small-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.table-container {
+  max-height: 420px;
+  overflow: auto;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+thead {
+  position: sticky;
+  top: 0;
+  background: var(--bg-soft);
+  z-index: 1;
+}
+th,
+td {
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid var(--border);
+}
+th {
+  text-align: left;
+  font-weight: 500;
+}
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+th.sortable span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+th.sortable .sort-indicator {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+tbody tr:nth-child(even) {
+  background: var(--bg-alt);
+}
+td.amount {
+  text-align: right;
+  white-space: nowrap;
+}
+td.type {
+  white-space: nowrap;
+}
+.pill {
+  display: inline-block;
+  padding: 0.05rem 0.35rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+}
+.pill-income {
+  background: var(--income-soft);
+  color: var(--income);
+}
+.pill-expense {
+  background: var(--expense-soft);
+  color: var(--expense);
+}
+.filters-row {
+  display: grid;
+  grid-template-columns: minmax(0,1.5fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1.1fr) minmax(0,1.1fr);
+  gap: 0.25rem;
+  margin-bottom: 0.35rem;
+}
+@media (max-width: 900px) {
+  .filters-row {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+.inline-input {
+  width: 100%;
+}
+.actions-cell {
+  white-space: nowrap;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+}
+.warning-banner {
+  margin: 0.3rem 0;
+  padding: 0.35rem 0.45rem;
+  border-radius: 4px;
+  background: var(--warning-bg);
+  color: var(--warning-text);
+  font-size: 0.75rem;
+}
+.inline-dialog {
+  margin-top: 0.3rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-alt);
+}
+.inline-dialog-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+.inline-dialog-row input[type="text"] {
+  min-width: 150px;
+}
+.badge {
+  display: inline-block;
+  padding: 0.05rem 0.3rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.section-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.list-compact {
+  margin: 0.1rem 0 0;
+  padding: 0;
+  list-style: none;
+  max-height: 160px;
+  overflow: auto;
+}
+.list-item-row {
+  display: grid;
+  grid-template-columns: minmax(0,1.4fr) minmax(0,0.9fr) minmax(0,0.7fr) auto;
+  gap: 0.25rem;
+  align-items: center;
+  padding: 0.2rem 0.1rem;
+  border-bottom: 1px dashed var(--border);
+}
+.list-item-row:last-child {
+  border-bottom: none;
+}
+.list-item-main {
+  font-size: 0.78rem;
+}
+.list-item-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+.badge-day {
+  font-size: 0.7rem;
+}
+.backup-textarea {
+  width: 100%;
+  min-height: 80px;
+  resize: vertical;
+  font-family: monospace;
+}
+.print-only {
+  display: none;
+}
+[data-print-mode="on"] .screen-only {
+  display: none !important;
+}
+[data-print-mode="on"] .print-only {
+  display: block;
+}
+.print-card {
+  background: var(--bg);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.6rem;
+  margin-top: 0.5rem;
+}
+.print-heading {
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+.print-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+.print-list {
+  font-size: 0.78rem;
+  margin: 0.1rem 0 0;
+  padding-left: 1.1rem;
+}
+.print-list li {
+  margin-bottom: 0.1rem;
+}
+@media print {
+  header,
+  .screen-only {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+  }
+  main {
+    padding: 0;
+    max-width: none;
+  }
+  .print-only {
+    display: block;
+  }
+}
+.status-region {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+</style>
+</head>
+<body>
+<header aria-label="Pocket Ledger header">
+  <div class="header-left">
+    <div class="app-title">Pocket Ledger</div>
+    <div class="group" aria-label="Budget selection">
+      <label for="budgetSelect" class="group-label">Budget</label>
+      <select id="budgetSelect" aria-label="Select budget"></select>
+      <button type="button" class="btn btn-ghost" id="newBudgetBtn" aria-label="Create new budget">New</button>
+      <button type="button" class="btn btn-ghost" id="renameBudgetBtn" aria-label="Rename current budget">Rename</button>
+      <button type="button" class="btn btn-ghost" id="deleteBudgetBtn" aria-label="Delete current budget">Delete</button>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="group screen-only" aria-label="Undo and redo">
+      <button type="button" class="btn btn-ghost" id="undoBtn" aria-label="Undo last action" disabled>↺ Undo</button>
+      <button type="button" class="btn btn-ghost" id="redoBtn" aria-label="Redo last action" disabled>↻ Redo</button>
+    </div>
+    <div id="netPill" class="net-pill badge-neutral" aria-live="polite" aria-label="Net result pill">Net: $0.00</div>
+    <button type="button" class="btn btn-ghost" id="themeToggleBtn" aria-label="Toggle theme mode">Theme: A</button>
+    <button type="button" class="btn btn-ghost screen-only" id="printModeBtn" aria-label="Print summary">Print Summary</button>
+  </div>
+</header>
+
+<main>
+  <div id="storageWarning" class="warning-banner" role="status" aria-live="polite" style="display:none;">
+    Local storage unavailable. Data will not persist after closing this tab.
+  </div>
+  <div id="budgetDialog" class="inline-dialog screen-only" aria-live="polite" style="display:none;">
+    <div class="inline-dialog-row">
+      <span id="budgetDialogLabel">Budget name</span>
+      <input type="text" id="budgetDialogInput" aria-labelledby="budgetDialogLabel">
+      <button type="button" class="btn btn-primary" id="budgetDialogConfirm">OK</button>
+      <button type="button" class="btn" id="budgetDialogCancel">Cancel</button>
+      <span id="budgetDialogError" class="error-msg"></span>
+    </div>
+  </div>
+
+  <div class="layout screen-only" aria-label="Pocket Ledger main layout">
+    <section aria-label="Left column: quick add and summaries">
+      <div class="card" id="quickAddCard">
+        <div class="section-header">
+          <div class="card-title">Quick Add Transaction</div>
+          <div class="small-text">Shortcut: Ctrl/Cmd+N</div>
+        </div>
+        <div id="quickAddErrorSummary" class="form-error-summary" style="display:none;"></div>
+        <form id="quickAddForm" novalidate>
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="txDate">Date</label>
+              <input type="date" id="txDate" required>
+              <span id="txDateError" class="error-msg"></span>
+            </div>
+            <div class="form-row" aria-label="Type">
+              <span class="summary-label">Type</span>
+              <div class="radio-row">
+                <label><input type="radio" name="txType" value="income" checked> Income</label>
+                <label><input type="radio" name="txType" value="expense"> Expense</label>
+              </div>
+              <span id="txTypeError" class="error-msg"></span>
+            </div>
+            <div class="form-row">
+              <label for="txCategory">Category</label>
+              <select id="txCategory" required></select>
+              <span id="txCategoryError" class="error-msg"></span>
+            </div>
+            <div class="form-row">
+              <label for="txDescription">Description</label>
+              <input type="text" id="txDescription" maxlength="120" placeholder="Optional note">
+              <span id="txDescriptionError" class="error-msg"></span>
+            </div>
+            <div class="form-row">
+              <label for="txAmount">Amount</label>
+              <input type="number" id="txAmount" step="0.01" min="0.01" required>
+              <span id="txAmountError" class="error-msg"></span>
+            </div>
+          </div>
+          <div class="inline-controls">
+            <button type="submit" class="btn btn-primary">Add</button>
+            <span class="small-text">Form stays open for rapid entry.</span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title">This Month Snapshot</div>
+          <div class="small-text" id="snapshotPeriodLabel"></div>
+        </div>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-label">Income</div>
+            <div class="summary-value badge-income" id="summaryIncome">$0.00</div>
+            <div class="summary-note" id="summaryIncomeRecurring">From recurring: $0.00</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Expenses</div>
+            <div class="summary-value badge-expense" id="summaryExpenses">$0.00</div>
+            <div class="summary-note" id="summaryExpensesRecurring">From recurring: $0.00</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-label">Net</div>
+            <div class="summary-value" id="summaryNet">$0.00</div>
+            <div class="summary-note" id="summarySavingsRate">Savings rate: –</div>
+          </div>
+        </div>
+        <div style="margin-top:0.4rem;">
+          <div class="summary-label">Per-category snapshot</div>
+          <div id="categorySnapshot"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div>
+            <div class="card-title">Trend Mini-Chart</div>
+            <div class="card-subtitle">Weekly net for current month</div>
+          </div>
+        </div>
+        <div class="trend-bars" id="trendBars" aria-label="Weekly net trend for this month"></div>
+        <div class="trend-scale" id="trendScaleLabel"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title">Categories</div>
+          <span class="badge">Monthly targets optional</span>
+        </div>
+        <ul class="list-compact" id="categoriesList" aria-label="Categories list"></ul>
+        <form id="categoryForm" class="inline-dialog" style="margin-top:0.3rem;">
+          <div class="inline-dialog-row">
+            <span class="summary-label">Add / Edit Category</span>
+            <input type="hidden" id="categoryId">
+            <input type="text" id="categoryName" placeholder="Name" aria-label="Category name">
+            <select id="categoryType" aria-label="Category type">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+            <input type="number" id="categoryTarget" step="0.01" min="0" placeholder="Monthly target" aria-label="Monthly target">
+            <button type="submit" class="btn btn-primary" id="categorySaveBtn">Save</button>
+            <button type="button" class="btn" id="categoryCancelBtn">Clear</button>
+          </div>
+          <span id="categoryFormError" class="error-msg"></span>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title">Recurring Items</div>
+          <span class="badge">Info-only; optional generator</span>
+        </div>
+        <ul class="list-compact" id="recurringList" aria-label="Recurring items"></ul>
+        <form id="recurringForm" class="inline-dialog" style="margin-top:0.3rem;">
+          <div class="inline-dialog-row">
+            <span class="summary-label">Add / Edit Recurring</span>
+            <input type="hidden" id="recurringId">
+            <input type="text" id="recurringName" placeholder="Name" aria-label="Recurring name">
+            <input type="number" id="recurringAmount" step="0.01" min="0.01" placeholder="Amount" aria-label="Recurring amount">
+            <select id="recurringType" aria-label="Recurring type">
+              <option value="income">Income</option>
+              <option value="expense">Expense</option>
+            </select>
+            <select id="recurringCategory" aria-label="Recurring category"></select>
+            <input type="number" id="recurringDay" min="1" max="31" placeholder="Day" aria-label="Due day (1-31)">
+            <button type="submit" class="btn btn-primary" id="recurringSaveBtn">Save</button>
+            <button type="button" class="btn" id="recurringCancelBtn">Clear</button>
+          </div>
+          <span id="recurringFormError" class="error-msg"></span>
+        </form>
+        <div class="inline-controls" style="margin-top:0.3rem;">
+          <button type="button" class="btn" id="generateRecurringBtn">Generate this month’s recurring transactions</button>
+          <span class="small-text" id="recurringGenerateNote"></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title">Backup / Restore</div>
+        </div>
+        <div class="small-text" style="margin-bottom:0.2rem;">
+          Backup creates JSON for all budgets. Restore replaces current stored data after confirmation.
+        </div>
+        <div class="inline-controls">
+          <button type="button" class="btn" id="backupBtn">Backup</button>
+          <button type="button" class="btn" id="restoreBtn">Restore</button>
+        </div>
+        <textarea id="backupArea" class="backup-textarea" aria-label="Backup or restore JSON" readonly></textarea>
+        <span id="backupError" class="error-msg"></span>
+      </div>
+    </section>
+
+    <section aria-label="Right column: transactions">
+      <div class="card">
+        <div class="section-header">
+          <div class="card-title">Transactions</div>
+          <div class="small-text">Inline edit; filters; sort by Date / Amount</div>
+        </div>
+        <div class="filters-row" aria-label="Transactions filter row">
+          <input type="text" id="filterSearch" placeholder="Search description / category" aria-label="Search transactions (Ctrl/Cmd+F)">
+          <select id="filterCategory" aria-label="Filter by category"></select>
+          <select id="filterType" aria-label="Filter by type">
+            <option value="all">All types</option>
+            <option value="income">Income only</option>
+            <option value="expense">Expenses only</option>
+          </select>
+          <input type="date" id="filterFrom" aria-label="Filter from date">
+          <input type="date" id="filterTo" aria-label="Filter to date">
+        </div>
+        <div class="table-container" aria-label="Transactions table container">
+          <table aria-label="Transactions table">
+            <thead>
+              <tr>
+                <th class="sortable" data-sort="date"><span>Date<span class="sort-indicator" id="sortDateIndicator">⇅</span></span></th>
+                <th>Type</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th class="sortable" data-sort="amount"><span>Amount<span class="sort-indicator" id="sortAmountIndicator">⇅</span></span></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTbody"></tbody>
+          </table>
+        </div>
+        <div class="small-text" style="margin-top:0.25rem;">
+          Use Edit to adjust a single row; Save or Cancel to finish. Delete requires confirmation.
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="print-only" aria-label="Print summary section">
+    <div class="print-card">
+      <div class="print-heading" id="printBudgetTitle">Pocket Ledger – Summary</div>
+      <div class="print-sub" id="printPeriodLabel"></div>
+      <div style="margin-top:0.3rem;">
+        <strong>Totals this month</strong>
+        <ul class="print-list">
+          <li id="printIncome">Income: $0.00</li>
+          <li id="printExpenses">Expenses: $0.00</li>
+          <li id="printNet">Net: $0.00</li>
+          <li id="printSavingsRate">Savings rate: –</li>
+        </ul>
+      </div>
+      <div style="margin-top:0.3rem;">
+        <strong>Categories</strong>
+        <ul class="print-list" id="printCategories"></ul>
+      </div>
+      <div style="margin-top:0.3rem;">
+        <strong>Recurring items</strong>
+        <ul class="print-list" id="printRecurring"></ul>
+      </div>
+      <div style="margin-top:0.3rem;">
+        <strong>Last 20 transactions</strong>
+        <ul class="print-list" id="printTransactions"></ul>
+      </div>
+      <button type="button" class="btn" id="exitPrintModeBtn">Exit Print Mode</button>
+    </div>
+  </section>
+
+  <div id="statusRegion" class="status-region" aria-live="polite" aria-atomic="true"></div>
+</main>
+
+<script>
+(function() {
+  const STORAGE_KEY = 'PocketLedgerAppState';
+  const THEME_KEY = 'PocketLedgerThemeMode';
+  let storageAvailable = true;
+  try {
+    const testKey = '__test_pl__';
+    window.localStorage.setItem(testKey, '1');
+    window.localStorage.removeItem(testKey);
+  } catch (e) {
+    storageAvailable = false;
+  }
+
+  const todayStr = new Date().toISOString().slice(0,10);
+
+  function uuid() {
+    return 'xxxx-4xxx-yxxx-xxxx'.replace(/[xy]/g, c => {
+      const r = Math.random()*16|0;
+      const v = c === 'x' ? r : (r&0x3|0x8);
+      return v.toString(16);
+    });
+  }
+
+  function monthKey(d) {
+    const dt = new Date(d);
+    if (isNaN(dt)) return '';
+    return dt.getFullYear() + '-' + String(dt.getMonth()+1).padStart(2,'0');
+  }
+
+  function clamp(num, min, max) {
+    return Math.min(Math.max(num, min), max);
+  }
+
+  function fmtAmount(num) {
+    if (!isFinite(num)) return '$0.00';
+    const sign = num < 0 ? '-' : '';
+    const abs = Math.abs(num);
+    return sign + '$' + abs.toFixed(2);
+  }
+
+  function parseAmount(val) {
+    const n = Number(val);
+    return isFinite(n) ? n : 0;
+  }
+
+  function getCurrentMonthKey() {
+    return monthKey(new Date());
+  }
+
+  const defaultCategories = [
+    { id: uuid(), name: 'Salary', type: 'income', target: null },
+    { id: uuid(), name: 'Other Income', type: 'income', target: null },
+    { id: uuid(), name: 'Rent', type: 'expense', target: null },
+    { id: uuid(), name: 'Groceries', type: 'expense', target: null },
+    { id: uuid(), name: 'Utilities', type: 'expense', target: null },
+    { id: uuid(), name: 'Misc', type: 'expense', target: null }
+  ];
+
+  function createEmptyBudget(name) {
+    return {
+      id: uuid(),
+      name: name || 'New Budget',
+      createdAt: Date.now(),
+      categories: JSON.parse(JSON.stringify(defaultCategories)),
+      recurring: [],
+      transactions: [],
+      undoStack: [],
+      redoStack: [],
+      recurringGeneratedFor: {}
+    };
+  }
+
+  const appState = {
+    budgets: [],
+    activeBudgetId: null,
+    themeMode: 'auto',
+    filters: {
+      search: '',
+      categoryId: 'all',
+      type: 'all',
+      from: '',
+      to: ''
+    },
+    sort: {
+      field: 'date',
+      dir: 'desc'
+    },
+    ui: {
+      editingTxId: null,
+      budgetDialogMode: null
+    }
+  };
+
+  function loadState() {
+    if (!storageAvailable) {
+      appState.budgets = [createEmptyBudget('My First Budget')];
+      appState.activeBudgetId = appState.budgets.id;
+      appState.themeMode = 'auto';
+      return;
+    }
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.budgets) && parsed.budgets.length) {
+          appState.budgets = parsed.budgets;
+          appState.activeBudgetId = parsed.activeBudgetId || parsed.budgets.id;
+        } else {
+          appState.budgets = [createEmptyBudget('My First Budget')];
+          appState.activeBudgetId = appState.budgets.id;
+        }
+      } catch (e) {
+        appState.budgets = [createEmptyBudget('My First Budget')];
+        appState.activeBudgetId = appState.budgets.id;
+      }
+    } else {
+      appState.budgets = [createEmptyBudget('My First Budget')];
+      appState.activeBudgetId = appState.budgets.id;
+    }
+    const tMode = storageAvailable ? window.localStorage.getItem(THEME_KEY) : null;
+    appState.themeMode = tMode === 'light' || tMode === 'dark' || tMode === 'auto' ? tMode : 'auto';
+  }
+
+  function saveState() {
+    if (!storageAvailable) return;
+    const serializable = {
+      budgets: appState.budgets,
+      activeBudgetId: appState.activeBudgetId
+    };
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
+    } catch (e) {}
+  }
+
+  function saveThemeMode() {
+    if (!storageAvailable) return;
+    try {
+      window.localStorage.setItem(THEME_KEY, appState.themeMode);
+    } catch (e) {}
+  }
+
+  function getActiveBudget() {
+    return appState.budgets.find(b => b.id === appState.activeBudgetId) || null;
+  }
+
+  function setActiveBudget(id) {
+    if (appState.budgets.some(b => b.id === id)) {
+      appState.activeBudgetId = id;
+      saveState();
+      renderAll();
+    }
+  }
+
+  function pushUndoAction(budget, action) {
+    budget.undoStack.push(action);
+    budget.redoStack = [];
+    saveState();
+    renderUndoRedoButtons();
+  }
+
+  function performUndo() {
+    const budget = getActiveBudget();
+    if (!budget || !budget.undoStack.length) return;
+    const action = budget.undoStack.pop();
+    applyInverseAction(budget, action, 'undo');
+    budget.redoStack.push(action);
+    saveState();
+    renderAll();
+    renderUndoRedoButtons();
+    announceStatus(action.undoMessage || 'Undo complete');
+  }
+
+  function performRedo() {
+    const budget = getActiveBudget();
+    if (!budget || !budget.redoStack.length) return;
+    const action = budget.redoStack.pop();
+    applyActionAgain(budget, action);
+    budget.undoStack.push(action);
+    saveState();
+    renderAll();
+    renderUndoRedoButtons();
+    announceStatus(action.redoMessage || 'Redo complete');
+  }
+
+  function applyInverseAction(budget, action, mode) {
+    switch (action.type) {
+      case 'addTransaction': {
+        const idx = budget.transactions.findIndex(t => t.id === action.payload.id);
+        if (idx !== -1) budget.transactions.splice(idx, 1);
+        break;
+      }
+      case 'editTransaction': {
+        const idx = budget.transactions.findIndex(t => t.id === action.payload.id);
+        if (idx !== -1) {
+          budget.transactions[idx] = action.before;
+        }
+        break;
+      }
+      case 'deleteTransaction': {
+        budget.transactions.push(action.before);
+        break;
+      }
+      case 'addCategory': {
+        const idx = budget.categories.findIndex(c => c.id === action.payload.id);
+        if (idx !== -1) budget.categories.splice(idx, 1);
+        budget.transactions = budget.transactions.map(tx => {
+          if (tx.categoryId === action.payload.id) {
+            return { ...tx, categoryId: null };
+          }
+          return tx;
+        });
+        budget.recurring = budget.recurring.map(r => {
+          if (r.categoryId === action.payload.id) {
+            return { ...r, categoryId: null };
+          }
+          return r;
+        });
+        break;
+      }
+      case 'editCategory': {
+        const idx = budget.categories.findIndex(c => c.id === action.payload.id);
+        if (idx !== -1) budget.categories[idx] = action.before;
+        break;
+      }
+      case 'deleteCategory': {
+        budget.categories.push(action.before);
+        break;
+      }
+      case 'addRecurring': {
+        const idx = budget.recurring.findIndex(r => r.id === action.payload.id);
+        if (idx !== -1) budget.recurring.splice(idx, 1);
+        break;
+      }
+      case 'editRecurring': {
+        const idx = budget.recurring.findIndex(r => r.id === action.payload.id);
+        if (idx !== -1) budget.recurring[idx] = action.before;
+        break;
+      }
+      case 'deleteRecurring': {
+        budget.recurring.push(action.before);
+        break;
+      }
+      case 'generateRecurring': {
+        const ids = action.generatedIds || [];
+        budget.transactions = budget.transactions.filter(tx => !ids.includes(tx.id));
+        if (action.monthKey) {
+          delete budget.recurringGeneratedFor[action.monthKey];
+        }
+        break;
+      }
+    }
+  }
+
+  function applyActionAgain(budget, action) {
+    switch (action.type) {
+      case 'addTransaction': {
+        budget.transactions.push(action.payload);
+        break;
+      }
+      case 'editTransaction': {
+        const idx = budget.transactions.findIndex(t => t.id === action.payload.id);
+        if (idx !== -1) budget.transactions[idx] = action.after;
+        break;
+      }
+      case 'deleteTransaction': {
+        const idx = budget.transactions.findIndex(t => t.id === action.before.id);
+        if (idx !== -1) budget.transactions.splice(idx, 1);
+        break;
+      }
+      case 'addCategory': {
+        budget.categories.push(action.payload);
+        break;
+      }
+      case 'editCategory': {
+        const idx = budget.categories.findIndex(c => c.id === action.payload.id);
+        if (idx !== -1) budget.categories[idx] = action.after;
+        break;
+      }
+      case 'deleteCategory': {
+        const idx = budget.categories.findIndex(c => c.id === action.before.id);
+        if (idx !== -1) budget.categories.splice(idx, 1);
+        break;
+      }
+      case 'addRecurring': {
+        budget.recurring.push(action.payload);
+        break;
+      }
+      case 'editRecurring': {
+        const idx = budget.recurring.findIndex(r => r.id === action.payload.id);
+        if (idx !== -1) budget.recurring[idx] = action.after;
+        break;
+      }
+      case 'deleteRecurring': {
+        const idx = budget.recurring.findIndex(r => r.id === action.before.id);
+        if (idx !== -1) budget.recurring.splice(idx, 1);
+        break;
+      }
+      case 'generateRecurring': {
+        const txs = action.generatedTransactions || [];
+        for (const tx of txs) {
+          if (!budget.transactions.some(t => t.id === tx.id)) {
+            budget.transactions.push(tx);
+          }
+        }
+        if (action.monthKey) {
+          budget.recurringGeneratedFor[action.monthKey] = true;
+        }
+        break;
+      }
+    }
+  }
+
+  function computeMonthSummary(budget, mKey) {
+    const txs = budget.transactions.filter(tx => monthKey(tx.date) === mKey);
+    let income = 0, expenses = 0;
+    for (const tx of txs) {
+      if (tx.type === 'income') income += tx.amount;
+      else if (tx.type === 'expense') expenses += tx.amount;
+    }
+    const net = income - expenses;
+    const savingsRate = income > 0 ? (net / income) : null;
+
+    const catsById = {};
+    budget.categories.forEach(c => { catsById[c.id] = c; });
+    const catTotals = {};
+    txs.forEach(tx => {
+      const cid = tx.categoryId || 'uncategorized';
+      if (!catTotals[cid]) {
+        catTotals[cid] = { income: 0, expense: 0 };
+      }
+      if (tx.type === 'income') catTotals[cid].income += tx.amount;
+      else catTotals[cid].expense += tx.amount;
+    });
+
+    let recurringIncome = 0, recurringExpense = 0;
+    budget.recurring.forEach(r => {
+      if (r.type === 'income') recurringIncome += r.amount;
+      else if (r.type === 'expense') recurringExpense += r.amount;
+    });
+
+    return {
+      income, expenses, net, savingsRate,
+      catTotals,
+      recurringIncome, recurringExpense,
+      catsById
+    };
+  }
+
+  function computeTrend(budget, mKey) {
+    const dt = new Date(mKey + '-01T00:00:00');
+    if (isNaN(dt)) return [];
+    const year = dt.getFullYear();
+    const month = dt.getMonth();
+    const weeks = [0,0,0,0,0];
+    for (const tx of budget.transactions) {
+      if (monthKey(tx.date) !== mKey) continue;
+      const d = new Date(tx.date);
+      if (isNaN(d)) continue;
+      const day = d.getDate();
+      const idx = clamp(Math.floor((day-1)/7), 0, 4);
+      const sign = tx.type === 'income' ? 1 : -1;
+      weeks[idx] += sign * tx.amount;
+    }
+    return weeks;
+  }
+
+  function applyFiltersAndSort(budget) {
+    const { search, categoryId, type, from, to } = appState.filters;
+    let txs = budget.transactions.slice();
+    if (search) {
+      const s = search.toLowerCase();
+      txs = txs.filter(tx => {
+        const cat = budget.categories.find(c => c.id === tx.categoryId);
+        const catName = cat ? cat.name : '';
+        return (tx.description || '').toLowerCase().includes(s) ||
+               catName.toLowerCase().includes(s);
+      });
+    }
+    if (categoryId && categoryId !== 'all') {
+      txs = txs.filter(tx => tx.categoryId === categoryId);
+    }
+    if (type !== 'all') {
+      txs = txs.filter(tx => tx.type === type);
+    }
+    if (from) {
+      txs = txs.filter(tx => tx.date >= from);
+    }
+    if (to) {
+      txs = txs.filter(tx => tx.date <= to);
+    }
+    const { field, dir } = appState.sort;
+    txs.sort((a,b) => {
+      let vA, vB;
+      if (field === 'date') {
+        vA = a.date;
+        vB = b.date;
+      } else {
+        vA = a.amount;
+        vB = b.amount;
+      }
+      if (vA < vB) return dir === 'asc' ? -1 : 1;
+      if (vA > vB) return dir === 'asc' ? 1 : -1;
+      return 0;
+    });
+    return txs;
+  }
+
+  function renderBudgetsSelector() {
+    const select = document.getElementById('budgetSelect');
+    const budget = getActiveBudget();
+    select.innerHTML = '';
+    appState.budgets.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.id;
+      opt.textContent = b.name;
+      select.appendChild(opt);
+    });
+    if (budget) select.value = budget.id;
+  }
+
+  function renderUndoRedoButtons() {
+    const budget = getActiveBudget();
+    const undoBtn = document.getElementById('undoBtn');
+    const redoBtn = document.getElementById('redoBtn');
+    if (!budget) {
+      undoBtn.disabled = true;
+      redoBtn.disabled = true;
+      return;
+    }
+    undoBtn.disabled = !budget.undoStack.length;
+    redoBtn.disabled = !budget.redoStack.length;
+  }
+
+  function renderQuickAddForm() {
+    const budget = getActiveBudget();
+    const select = document.getElementById('txCategory');
+    const type = document.querySelector('input[name="txType"]:checked')?.value || 'income';
+    select.innerHTML = '';
+    const cats = budget ? budget.categories.filter(c => c.type === type) : [];
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      select.appendChild(opt);
+    });
+    const optNew = document.createElement('option');
+    optNew.value = '__new__';
+    optNew.textContent = '+ New Category…';
+    select.appendChild(optNew);
+    if (!document.getElementById('txDate').value) {
+      document.getElementById('txDate').value = todayStr;
+    }
+  }
+
+  function renderSnapshot() {
+    const budget = getActiveBudget();
+    const month = getCurrentMonthKey();
+    const label = document.getElementById('snapshotPeriodLabel');
+    if (!budget) {
+      label.textContent = '';
+      document.getElementById('summaryIncome').textContent = '$0.00';
+      document.getElementById('summaryExpenses').textContent = '$0.00';
+      document.getElementById('summaryNet').textContent = '$0.00';
+      document.getElementById('summarySavingsRate').textContent = 'Savings rate: –';
+      document.getElementById('summaryIncomeRecurring').textContent = 'From recurring: $0.00';
+      document.getElementById('summaryExpensesRecurring').textContent = 'From recurring: $0.00';
+      return;
+    }
+    const dt = new Date(month + '-01T00:00:00');
+    const mName = dt.toLocaleString(undefined,{month:'short',year:'numeric'});
+    label.textContent = mName;
+    const s = computeMonthSummary(budget, month);
+    document.getElementById('summaryIncome').textContent = fmtAmount(s.income);
+    document.getElementById('summaryExpenses').textContent = fmtAmount(s.expenses);
+    const netEl = document.getElementById('summaryNet');
+    netEl.textContent = fmtAmount(s.net);
+    const srEl = document.getElementById('summarySavingsRate');
+    srEl.textContent = s.savingsRate == null ? 'Savings rate: –' : 'Savings rate: ' + (s.savingsRate*100).toFixed(1) + '%';
+    document.getElementById('summaryIncomeRecurring').textContent = 'From recurring: ' + fmtAmount(s.recurringIncome);
+    document.getElementById('summaryExpensesRecurring').textContent = 'From recurring: ' + fmtAmount(s.recurringExpense);
+
+    const catContainer = document.getElementById('categorySnapshot');
+    catContainer.innerHTML = '';
+    const catsArr = budget.categories.slice();
+    const catTotals = s.catTotals;
+    const recurringByCat = {};
+    budget.recurring.forEach(r => {
+      if (!recurringByCat[r.categoryId || 'uncategorized']) {
+        recurringByCat[r.categoryId || 'uncategorized'] = { income: 0, expense: 0 };
+      }
+      if (r.type === 'income') recurringByCat[r.categoryId || 'uncategorized'].income += r.amount;
+      else recurringByCat[r.categoryId || 'uncategorized'].expense += r.amount;
+    });
+    catsArr.forEach(c => {
+      const t = catTotals[c.id] || { income: 0, expense: 0 };
+      const rec = recurringByCat[c.id] || { income: 0, expense: 0 };
+      const isExpense = c.type === 'expense';
+      const spent = isExpense ? t.expense : t.income;
+      const target = c.target;
+      const expected = isExpense ? (target || 0) : rec.income;
+      const pct = expected > 0 ? clamp(spent / expected, 0, 3) : 0;
+      const row = document.createElement('div');
+      row.className = 'progress-row';
+      const labelEl = document.createElement('div');
+      labelEl.className = 'progress-label';
+      labelEl.textContent = c.name;
+      const barOuter = document.createElement('div');
+      barOuter.className = 'progress-bar-outer';
+      const barInner = document.createElement('div');
+      barInner.className = 'progress-bar-inner';
+      barInner.style.width = (pct*100).toFixed(0) + '%';
+      barInner.style.background = isExpense ? (pct>1 ? varColor('--expense') : 'var(--expense-soft)') : 'var(--income-soft)';
+      function varColor(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name) || 'var(--accent)';
+      }
+      barOuter.appendChild(barInner);
+      const meta = document.createElement('div');
+      meta.className = 'progress-meta';
+      meta.textContent = fmtAmount(spent) + (expected>0 ? ' / ' + fmtAmount(expected) : '');
+      row.appendChild(labelEl);
+      row.appendChild(barOuter);
+      row.appendChild(meta);
+      catContainer.appendChild(row);
+    });
+  }
+
+  function renderTrend() {
+    const budget = getActiveBudget();
+    const el = document.getElementById('trendBars');
+    const labelEl = document.getElementById('trendScaleLabel');
+    el.innerHTML = '';
+    if (!budget) {
+      labelEl.textContent = '';
+      return;
+    }
+    const month = getCurrentMonthKey();
+    const weeks = computeTrend(budget, month);
+    const maxAbs = weeks.reduce((m,v)=>Math.max(m,Math.abs(v)),0) || 1;
+    weeks.forEach((v, idx) => {
+      const bar = document.createElement('div');
+      bar.className = 'trend-bar';
+      if (v < 0) bar.classList.add('negative');
+      bar.style.height = (Math.abs(v)/maxAbs*100).toFixed(0) + '%';
+      const dt = new Date(month + '-01T00:00:00');
+      const start = new Date(dt.getFullYear(), dt.getMonth(), idx*7+1);
+      const end = new Date(dt.getFullYear(), dt.getMonth(), idx*7+7);
+      const title = start.toLocaleDateString() + ' – ' + end.toLocaleDateString() + ': ' + fmtAmount(v);
+      bar.title = title;
+      el.appendChild(bar);
+    });
+    labelEl.textContent = 'Max abs weekly net: ' + fmtAmount(maxAbs);
+  }
+
+  function renderNetPill() {
+    const budget = getActiveBudget();
+    const pill = document.getElementById('netPill');
+    if (!budget) {
+      pill.textContent = 'Net: $0.00';
+      pill.classList.remove('net-positive','net-negative');
+      pill.classList.add('badge-neutral');
+      return;
+    }
+    const s = computeMonthSummary(budget, getCurrentMonthKey());
+    pill.textContent = 'Net: ' + fmtAmount(s.net);
+    pill.classList.remove('net-positive','net-negative','badge-neutral');
+    if (s.net > 0) {
+      pill.classList.add('net-positive');
+    } else if (s.net < 0) {
+      pill.classList.add('net-negative');
+    } else {
+      pill.classList.add('badge-neutral');
+    }
+  }
+
+  function renderCategories() {
+    const budget = getActiveBudget();
+    const list = document.getElementById('categoriesList');
+    list.innerHTML = '';
+    if (!budget) return;
+    budget.categories.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c => {
+      const li = document.createElement('li');
+      li.className = 'list-item-row';
+      const main = document.createElement('div');
+      main.className = 'list-item-main';
+      main.textContent = c.name;
+      const sub = document.createElement('div');
+      sub.className = 'list-item-sub';
+      sub.textContent = (c.type === 'income' ? 'Income' : 'Expense') + (c.target ? ' · Target ' + fmtAmount(c.target) : '');
+      const typeCell = document.createElement('div');
+      const typeBadge = document.createElement('span');
+      typeBadge.className = 'pill ' + (c.type === 'income' ? 'pill-income' : 'pill-expense');
+      typeBadge.textContent = c.type === 'income' ? 'Income' : 'Expense';
+      typeCell.appendChild(typeBadge);
+      const targetCell = document.createElement('div');
+      targetCell.className = 'small-text';
+      targetCell.textContent = c.target ? fmtAmount(c.target) : '';
+      const actions = document.createElement('div');
+      actions.className = 'actions-cell';
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn btn-ghost';
+      editBtn.textContent = 'Edit';
+      editBtn.addEventListener('click', () => startEditCategory(c.id));
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn btn-ghost';
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', () => deleteCategory(c.id));
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      const left = document.createElement('div');
+      left.appendChild(main);
+      left.appendChild(sub);
+      li.appendChild(left);
+      li.appendChild(typeCell);
+      li.appendChild(targetCell);
+      li.appendChild(actions);
+      list.appendChild(li);
+    });
+  }
+
+  function renderRecurring() {
+    const budget = getActiveBudget();
+    const list = document.getElementById('recurringList');
+    const note = document.getElementById('recurringGenerateNote');
+    list.innerHTML = '';
+    note.textContent = '';
+    if (!budget) return;
+    budget.recurring.slice().sort((a,b)=> (a.day||1)-(b.day||1)).forEach(r => {
+      const li = document.createElement('li');
+      li.className = 'list-item-row';
+      const main = document.createElement('div');
+      main.className = 'list-item-main';
+      main.textContent = r.name + ' ' + fmtAmount(r.amount);
+      const sub = document.createElement('div');
+      sub.className = 'list-item-sub';
+      const cat = budget.categories.find(c => c.id === r.categoryId);
+      const cname = cat ? cat.name : '(no category)';
+      sub.textContent = (r.type === 'income' ? 'Income' : 'Expense') + ' · ' + cname;
+      const typeCell = document.createElement('div');
+      const typeBadge = document.createElement('span');
+      typeBadge.className = 'pill ' + (r.type === 'income' ? 'pill-income' : 'pill-expense');
+      typeBadge.textContent = r.type === 'income' ? 'Income' : 'Expense';
+      typeCell.appendChild(typeBadge);
+      const dayCell = document.createElement('div');
+      const dayBadge = document.createElement('span');
+      dayBadge.className = 'badge-day badge';
+      dayBadge.textContent = 'Day ' + (r.day || '');
+      dayCell.appendChild(dayBadge);
+      const actions = document.createElement('div');
+      const editBtn = document.createElement('button');
+      editBtn.type = 'button';
+      editBtn.className = 'btn btn-ghost';
+      editBtn.textContent = 'Edit';
+      editBtn.addEventListener('click', () => startEditRecurring(r.id));
+      const delBtn = document.createElement('button');
+      delBtn.type = 'button';
+      delBtn.className = 'btn btn-ghost';
+      delBtn.textContent = 'Delete';
+      delBtn.addEventListener('click', () => deleteRecurring(r.id));
+      actions.appendChild(editBtn);
+      actions.appendChild(delBtn);
+      const left = document.createElement('div');
+      left.appendChild(main);
+      left.appendChild(sub);
+      li.appendChild(left);
+      li.appendChild(typeCell);
+      li.appendChild(dayCell);
+      li.appendChild(actions);
+      list.appendChild(li);
+    });
+    const month = getCurrentMonthKey();
+    if (budget.recurringGeneratedFor && budget.recurringGeneratedFor[month]) {
+      note.textContent = 'Recurring transactions already generated for this month.';
+    } else {
+      note.textContent = 'Generate creates non-duplicate transactions for this month.';
+    }
+    renderRecurringCategoryOptions();
+  }
+
+  function renderRecurringCategoryOptions() {
+    const budget = getActiveBudget();
+    const select = document.getElementById('recurringCategory');
+    select.innerHTML = '';
+    if (!budget) return;
+    budget.categories.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      select.appendChild(opt);
+    });
+    const optNone = document.createElement('option');
+    optNone.value = '';
+    optNone.textContent = '(no category)';
+    select.appendChild(optNone);
+  }
+
+  function renderFilters() {
+    const budget = getActiveBudget();
+    const sel = document.getElementById('filterCategory');
+    sel.innerHTML = '';
+    const optAll = document.createElement('option');
+    optAll.value = 'all';
+    optAll.textContent = 'All categories';
+    sel.appendChild(optAll);
+    if (budget) {
+      budget.categories.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+    }
+    sel.value = appState.filters.categoryId || 'all';
+    document.getElementById('filterSearch').value = appState.filters.search;
+    document.getElementById('filterType').value = appState.filters.type;
+    document.getElementById('filterFrom').value = appState.filters.from;
+    document.getElementById('filterTo').value = appState.filters.to;
+    const dirDate = appState.sort.field === 'date' ? (appState.sort.dir === 'asc' ? '↑' : '↓') : '⇅';
+    const dirAmt = appState.sort.field === 'amount' ? (appState.sort.dir === 'asc' ? '↑' : '↓') : '⇅';
+    document.getElementById('sortDateIndicator').textContent = dirDate;
+    document.getElementById('sortAmountIndicator').textContent = dirAmt;
+  }
+
+  function renderTransactionsTable() {
+    const budget = getActiveBudget();
+    const tbody = document.getElementById('transactionsTbody');
+    tbody.innerHTML = '';
+    if (!budget) return;
+    const txs = applyFiltersAndSort(budget);
+    txs.forEach(tx => {
+      const tr = document.createElement('tr');
+      if (appState.ui.editingTxId === tx.id) {
+        renderTransactionEditRow(tr, budget, tx);
+      } else {
+        renderTransactionDisplayRow(tr, budget, tx);
+      }
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderTransactionDisplayRow(tr, budget, tx) {
+    const cat = budget.categories.find(c => c.id === tx.categoryId);
+    const dateTd = document.createElement('td');
+    dateTd.textContent = tx.date;
+    const typeTd = document.createElement('td');
+    typeTd.className = 'type';
+    const tp = document.createElement('span');
+    tp.className = 'pill ' + (tx.type === 'income' ? 'pill-income' : 'pill-expense');
+    tp.textContent = tx.type === 'income' ? 'Income' : 'Expense';
+    typeTd.appendChild(tp);
+    const catTd = document.createElement('td');
+    catTd.textContent = cat ? cat.name : '';
+    const descTd = document.createElement('td');
+    descTd.textContent = tx.description || '';
+    const amtTd = document.createElement('td');
+    amtTd.className = 'amount';
+    amtTd.textContent = fmtAmount(tx.amount * (tx.type === 'expense' ? 1 : 1));
+    const actionsTd = document.createElement('td');
+    actionsTd.className = 'actions-cell';
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'btn btn-ghost';
+    editBtn.textContent = 'Edit';
+    editBtn.addEventListener('click', () => {
+      appState.ui.editingTxId = tx.id;
+      renderTransactionsTable();
+    });
+    const delBtn = document.createElement('button');
+    delBtn.type = 'button';
+    delBtn.className = 'btn btn-ghost';
+    delBtn.textContent = 'Delete';
+    delBtn.addEventListener('click', () => deleteTransaction(tx.id));
+    actionsTd.appendChild(editBtn);
+    actionsTd.appendChild(delBtn);
+    tr.appendChild(dateTd);
+    tr.appendChild(typeTd);
+    tr.appendChild(catTd);
+    tr.appendChild(descTd);
+    tr.appendChild(amtTd);
+    tr.appendChild(actionsTd);
+  }
+
+  function renderTransactionEditRow(tr, budget, tx) {
+    const dateTd = document.createElement('td');
+    const dateInput = document.createElement('input');
+    dateInput.type = 'date';
+    dateInput.value = tx.date;
+    dateInput.className = 'inline-input';
+    dateTd.appendChild(dateInput);
+    const typeTd = document.createElement('td');
+    const typeSelect = document.createElement('select');
+    typeSelect.className = 'inline-input';
+    ['income','expense'].forEach(t => {
+      const opt = document.createElement('option');
+      opt.value = t;
+      opt.textContent = t === 'income' ? 'Income' : 'Expense';
+      typeSelect.appendChild(opt);
+    });
+    typeSelect.value = tx.type;
+    typeTd.appendChild(typeSelect);
+    const catTd = document.createElement('td');
+    const catSelect = document.createElement('select');
+    catSelect.className = 'inline-input';
+    const cats = budget.categories.filter(c => c.type === tx.type);
+    cats.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = c.name;
+      catSelect.appendChild(opt);
+    });
+    const optNone = document.createElement('option');
+    optNone.value = '';
+    optNone.textContent = '(no category)';
+    catSelect.appendChild(optNone);
+    catSelect.value = tx.categoryId || '';
+    catTd.appendChild(catSelect);
+    const descTd = document.createElement('td');
+    const descInput = document.createElement('input');
+    descInput.type = 'text';
+    descInput.value = tx.description || '';
+    descInput.className = 'inline-input';
+    descTd.appendChild(descInput);
+    const amtTd = document.createElement('td');
+    const amtInput = document.createElement('input');
+    amtInput.type = 'number';
+    amtInput.step = '0.01';
+    amtInput.min = '0.01';
+    amtInput.value = String(tx.amount);
+    amtInput.className = 'inline-input';
+    amtTd.appendChild(amtInput);
+    const actionsTd = document.createElement('td');
+    actionsTd.className = 'actions-cell';
+    const saveBtn = document.createElement('button');
+    saveBtn.type = 'button';
+    saveBtn.className = 'btn btn-primary';
+    saveBtn.textContent = 'Save';
+    saveBtn.addEventListener('click', () => {
+      const nDate = dateInput.value;
+      const nType = typeSelect.value;
+      const nCat = catSelect.value || null;
+      const nDesc = descInput.value.trim();
+      const nAmt = parseAmount(amtInput.value);
+      if (!nDate || !nAmt || nAmt <= 0 || (nType !== 'income' && nType !== 'expense')) return;
+      const before = { ...tx };
+      tx.date = nDate;
+      tx.type = nType;
+      tx.categoryId = nCat;
+      tx.description = nDesc;
+      tx.amount = nAmt;
+      appState.ui.editingTxId = null;
+      const action = {
+        type: 'editTransaction',
+        payload: { id: tx.id },
+        before,
+        after: { ...tx },
+        undoMessage: 'Undo: transaction edit reverted',
+        redoMessage: 'Redo: transaction edit applied again'
+      };
+      pushUndoAction(budget, action);
+      saveState();
+      renderAll();
+      announceStatus('Transaction updated');
+    });
+    const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.className = 'btn';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => {
+      appState.ui.editingTxId = null;
+      renderTransactionsTable();
+    });
+    actionsTd.appendChild(saveBtn);
+    actionsTd.appendChild(cancelBtn);
+    tr.appendChild(dateTd);
+    tr.appendChild(typeTd);
+    tr.appendChild(catTd);
+    tr.appendChild(descTd);
+    tr.appendChild(amtTd);
+    tr.appendChild(actionsTd);
+  }
+
+  function renderBackupArea() {
+    document.getElementById('backupArea').value = '';
+    document.getElementById('backupError').textContent = '';
+  }
+
+  function renderThemeMode() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeToggleBtn');
+    const mode = appState.themeMode;
+    html.setAttribute('data-theme', mode);
+    btn.textContent = 'Theme: ' + (mode === 'auto' ? 'A' : mode === 'light' ? '☼' : '☾');
+  }
+
+  function renderPrintSummary() {
+    const budget = getActiveBudget();
+    const titleEl = document.getElementById('printBudgetTitle');
+    const periodEl = document.getElementById('printPeriodLabel');
+    const incomeEl = document.getElementById('printIncome');
+    const expensesEl = document.getElementById('printExpenses');
+    const netEl = document.getElementById('printNet');
+    const srEl = document.getElementById('printSavingsRate');
+    const catEl = document.getElementById('printCategories');
+    const recEl = document.getElementById('printRecurring');
+    const txEl = document.getElementById('printTransactions');
+    catEl.innerHTML = '';
+    recEl.innerHTML = '';
+    txEl.innerHTML = '';
+    if (!budget) {
+      titleEl.textContent = 'Pocket Ledger – Summary';
+      periodEl.textContent = '';
+      incomeEl.textContent = 'Income: $0.00';
+      expensesEl.textContent = 'Expenses: $0.00';
+      netEl.textContent = 'Net: $0.00';
+      srEl.textContent = 'Savings rate: –';
+      return;
+    }
+    titleEl.textContent = 'Pocket Ledger – ' + budget.name;
+    const mKey = getCurrentMonthKey();
+    const dt = new Date(mKey + '-01T00:00:00');
+    const mName = dt.toLocaleString(undefined,{month:'long',year:'numeric'});
+    periodEl.textContent = 'Period: ' + mName;
+    const s = computeMonthSummary(budget, mKey);
+    incomeEl.textContent = 'Income: ' + fmtAmount(s.income);
+    expensesEl.textContent = 'Expenses: ' + fmtAmount(s.expenses);
+    netEl.textContent = 'Net: ' + fmtAmount(s.net);
+    srEl.textContent = s.savingsRate == null ? 'Savings rate: –' : 'Savings rate: ' + (s.savingsRate*100).toFixed(1) + '%';
+
+    budget.categories.slice().sort((a,b)=>a.name.localeCompare(b.name)).forEach(c => {
+      const li = document.createElement('li');
+      const totals = s.catTotals[c.id] || { income:0, expense:0 };
+      const spent = c.type === 'expense' ? totals.expense : totals.income;
+      const targetTxt = c.target ? ' (target ' + fmtAmount(c.target) + ')' : '';
+      li.textContent = c.name + ': ' + fmtAmount(spent) + targetTxt;
+      catEl.appendChild(li);
+    });
+    budget.recurring.slice().sort((a,b)=>(a.day||1)-(b.day||1)).forEach(r => {
+      const li = document.createElement('li');
+      const cat = budget.categories.find(c => c.id === r.categoryId);
+      const cname = cat ? cat.name : '(no category)';
+      li.textContent = (r.type === 'income' ? 'Income' : 'Expense') + ' ' + fmtAmount(r.amount) + ' – ' + r.name + ' – ' + cname + ' – day ' + (r.day||'');
+      recEl.appendChild(li);
+    });
+    const txs = budget.transactions.slice().sort((a,b)=>b.date.localeCompare(a.date)).slice(0,20);
+    txs.forEach(tx => {
+      const li = document.createElement('li');
+      const cat = budget.categories.find(c => c.id === tx.categoryId);
+      const cname = cat ? cat.name : '';
+      li.textContent = tx.date + ' · ' + (tx.type === 'income' ? 'Income' : 'Expense') + ' · ' + cname + ' · ' + fmtAmount(tx.amount) + (tx.description ? ' – ' + tx.description : '');
+      txEl.appendChild(li);
+    });
+  }
+
+  function renderAll() {
+    renderBudgetsSelector();
+    renderUndoRedoButtons();
+    renderQuickAddForm();
+    renderSnapshot();
+    renderTrend();
+    renderNetPill();
+    renderCategories();
+    renderRecurring();
+    renderFilters();
+    renderTransactionsTable();
+    renderBackupArea();
+    renderPrintSummary();
+  }
+
+  function clearQuickAddErrors() {
+    const ids = ['txDate','txType','txCategory','txDescription','txAmount'];
+    ids.forEach(id => {
+      const el = document.getElementById(id+'Error');
+      if (el) el.textContent = '';
+    });
+    document.getElementById('quickAddErrorSummary').style.display = 'none';
+    document.getElementById('quickAddErrorSummary').textContent = '';
+  }
+
+  function validateQuickAdd() {
+    clearQuickAddErrors();
+    const date = document.getElementById('txDate').value;
+    const type = document.querySelector('input[name="txType"]:checked')?.value;
+    const categoryId = document.getElementById('txCategory').value;
+    const amountVal = document.getElementById('txAmount').value;
+    const errors = [];
+    if (!date) {
+      errors.push('Date is required.');
+      document.getElementById('txDateError').textContent = 'Required.';
+    }
+    if (type !== 'income' && type !== 'expense') {
+      errors.push('Type is required.');
+      document.getElementById('txTypeError').textContent = 'Required.';
+    }
+    if (!categoryId) {
+      errors.push('Category is required.');
+      document.getElementById('txCategoryError').textContent = 'Required.';
+    } else if (categoryId === '__new__') {
+      errors.push('Please create the new category first.');
+      document.getElementById('txCategoryError').textContent = 'Create category first.';
+    }
+    const amt = parseAmount(amountVal);
+    if (!amountVal || amt <= 0) {
+      errors.push('Amount must be greater than 0.');
+      document.getElementById('txAmountError').textContent = 'Enter amount > 0.';
+    }
+    if (errors.length) {
+      const summary = document.getElementById('quickAddErrorSummary');
+      summary.style.display = 'block';
+      summary.textContent = errors.join(' ');
+      return null;
+    }
+    return {
+      date,
+      type,
+      categoryId,
+      amount: amt
+    };
+  }
+
+  function addTransactionFromQuickForm(evt) {
+    evt.preventDefault();
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const v = validateQuickAdd();
+    if (!v) return;
+    const desc = document.getElementById('txDescription').value.trim();
+    const tx = {
+      id: uuid(),
+      date: v.date,
+      type: v.type,
+      categoryId: v.categoryId,
+      description: desc,
+      amount: v.amount
+    };
+    budget.transactions.push(tx);
+    const action = {
+      type: 'addTransaction',
+      payload: tx,
+      undoMessage: 'Undo: transaction removed',
+      redoMessage: 'Redo: transaction re-added'
+    };
+    pushUndoAction(budget, action);
+    saveState();
+    document.getElementById('txDescription').value = '';
+    document.getElementById('txAmount').value = '';
+    clearQuickAddErrors();
+    renderAll();
+    announceStatus('Transaction added');
+  }
+
+  function deleteTransaction(id) {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const tx = budget.transactions.find(t => t.id === id);
+    if (!tx) return;
+    if (!window.confirm('Delete this transaction?')) return;
+    budget.transactions = budget.transactions.filter(t => t.id !== id);
+    appState.ui.editingTxId = null;
+    const action = {
+      type: 'deleteTransaction',
+      payload: { id },
+      before: tx,
+      undoMessage: 'Undo: deleted transaction restored',
+      redoMessage: 'Redo: transaction deleted again'
+    };
+    pushUndoAction(budget, action);
+    saveState();
+    renderAll();
+    announceStatus('Transaction deleted');
+  }
+
+  function startEditCategory(id) {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const c = budget.categories.find(c => c.id === id);
+    if (!c) return;
+    document.getElementById('categoryId').value = c.id;
+    document.getElementById('categoryName').value = c.name;
+    document.getElementById('categoryType').value = c.type;
+    document.getElementById('categoryTarget').value = c.target != null ? c.target : '';
+    document.getElementById('categoryFormError').textContent = '';
+  }
+
+  function deleteCategory(id) {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const c = budget.categories.find(c => c.id === id);
+    if (!c) return;
+    if (!window.confirm('Delete category "' + c.name + '"? Transactions will keep their amounts but lose this category.')) return;
+    budget.categories = budget.categories.filter(x => x.id !== id);
+    budget.transactions = budget.transactions.map(tx => {
+      if (tx.categoryId === id) return { ...tx, categoryId: null };
+      return tx;
+    });
+    budget.recurring = budget.recurring.map(r => {
+      if (r.categoryId === id) return { ...r, categoryId: null };
+      return r;
+    });
+    if (document.getElementById('categoryId').value === id) {
+      document.getElementById('categoryId').value = '';
+      document.getElementById('categoryName').value = '';
+      document.getElementById('categoryType').value = 'expense';
+      document.getElementById('categoryTarget').value = '';
+    }
+    const action = {
+      type: 'deleteCategory',
+      payload: { id },
+      before: c,
+      undoMessage: 'Undo: deleted category restored',
+      redoMessage: 'Redo: category deleted again'
+    };
+    pushUndoAction(budget, action);
+    saveState();
+    renderAll();
+    announceStatus('Category deleted');
+  }
+
+  function handleCategoryForm(evt) {
+    evt.preventDefault();
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const id = document.getElementById('categoryId').value;
+    const name = document.getElementById('categoryName').value.trim();
+    const type = document.getElementById('categoryType').value;
+    const targetVal = document.getElementById('categoryTarget').value;
+    const errEl = document.getElementById('categoryFormError');
+    errEl.textContent = '';
+    if (!name) {
+      errEl.textContent = 'Name is required.';
+      return;
+    }
+    if (type !== 'income' && type !== 'expense') {
+      errEl.textContent = 'Type must be income or expense.';
+      return;
+    }
+    const existingSameName = budget.categories.find(c => c.name.toLowerCase() === name.toLowerCase() && c.id !== id);
+    if (existingSameName) {
+      errEl.textContent = 'Category name already exists.';
+      return;
+    }
+    const target = targetVal ? parseAmount(targetVal) : null;
+    if (id) {
+      const c = budget.categories.find(c => c.id === id);
+      if (!c) return;
+      const before = { ...c };
+      c.name = name;
+      c.type = type;
+      c.target = target;
+      const action = {
+        type: 'editCategory',
+        payload: { id },
+        before,
+        after: { ...c },
+        undoMessage: 'Undo: category edit reverted',
+        redoMessage: 'Redo: category edit applied again'
+      };
+      pushUndoAction(budget, action);
+      announceStatus('Category updated');
+    } else {
+      const newCat = { id: uuid(), name, type, target };
+      budget.categories.push(newCat);
+      const action = {
+        type: 'addCategory',
+        payload: newCat,
+        undoMessage: 'Undo: category removed',
+        redoMessage: 'Redo: category re-added'
+      };
+      pushUndoAction(budget, action);
+      announceStatus('Category added');
+    }
+    saveState();
+    document.getElementById('categoryId').value = '';
+    document.getElementById('categoryName').value = '';
+    document.getElementById('categoryType').value = 'expense';
+    document.getElementById('categoryTarget').value = '';
+    renderAll();
+  }
+
+  function cancelCategoryEdit() {
+    document.getElementById('categoryId').value = '';
+    document.getElementById('categoryName').value = '';
+    document.getElementById('categoryType').value = 'expense';
+    document.getElementById('categoryTarget').value = '';
+    document.getElementById('categoryFormError').textContent = '';
+  }
+
+  function startEditRecurring(id) {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const r = budget.recurring.find(r => r.id === id);
+    if (!r) return;
+    document.getElementById('recurringId').value = r.id;
+    document.getElementById('recurringName').value = r.name;
+    document.getElementById('recurringAmount').value = r.amount;
+    document.getElementById('recurringType').value = r.type;
+    document.getElementById('recurringCategory').value = r.categoryId || '';
+    document.getElementById('recurringDay').value = r.day || '';
+    document.getElementById('recurringFormError').textContent = '';
+  }
+
+  function deleteRecurring(id) {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const r = budget.recurring.find(r => r.id === id);
+    if (!r) return;
+    if (!window.confirm('Delete recurring item "' + r.name + '"?')) return;
+    budget.recurring = budget.recurring.filter(x => x.id !== id);
+    if (document.getElementById('recurringId').value === id) {
+      cancelRecurringEdit();
+    }
+    const action = {
+      type: 'deleteRecurring',
+      payload: { id },
+      before: r,
+      undoMessage: 'Undo: recurring item restored',
+      redoMessage: 'Redo: recurring item deleted again'
+    };
+    pushUndoAction(budget, action);
+    saveState();
+    renderAll();
+    announceStatus('Recurring item deleted');
+  }
+
+  function handleRecurringForm(evt) {
+    evt.preventDefault();
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const id = document.getElementById('recurringId').value;
+    const name = document.getElementById('recurringName').value.trim();
+    const amountVal = document.getElementById('recurringAmount').value;
+    const type = document.getElementById('recurringType').value;
+    const catId = document.getElementById('recurringCategory').value || null;
+    const dayVal = document.getElementById('recurringDay').value;
+    const errEl = document.getElementById('recurringFormError');
+    errEl.textContent = '';
+    if (!name) {
+      errEl.textContent = 'Name is required.';
+      return;
+    }
+    const amt = parseAmount(amountVal);
+    if (!amountVal || amt <= 0) {
+      errEl.textContent = 'Amount must be greater than 0.';
+      return;
+    }
+    if (type !== 'income' && type !== 'expense') {
+      errEl.textContent = 'Type must be income or expense.';
+      return;
+    }
+    const day = dayVal ? parseInt(dayVal,10) : null;
+    if (day != null && (isNaN(day) || day < 1 || day > 31)) {
+      errEl.textContent = 'Day must be between 1 and 31.';
+      return;
+    }
+    if (id) {
+      const r = budget.recurring.find(r => r.id === id);
+      if (!r) return;
+      const before = { ...r };
+      r.name = name;
+      r.amount = amt;
+      r.type = type;
+      r.categoryId = catId;
+      r.day = day;
+      const action = {
+        type: 'editRecurring',
+        payload: { id },
+        before,
+        after: { ...r },
+        undoMessage: 'Undo: recurring edit reverted',
+        redoMessage: 'Redo: recurring edit applied again'
+      };
+      pushUndoAction(budget, action);
+      announceStatus('Recurring item updated');
+    } else {
+      const newR = { id: uuid(), name, amount: amt, type, categoryId: catId, day };
+      budget.recurring.push(newR);
+      const action = {
+        type: 'addRecurring',
+        payload: newR,
+        undoMessage: 'Undo: recurring item removed',
+        redoMessage: 'Redo: recurring item re-added'
+      };
+      pushUndoAction(budget, action);
+      announceStatus('Recurring item added');
+    }
+    saveState();
+    cancelRecurringEdit();
+    renderAll();
+  }
+
+  function cancelRecurringEdit() {
+    document.getElementById('recurringId').value = '';
+    document.getElementById('recurringName').value = '';
+    document.getElementById('recurringAmount').value = '';
+    document.getElementById('recurringType').value = 'income';
+    document.getElementById('recurringCategory').value = '';
+    document.getElementById('recurringDay').value = '';
+    document.getElementById('recurringFormError').textContent = '';
+  }
+
+  function generateRecurringTransactions() {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    const month = getCurrentMonthKey();
+    budget.recurringGeneratedFor = budget.recurringGeneratedFor || {};
+    if (budget.recurringGeneratedFor[month]) {
+      if (!window.confirm('Recurring transactions have already been generated for this month. Generate again (may duplicate)?')) {
+        return;
+      }
+    }
+    const generated = [];
+    const dateBase = month + '-';
+    budget.recurring.forEach(r => {
+      const day = r.day || 1;
+      const dStr = dateBase + String(day).padStart(2,'0');
+      const exists = budget.transactions.some(tx =>
+        tx.date === dStr &&
+        tx.type === r.type &&
+        tx.amount === r.amount &&
+        tx.categoryId === r.categoryId &&
+        tx.description === r.name
+      );
+      if (!exists) {
+        const tx = {
+          id: uuid(),
+          date: dStr,
+          type: r.type,
+          categoryId: r.categoryId,
+          description: r.name,
+          amount: r.amount
+        };
+        budget.transactions.push(tx);
+        generated.push(tx);
+      }
+    });
+    budget.recurringGeneratedFor[month] = true;
+    const action = {
+      type: 'generateRecurring',
+      payload: { monthKey: month },
+      generatedTransactions: generated.map(t => ({ ...t })),
+      generatedIds: generated.map(t => t.id),
+      monthKey: month,
+      undoMessage: 'Undo: generated recurring transactions removed',
+      redoMessage: 'Redo: recurring transactions generated again'
+    };
+    pushUndoAction(budget, action);
+    saveState();
+    renderAll();
+    announceStatus(generated.length ? 'Recurring transactions generated' : 'No new recurring transactions to generate');
+  }
+
+  function handleBudgetSelectChange(evt) {
+    setActiveBudget(evt.target.value);
+  }
+
+  function openBudgetDialog(mode) {
+    appState.ui.budgetDialogMode = mode;
+    const dialog = document.getElementById('budgetDialog');
+    const label = document.getElementById('budgetDialogLabel');
+    const input = document.getElementById('budgetDialogInput');
+    const err = document.getElementById('budgetDialogError');
+    err.textContent = '';
+    if (mode === 'new') {
+      label.textContent = 'New budget name';
+      input.value = '';
+    } else if (mode === 'rename') {
+      const budget = getActiveBudget();
+      label.textContent = 'Rename budget';
+      input.value = budget ? budget.name : '';
+    } else {
+      dialog.style.display = 'none';
+      return;
+    }
+    dialog.style.display = 'block';
+    input.focus();
+    input.select();
+  }
+
+  function closeBudgetDialog() {
+    appState.ui.budgetDialogMode = null;
+    document.getElementById('budgetDialog').style.display = 'none';
+    document.getElementById('budgetDialogError').textContent = '';
+  }
+
+  function confirmBudgetDialog() {
+    const mode = appState.ui.budgetDialogMode;
+    if (!mode) return;
+    const input = document.getElementById('budgetDialogInput');
+    const name = input.value.trim();
+    const err = document.getElementById('budgetDialogError');
+    err.textContent = '';
+    if (!name) {
+      err.textContent = 'Name is required.';
+      return;
+    }
+    const exists = appState.budgets.some(b => b.name.toLowerCase() === name.toLowerCase() && (mode === 'new' || b.id !== appState.activeBudgetId));
+    if (exists) {
+      err.textContent = 'Budget name must be unique.';
+      return;
+    }
+    if (mode === 'new') {
+      const b = createEmptyBudget(name);
+      appState.budgets.push(b);
+      appState.activeBudgetId = b.id;
+      saveState();
+      renderAll();
+      announceStatus('New budget created');
+    } else if (mode === 'rename') {
+      const budget = getActiveBudget();
+      if (!budget) return;
+      budget.name = name;
+      saveState();
+      renderBudgetsSelector();
+      announceStatus('Budget renamed');
+    }
+    closeBudgetDialog();
+  }
+
+  function deleteCurrentBudget() {
+    const budget = getActiveBudget();
+    if (!budget) return;
+    if (!window.confirm('Delete budget "' + budget.name + '" and all its data?')) return;
+    const idx = appState.budgets.findIndex(b => b.id === budget.id);
+    if (idx !== -1) appState.budgets.splice(idx,1);
+    if (!appState.budgets.length) {
+      const b = createEmptyBudget('My First Budget');
+      appState.budgets.push(b);
+      appState.activeBudgetId = b.id;
+    } else {
+      appState.activeBudgetId = appState.budgets[Math.max(0,idx-1)].id;
+    }
+    saveState();
+    renderAll();
+    announceStatus('Budget deleted');
+  }
+
+  function handleBackup() {
+    const data = {
+      budgets: appState.budgets,
+      activeBudgetId: appState.activeBudgetId
+    };
+    const area = document.getElementById('backupArea');
+    area.readOnly = false;
+    area.value = JSON.stringify(data,null,2);
+    area.readOnly = false;
+    document.getElementById('backupError').textContent = '';
+    announceStatus('Backup JSON ready to copy');
+  }
+
+  function handleRestore() {
+    const area = document.getElementById('backupArea');
+    const text = area.value.trim();
+    const errEl = document.getElementById('backupError');
+    errEl.textContent = '';
+    if (!text) {
+      errEl.textContent = 'Paste backup JSON first.';
+      return;
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      errEl.textContent = 'Invalid JSON.';
+      return;
+    }
+    if (!parsed || !Array.isArray(parsed.budgets) || !parsed.budgets.length) {
+      errEl.textContent = 'Backup JSON must contain non-empty budgets array.';
+      return;
+    }
+    if (!window.confirm('Replace all current budgets with this backup? This cannot be undone.')) return;
+    appState.budgets = parsed.budgets;
+    appState.activeBudgetId = parsed.activeBudgetId || parsed.budgets.id;
+    saveState();
+    renderAll();
+    announceStatus('Backup restored');
+  }
+
+  function toggleThemeMode() {
+    const mode = appState.themeMode;
+    if (mode === 'auto') appState.themeMode = 'light';
+    else if (mode === 'light') appState.themeMode = 'dark';
+    else appState.themeMode = 'auto';
+    renderThemeMode();
+    saveThemeMode();
+  }
+
+  function enterPrintMode() {
+    document.documentElement.setAttribute('data-print-mode','on');
+    renderPrintSummary();
+  }
+
+  function exitPrintMode() {
+    document.documentElement.setAttribute('data-print-mode','off');
+  }
+
+  function announceStatus(msg) {
+    const el = document.getElementById('statusRegion');
+    el.textContent = msg;
+  }
+
+  function handleKeyboardShortcuts(e) {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const mod = isMac ? e.metaKey : e.ctrlKey;
+    if (!mod) return;
+    const key = e.key.toLowerCase();
+    if (key === 'n') {
+      e.preventDefault();
+      document.getElementById('txDate').focus();
+    } else if (key === 'z') {
+      e.preventDefault();
+      performUndo();
+    } else if (key === 'y') {
+      e.preventDefault();
+      performRedo();
+    } else if (key === 'f') {
+      e.preventDefault();
+      document.getElementById('filterSearch').focus();
+      document.getElementById('filterSearch').select();
+    }
+  }
+
+  function handleFilterChange() {
+    appState.filters.search = document.getElementById('filterSearch').value.trim();
+    appState.filters.categoryId = document.getElementById('filterCategory').value;
+    appState.filters.type = document.getElementById('filterType').value;
+    appState.filters.from = document.getElementById('filterFrom').value;
+    appState.filters.to = document.getElementById('filterTo').value;
+    renderTransactionsTable();
+  }
+
+  function handleSortClick(field) {
+    if (appState.sort.field === field) {
+      appState.sort.dir = appState.sort.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      appState.sort.field = field;
+      appState.sort.dir = field === 'date' ? 'desc' : 'asc';
+    }
+    renderFilters();
+    renderTransactionsTable();
+  }
+
+  function handleTxTypeChange() {
+    renderQuickAddForm();
+  }
+
+  function handleQuickCategoryChange() {
+    const sel = document.getElementById('txCategory');
+    if (sel.value === '__new__') {
+      openBudgetDialog(null);
+      document.getElementById('categoryName').focus();
+    }
+  }
+
+  function initEvents() {
+    document.getElementById('budgetSelect').addEventListener('change', handleBudgetSelectChange);
+    document.getElementById('newBudgetBtn').addEventListener('click', () => openBudgetDialog('new'));
+    document.getElementById('renameBudgetBtn').addEventListener('click', () => openBudgetDialog('rename'));
+    document.getElementById('deleteBudgetBtn').addEventListener('click', deleteCurrentBudget);
+    document.getElementById('budgetDialogConfirm').addEventListener('click', confirmBudgetDialog);
+    document.getElementById('budgetDialogCancel').addEventListener('click', closeBudgetDialog);
+    document.getElementById('quickAddForm').addEventListener('submit', addTransactionFromQuickForm);
+    document.querySelectorAll('input[name="txType"]').forEach(r => {
+      r.addEventListener('change', handleTxTypeChange);
+    });
+    document.getElementById('txCategory').addEventListener('change', handleQuickCategoryChange);
+    document.getElementById('categoryForm').addEventListener('submit', handleCategoryForm);
+    document.getElementById('categoryCancelBtn').addEventListener('click', cancelCategoryEdit);
+    document.getElementById('recurringForm').addEventListener('submit', handleRecurringForm);
+    document.getElementById('recurringCancelBtn').addEventListener('click', cancelRecurringEdit);
+    document.getElementById('generateRecurringBtn').addEventListener('click', generateRecurringTransactions);
+    document.getElementById('filterSearch').addEventListener('input', handleFilterChange);
+    document.getElementById('filterCategory').addEventListener('change', handleFilterChange);
+    document.getElementById('filterType').addEventListener('change', handleFilterChange);
+    document.getElementById('filterFrom').addEventListener('change', handleFilterChange);
+    document.getElementById('filterTo').addEventListener('change', handleFilterChange);
+    document.querySelector('th[data-sort="date"]').addEventListener('click', () => handleSortClick('date'));
+    document.querySelector('th[data-sort="amount"]').addEventListener('click', () => handleSortClick('amount'));
+    document.getElementById('backupBtn').addEventListener('click', handleBackup);
+    document.getElementById('restoreBtn').addEventListener('click', handleRestore);
+    document.getElementById('themeToggleBtn').addEventListener('click', toggleThemeMode);
+    document.getElementById('printModeBtn').addEventListener('click', enterPrintMode);
+    document.getElementById('exitPrintModeBtn').addEventListener('click', exitPrintMode);
+    document.getElementById('undoBtn').addEventListener('click', performUndo);
+    document.getElementById('redoBtn').addEventListener('click', performRedo);
+    window.addEventListener('keydown', handleKeyboardShortcuts);
+  }
+
+  function initTheme() {
+    const mode = appState.themeMode;
+    if (mode === 'auto') {
+      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+    } else {
+      document.documentElement.setAttribute('data-theme', mode);
+    }
+    renderThemeMode();
+  }
+
+  function initStorageWarning() {
+    if (!storageAvailable) {
+      const warn = document.getElementById('storageWarning');
+      warn.style.display = 'block';
+    }
+  }
+
+  function init() {
+    loadState();
+    initTheme();
+    initStorageWarning();
+    initEvents();
+    renderAll();
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body>
+</html>

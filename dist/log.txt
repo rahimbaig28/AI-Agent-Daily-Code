@@ -600,3 +600,6 @@
 [2026-01-12] Proceeding with run #1 of target 5.
 [2026-01-12T01:43:42.868117Z] Prompt OK  seed=59780  theme=small business utilities  extras=dark/light auto theme, share via URL hash, undo/redo  title='Client Deal Pipeline CLI'  slug=client-deal-pipeline-cli  kind=py
 [2026-01-12T01:43:42.868117Z] Build OK  file=client-deal-pipeline-cli.py  kind=py  required_kind=py  
+[2026-01-12] Proceeding with run #2 of target 5.
+[2026-01-12T04:48:43.881334Z] Prompt OK  seed=85449  theme=finance & budgeting  extras=dark/light auto theme, undo/redo, print-friendly view  title='Pocket Ledger: Inline Budget Snapshot'  slug=pocket-ledger-inline-budget-snapshot  kind=html
+[2026-01-12T04:48:43.881334Z] Build OK  file=pocket-ledger-inline-budget-snapshot.html  kind=html  required_kind=html  
