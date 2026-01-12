@@ -17,3 +17,5 @@ Accessibility Grid Tester
 - Visual feedback: Subtle animations (CSS transitions), high-contrast mode toggle, ARIA labels/roles on all interactive elements.
 - Reset button to default layout; info modal (ARIA dialog) explaining WCAG rules tested.
 - Performance: Under 800 LOC; throttle resize/drag events to 60fps.
+
+(Generated: 2026-01-12T08:30:09.813373Z, seed=63633, theme=accessibility helpers, extras=export/import JSON, drag-and-drop, responsive grid, kind=html)
