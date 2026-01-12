@@ -12,3 +12,5 @@ Micro Puzzle Grid
 - Accessibility: ARIA labels on tiles/grid, live move count region, high-contrast mode support, skip-to-content link.
 - Performance: 60fps animations via requestAnimationFrame; under 800 LOC total.
 - Test features: Load→shuffle→solve→verify win/undo/redo/theme/best score persists→resize/keyboard only.
+
+(Generated: 2026-01-12T13:38:49.787985Z, seed=84063, theme=micro games, extras=undo/redo, dark/light auto theme, responsive grid, kind=html)

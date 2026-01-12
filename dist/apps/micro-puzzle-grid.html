@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-12T13:39:36.682408Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Micro Puzzle Grid</title>
+    <style>
+        :root {
+            --tile-size: 80px;
+            --grid-size: 320px;
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #e9ecef;
+            --tile-bg: #ffffff;
+            --tile-text: #333333;
+            --accent: #007bff;
+            --shadow: rgba(0,0,0,0.1);
+            --border: #dee2e6;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #212529;
+                --bg-secondary: #343a40;
+                --tile-bg: #495057;
+                --tile-text: #ffffff;
+                --accent: #4dabf7;
+                --shadow: rgba(0,0,0,0.3);
+                --border: #495057;
+            }
+        }
+        @media (orientation: landscape) {
+            :root {
+                --cols: 6;
+                --rows: 3;
+                --grid-size: 480px;
+                --tile-size: 80px;
+            }
+        }
+        @media (min-width: 600px) {
+            :root {
+                --grid-size: 600px;
+                --tile-size: 150px;
+            }
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--tile-text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .skip-link {
+            position: absolute; left: -9999px; top: 0;
+            background: var(--accent); color: white; padding: 0.5rem;
+            text-decoration: none;
+        }
+        .skip-link:focus { left: 0; z-index: 1000; }
+        header {
+            position: sticky; top: 0; background: var(--bg-secondary);
+            backdrop-filter: blur(10px); border-bottom: 1px solid var(--border);
+            padding: 1rem; display: flex; gap: 1rem; align-items: center;
+            flex-wrap: wrap; z-index: 100;
+        }
+        .controls { display: flex; gap: 0.5rem; align-items: center; }
+        button {
+            background: var(--tile-bg); color: var(--tile-text);
+            border: 1px solid var(--border); border-radius: 6px;
+            padding: 0.75rem 1rem; cursor: pointer; font-size: 1rem;
+            transition: all 0.2s ease; user-select: none;
+        }
+        button:hover { background: var(--accent); color: white; transform: translateY(-1px); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .stats { margin-left: auto; display: flex; gap: 1rem; font-weight: 500; }
+        main { flex: 1; display: flex; flex-direction: column; align-items: center;
+               justify-content: center; padding: 2rem 1rem; }
+        .empty-state {
+            text-align: center; max-width: 400px; opacity: 0.7;
+        }
+        .empty-state svg { width: 120px; height: 120px; margin: 0 auto 1rem; opacity: 0.5; }
+        #game {
+            display: grid; gap: 4px; width: var(--grid-size);
+            grid-template-columns: repeat(4, var(--tile-size));
+            grid-template-rows: repeat(4, var(--tile-size));
+            background: var(--bg-secondary); padding: 4px; border-radius: 12px;
+            box-shadow: 0 20px 40px var(--shadow); position: relative;
+        }
+        @media (orientation: landscape) {
+            #game { grid-template-columns: repeat(6, var(--tile-size));
+                    grid-template-rows: repeat(3, var(--tile-size)); }
+        }
+        .tile {
+            background: var(--tile-bg); border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; font-weight: bold; cursor: pointer;
+            user-select: none; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 12px var(--shadow); position: relative;
+            touch-action: manipulation;
+        }
+        .tile:hover { transform: scale(1.05); box-shadow: 0 8px 24px var(--shadow); }
+        .tile.moving { transform: scale(0.95) !important; }
+        .tile:focus { outline: 3px solid var(--accent); outline-offset: -3px; }
+        .empty { background: transparent !important; box-shadow: none !important; }
+        .win-modal {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; z-index: 1000; opacity: 0; visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .win-modal.show { opacity: 1; visibility: visible; }
+        .confetti {
+            position: absolute; width: 10px; height: 10px; background: var(--accent);
+            animation: confetti-fall 3s linear infinite;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .modal-content {
+            background: var(--tile-bg); padding: 3rem 2rem; border-radius: 20px;
+            text-align: center; box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            max-width: 90vw; transform: scale(0.8); transition: transform 0.3s ease;
+        }
+        .win-modal.show .modal-content { transform: scale(1); }
+        .modal-content h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .score-display { font-size: 1.5rem; font-weight: bold; margin: 1rem 0; }
+        @media (prefers-contrast: high) {
+            button, .tile { border-width: 2px; }
+            #game { border: 2px solid var(--tile-text); }
+        }
+        .live-region { position: absolute; left: -9999px; }
+        @media (max-width: 480px) {
+            header { padding: 0.75rem; flex-direction: column; gap: 0.75rem; }
+            .stats { margin-left: 0; order: -1; width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main" class="skip-link">Skip to game</a>
+    
+    <header role="banner">
+        <div class="controls" role="group">
+            <button id="theme-toggle" aria-label="Toggle theme">🌙</button>
+            <button id="undo" disabled>↶</button>
+            <button id="redo" disabled>↷</button>
+            <button id="new-game">New Game</button>
+        </div>
+        <div class="stats" role="status" aria-live="polite">
+            <span id="moves">Moves: 0</span>
+            <span id="best">Best: --</span>
+        </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+        <div id="empty-state" class="empty-state" role="img" aria-label="Puzzle grid ready - click New Game to start">
+            <svg viewBox="0 0 100 100" aria-hidden="true">
+                <rect x="10" y="10" width="80" height="80" rx="8" fill="currentColor" opacity="0.2"/>
+                <circle cx="50" cy="50" r="6" fill="currentColor"/>
+                <rect x="20" y="20" width="12" height="12" rx="2" fill="currentColor" opacity="0.6"/>
+                <rect x="68" y="20" width="12" height="12" rx="2" fill="currentColor" opacity="0.6"/>
+                <rect x="20" y="68" width="12" height="12" rx="2" fill="currentColor" opacity="0.6"/>
+                <rect x="68" y="68" width="12" height="12" rx="2" fill="currentColor" opacity="0.6"/>
+            </svg>
+            <p><strong>Ready to slide!</strong></p>
+            <p>Tap tiles next to the empty space or use arrow keys/WASD.</p>
+        </div>
+        
+        <div id="game" role="grid" aria-label="15 Puzzle grid" hidden>
+            <!-- Tiles generated by JS -->
+        </div>
+    </main>
+
+    <div id="win-modal" class="win-modal" role="dialog" aria-labelledby="win-title" aria-hidden="true">
+        <div class="modal-content">
+            <h2 id="win-title">🎉 Puzzle Solved!</h2>
+            <div class="score-display" id="win-score"></div>
+            <button id="continue">Continue Playing</button>
+        </div>
+    </div>
+
+    <div id="live-region" class="live-region" aria-live="polite" aria-atomic="true"></div>
+
+    <script>
+        class PuzzleGame {
+            constructor() {
+                this.cols = 4; this.rows = 4; this.size = 15;
+                this.tiles = []; this.board = [];
+                this.empty = { x: 3, y: 3 };
+                this.moves = 0; this.history = []; this.future = [];
+                this.isSolved = false; this.isAnimating = false;
+                this.init();
+            }
+
+            init() {
+                this.loadState();
+                this.attachEvents();
+                this.updateTheme();
+                this.updateStats();
+                if (!this.board.length) this.showEmptyState();
+            }
+
+            attachEvents() {
+                document.getElementById('new-game').onclick = () => this.newGame();
+                document.getElementById('undo').onclick = () => this.undo();
+                document.getElementById('redo').onclick = () => this.redo();
+                document.getElementById('theme-toggle').onclick = () => this.toggleTheme();
+                document.getElementById('continue').onclick = () => this.hideWinModal();
+                
+                document.addEventListener('keydown', e => this.handleKey(e));
+                window.addEventListener('resize', () => this.updateLayout());
+                document.getElementById('main').addEventListener('focus', () => this.focusGame());
+            }
+
+            async newGame() {
+                this.isSolved = false;
+                this.hideEmptyState();
+                this.board = this.generateSolvable();
+                this.empty = this.findEmpty();
+                this.moves = 0; this.history = []; this.future = [];
+                await this.render();
+                this.saveState();
+                this.announce('New game started');
+                this.updateControls();
+            }
+
+            generateSolvable() {
+                let board = Array.from({length: this.rows}, (_, y) => 
+                    Array.from({length: this.cols}, (_, x) => x + y * this.cols + 1)
+                );
+                board[this.rows-1][this.cols-1] = 0;
+                
+                // Shuffle with even parity
+                for (let i = 0; i < 1000; i++) {
+                    let moves = this.getValidMoves();
+                    let move = moves[Math.floor(Math.random() * moves.length)];
+                    this.moveTile(move.x, move.y, false);
+                }
+                return board.flat();
+            }
+
+            getValidMoves() {
+                let moves = [];
+                for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+                    let nx = this.empty.x + dx, ny = this.empty.y + dy;
+                    if (nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows && (dx !== 0) !== (dy !== 0))
+                        moves.push({x: nx, y: ny});
+                }
+                return moves;
+            }
+
+            async moveTile(tx, ty, saveHistory = true) {
+                if (this.isAnimating) return;
+                let idx = ty * this.cols + tx;
+                if (Math.abs(tx - this.empty.x) + Math.abs(ty - this.empty.y) !== 1) return;
+
+                this.isAnimating = true;
+                if (saveHistory) {
+                    this.history.push({ board: [...this.board], empty: {...this.empty}, moves: this.moves });
+                    if (this.history.length > 50) this.history.shift();
+                    this.future = [];
+                }
+
+                // Animate swap
+                let tileEl = document.querySelector(`[data-idx="${idx}"]`);
+                let emptyIdx = this.empty.y * this.cols + this.empty.x;
+                let emptyEl = document.querySelector(`[data-idx="${emptyIdx}"]`);
+                
+                tileEl.classList.add('moving');
+                await this.animateSwap(tileEl, emptyEl);
+                tileEl.classList.remove('moving');
+
+                // Swap in model
+                let temp = this.board[idx]; this.board[idx] = 0; this.board[emptyIdx] = temp;
+                let tex = this.empty.x; let tey = this.empty.y;
+                this.empty.x = tx; this.empty.y = ty;
+
+                this.moves++;
+                await this.render();
+                this.saveState();
+                this.checkWin();
+                this.updateStats();
+                this.updateControls();
+                this.announce(`Moved tile ${temp}`);
+                this.isAnimating = false;
+            }
+
+            async animateSwap(tile, empty) {
+                return new Promise(resolve => {
+                    requestAnimationFrame(() => {
+                        tile.style.transform = 'translate(0, 0)';
+                        empty.style.transform = 'translate(0, 0)';
+                        setTimeout(resolve, 300);
+                    });
+                });
+            }
+
+            async render() {
+                const gameEl = document.getElementById('game');
+                gameEl.innerHTML = '';
+                
+                for (let i = 0; i < this.size + 1; i++) {
+                    const tile = document.createElement('div');
+                    tile.className = 'tile';
+                    tile.dataset.idx = i;
+                    tile.tabIndex = 0;
+                    tile.setAttribute('role', 'gridcell');
+                    tile.setAttribute('aria-label', `Tile ${this.board[i] || 'empty'}`);
+                    
+                    if (this.board[i] === 0) {
+                        tile.classList.add('empty');
+                        tile.setAttribute('aria-hidden', 'true');
+                    } else {
+                        tile.textContent = this.board[i];
+                        tile.onclick = () => this.moveTile(
+                            i % this.cols, Math.floor(i / this.cols)
+                        );
+                        tile.onkeydown = e => this.handleTileKey(e, i);
+                    }
+                    
+                    gameEl.appendChild(tile);
+                }
+            }
+
+            handleKey(e) {
+                if (e.target.closest('button')) return;
+                let dx = 0, dy = 0;
+                if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'h') dx = 1;
+                if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'l') dx = -1;
+                if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'k') dy = 1;
+                if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'j') dy = -1;
+                
+                if (dx || dy) {
+                    e.preventDefault();
+                    let nx = this.empty.x + dx, ny = this.empty.y + dy;
+                    if (nx >= 0 && nx < this.cols && ny >= 0 && ny < this.rows)
+                        this.moveTile(nx, ny);
+                } else if (e.ctrlKey && e.key === 'z') {
+                    e.preventDefault(); this.undo();
+                } else if (e.ctrlKey && e.key === 'y') {
+                    e.preventDefault(); this.redo();
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault(); this.newGame();
+                }
+            }
+
+            handleTileKey(e, idx) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.moveTile(idx % this.cols, Math.floor(idx / this.cols));
+                }
+            }
+
+            undo() {
+                if (this.history.length) {
+                    this.future.push({ board: [...this.board], empty: {...this.empty}, moves: this.moves });
+                    let state = this.history.pop();
+                    this.board = state.board; this.empty = state.empty; this.moves = state.moves;
+                    this.render(); this.updateStats(); this.updateControls();
+                    this.announce('Move undone');
+                }
+            }
+
+            redo() {
+                if (this.future.length) {
+                    this.history.push({ board: [...this.board], empty: {...this.empty}, moves: this.moves });
+                    let state = this.future.pop();
+                    this.board = state.board; this.empty = state.empty; this.moves = state.moves;
+                    this.render(); this.updateStats(); this.updateControls();
+                    this.announce('Move redone');
+                }
+            }
+
+            checkWin() {
+                if (this.board.every((val, i) => val === (i < this.size ? i + 1 : 0))) {
+                    this.isSolved = true;
+                    this.showWinModal();
+                    this.updateBestScore();
+                }
+            }
+
+            updateBestScore() {
+                const key = `best_${this.isDark ? 'dark' : 'light'}`;
+                const best = localStorage.getItem(key) || Infinity;
+                if (this.moves < best) {
+                    localStorage.setItem(key, this.moves);
+                }
+            }
+
+            updateStats() {
+                document.getElementById('moves').textContent = `Moves: ${this.moves}`;
+                const key = `best_${this.isDark ? 'dark' : 'light'}`;
+                const best = localStorage.getItem(key);
+                document.getElementById('best').textContent = `Best: ${best || '--'}`;
+            }
+
+            updateControls() {
+                document.getElementById('undo').disabled = !this.history.length;
+                document.getElementById('redo').disabled = !this.future.length;
+            }
+
+            showWinModal() {
+                document.getElementById('win-modal').classList.add('show');
+                document.getElementById('win-score').textContent = `Solved in ${this.moves} moves!`;
+                this.createConfetti();
+                document.getElementById('live-region').textContent = `Puzzle solved in ${this.moves} moves`;
+            }
+
+            hideWinModal() {
+                document.getElementById('win-modal').classList.remove('show');
+            }
+
+            createConfetti() {
+                for (let i = 0; i < 50; i++) {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.background = `hsl(${Math.random()*360}, 70%, 60%)`;
+                    confetti.style.animationDelay = Math.random() * 0.5 + 's';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.getElementById('win-modal').appendChild(confetti);
+                    setTimeout(() => confetti.remove(), 5000);
+                }
+            }
+
+            toggleTheme() {
+                document.body.classList.toggle('dark-theme');
+                this.saveState();
+                this.updateTheme();
+            }
+
+            get isDark() {
+                return document.body.classList.contains('dark-theme') || 
+                       (!document.body.classList.contains('light-theme') && 
+                        window.matchMedia('(prefers-color-scheme: dark)').matches);
+            }
+
+            updateTheme() {
+                const isDark = this.isDark;
+                document.body.classList.toggle('dark-theme', isDark);
+                document.body.classList.toggle('light-theme', !isDark);
+                document.getElementById('theme-toggle').textContent = isDark ? '☀️' : '🌙';
+            }
+
+            saveState() {
+                const state = {
+                    board: this.board,
+                    empty: this.empty,
+                    moves: this.moves,
+                    history: this.history.slice(-10), // Limit storage
+                    theme: document.body.classList.contains('dark-theme') ? 'dark' : 'light'
+                };
+                localStorage.setItem('puzzleState', JSON.stringify(state));
+            }
+
+            loadState() {
+                try {
+                    const state = JSON.parse(localStorage.getItem('puzzleState'));
+                    if (state && state.board && state.board.length === this.size + 1) {
+                        this.board = state.board;
+                        this.empty = state.empty;
+                        this.moves = state.moves;
+                        this.history = state.history || [];
+                        if (state.theme === 'dark') document.body.classList.add('dark-theme');
+                        this.render();
+                        this.updateStats();
+                        this.updateControls();
+                        this.hideEmptyState();
+                    }
+                } catch (e) {}
+            }
+
+            showEmptyState() {
+                document.getElementById('empty-state').removeAttribute('hidden');
+                document.getElementById('game').setAttribute('hidden', 'true');
+            }
+
+            hideEmptyState() {
+                document.getElementById('empty-state').setAttribute('hidden', 'true');
+                document.getElementById('game').removeAttribute('hidden');
+            }
+
+            findEmpty() {
+                const idx = this.board.indexOf(0);
+                return { x: idx % this.cols, y: Math.floor(idx / this.cols) };
+            }
+
+            updateLayout() {
+                const isLandscape = window.innerWidth > window.innerHeight;
+                this.cols = isLandscape ? 6 : 4;
+                this.rows = isLandscape ? 3 : 4;
+                this.size = this.cols * this.rows - 1;
+                if (this.board.length) this.render();
+            }
+
+            focusGame() {
+                document.querySelector('.tile:not(.empty)')?.focus();
+            }
+
+            announce(message) {
+                const region = document.getElementById('live-region');
+                region.textContent = message;
+                setTimeout(() => region.textContent = '', 2000);
+            }
+        }
+
+        // Auto-detect orientation changes
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => game?.updateLayout(), 250);
+        });
+
+        // Initialize game
+        const game = new PuzzleGame();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+            game.updateTheme();
+        });
+    </script>
+</body>
+</html>
