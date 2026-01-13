@@ -16,3 +16,5 @@ Literature Review Tracker
 * Example data structure: [{"id":0,"title":"Paper Title","authors":"A B","year":2023,"notes":"Summary","status":"todo","added":"2026-01-13"}]
 * Error handling: validate year (int 1900-2030), backup JSON before changes.
 * Testable: start empty, add 3 papers, list, undo last, export, quit/restart shows data.
+
+(Generated: 2026-01-13T01:26:14.086171Z, seed=63430, theme=research utilities, extras=dark/light auto theme, export/import JSON, undo/redo, kind=py)
