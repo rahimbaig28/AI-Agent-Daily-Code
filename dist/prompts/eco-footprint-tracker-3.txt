@@ -13,3 +13,5 @@ Eco Footprint Tracker
 - Accessibility: ARIA labels on inputs/chart, high contrast text, screen-reader friendly (role="slider" on inputs, live regions for totals).
 - Service Worker simulation: Add <script> for basic offline caching of app shell via Cache API.
 - Test features: Add 7 sample days on first load, verify chart renders, hash shares correctly, persists after refresh/offline.
+
+(Generated: 2026-01-14T22:37:57.232773Z, seed=53853, theme=environment & sustainability, extras=keyboard-first UX, share via URL hash, offline-first with localStorage, kind=html)
