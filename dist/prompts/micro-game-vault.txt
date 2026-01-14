@@ -16,3 +16,5 @@ Micro Game Vault
 - Responsive: Fullscreen mobile support; touch/swipe for games; min 320px width.
 - Performance: <60KB total; 60fps animations via requestAnimationFrame; no external deps.
 - Test features: Load→play 3 games→set high score→toggle theme→reload verifies persistence; Tab through all elements.
+
+(Generated: 2026-01-14T02:32:32.852651Z, seed=63671, theme=micro games, extras=offline-first with localStorage, ARIA-compliant components, dark/light auto theme, kind=html)
