@@ -15,3 +15,5 @@ Study Session Tracker
 • Keyboard shortcuts: Q to quit any menu, R to reset current input, S to save and exit
 • Minimal dependencies: works with Python 3.7+ and requires only standard library modules
 • Estimated code size: 800–950 lines including comments and data validation
+
+(Generated: 2026-01-15T14:40:47.283672Z, seed=77101, theme=learning & study tools, extras=dark/light auto theme, print-friendly view, keyboard-first UX, kind=py)
