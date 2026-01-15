@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-15T16:53:34.662747Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness Habit Grid</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #2c3e50;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .chart-container {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #0b7dda;
+            transform: translateY(-2px);
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .main {
+                grid-template-columns: 200px 1fr;
+            }
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #2c3e50;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .palette {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .palette-item {
+            padding: 10px;
+            background: #f0f4f8;
+            border-radius: 6px;
+            cursor: grab;
+            font-size: 13px;
+            transition: all 0.2s;
+            user-select: none;
+            border-left: 3px solid #4CAF50;
+        }
+
+        .palette-item:hover {
+            background: #e0e8f0;
+            transform: translateX(4px);
+        }
+
+        .palette-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .grid-wrapper {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .habit-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            min-height: 300px;
+        }
+
+        @media (min-width: 768px) {
+            .habit-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .habit-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .habit-tile {
+            aspect-ratio: 1;
+            background: #f0f4f8;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            padding: 12px;
+            cursor: move;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            min-height: 120px;
+        }
+
+        .habit-tile.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border-color: #2e7d32;
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        .habit-tile.active::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 8px;
+            box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .habit-tile.inactive {
+            opacity: 0.6;
+            background: #e8eef5;
+        }
+
+        .habit-tile.drag-over {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+            transform: scale(1.05);
+        }
+
+        .tile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .tile-emoji {
+            font-size: 20px;
+        }
+
+        .tile-close {
+            background: rgba(255, 255, 255, 0.3);
+            border: none;
+            color: inherit;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile-close:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .tile-name {
+            font-size: 12px;
+            word-break: break-word;
+            flex: 1;
+        }
+
+        .tile-progress {
+            margin-top: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 10px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
+        .tile-streak {
+            font-size: 11px;
+            margin-top: 4px;
+            opacity: 0.9;
+        }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal h2 {
+            margin-bottom: 16px;
+            color: #2c3e50;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .emoji-picker {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .emoji-btn {
+            font-size: 24px;
+            background: #f0f4f8;
+            border: 2px solid transparent;
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .emoji-btn:hover,
+        .emoji-btn.selected {
+            border-color: #4CAF50;
+            background: #e8f5e9;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .confetti {
+            position: fixed;
+            pointer-events: none;
+        }
+
+        @keyframes float-up {
+            to {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .confetti-particle {
+            animation: float-up 2s ease-out forwards;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Wellness Habit Grid</h1>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-value" id="activeCount">0</div>
+                    <div class="stat-label">Active Habits</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="avgProgress">0%</div>
+                    <div class="stat-label">Avg Progress</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-value" id="longestStreak">0</div>
+                    <div class="stat-label">Longest Streak</div>
+                </div>
+                <div class="stat-box">
+                    <div class="chart-container">
+                        <canvas id="progressChart" width="120" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn-primary" id="addBtn">+ Add Habit</button>
+                <button class="btn-secondary" id="shareBtn">📤 Share</button>
+                <button class="btn-secondary" id="resetBtn">🔄 Reset Today</button>
+            </div>
+        </header>
+
+        <div class="main">
+            <aside class="sidebar">
+                <h3>Palette</h3>
+                <div class="palette" id="palette"></div>
+            </aside>
+
+            <div class="grid-wrapper">
+                <div class="habit-grid" id="habitGrid" role="grid" aria-label="Wellness habits grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h2>Add Custom Habit</h2>
+            <div class="form-group">
+                <label>Habit Name</label>
+                <input type="text" id="habitInput" placeholder="e.g., Drink Water" maxlength="30">
+            </div>
+            <div class="form-group">
+                <label>Select Emoji</label>
+                <div class="emoji-picker" id="emojiPicker"></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" id="cancelBtn">Cancel</button>
+                <button class="btn-primary" id="confirmBtn">Add Habit</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const EMOJIS = ['💧', '🧘', '🚶', '🥗', '😴', '📚', '🏃', '🧠', '❤️', '🌅', '🎯', '🎵'];
+        const DEFAULT_HABITS = [
+            { name: 'Drink Water', emoji: '💧', category: 'Hydration' },
+            { name: 'Meditate 10min', emoji: '🧘', category: 'Mindfulness' },
+            { name: 'Walk 5k steps', emoji: '🚶', category: 'Movement' },
+            { name: 'Eat Vegetables', emoji: '🥗', category: 'Nutrition' },
+            { name: 'Sleep 8hrs', emoji: '😴', category: 'Rest' },
+            { name: 'Read 20min', emoji: '📚', category: 'Growth' },
+            { name: 'Exercise', emoji: '🏃', category: 'Movement' },
+            { name: 'Gratitude', emoji: '❤️', category: 'Mindfulness' },
+            { name: 'Stretch', emoji: '🧘', category: 'Movement' },
+            { name: 'Journal', emoji: '📝', category: 'Growth' },
+            { name: 'Sunlight', emoji: '🌅', category: 'Wellness' },
+            { name: 'Goal Review', emoji: '🎯', category: 'Growth' },
+            { name: 'Music', emoji: '🎵', category: 'Wellness' },
+            { name: 'Breathwork', emoji: '💨', category: 'Mindfulness' },
+            { name: 'Hydrate', emoji: '💧', category: 'Hydration' },
+            { name: 'Yoga', emoji: '🧘', category: 'Movement' },
+            { name: 'Meal Prep', emoji: '🍳', category: 'Nutrition' },
+            { name: 'Stretch', emoji: '🤸', category: 'Movement' },
+            { name: 'Mindful Eating', emoji: '🥘', category: 'Nutrition' },
+            { name: 'Positive Affirmation', emoji: '✨', category: 'Mindfulness' }
+        ];
+
+        let state = {
+            habits: [],
+            progress: {},
+            streaks: {},
+            lastReset: new Date().toDateString()
+        };
+
+        let draggedItem = null;
+        let selectedEmoji = '💧';
+
+        function initState() {
+            const saved = localStorage.getItem('habitState');
+            if (saved) {
+                state = JSON.parse(saved);
+                checkMidnightReset();
+            } else {
+                state.habits = DEFAULT_HABITS.slice(0, 8);
+                state.progress = {};
+                state.streaks = {};
+                state.habits.forEach(h => {
+                    state.progress[h.name] = 0;
+                    state.streaks[h.name] = 0;
+                });
+                saveState();
+            }
+            loadFromHash();
+        }
+
+        function saveState() {
+            localStorage.setItem('habitState', JSON.stringify(state));
+        }
+
+        function checkMidnightReset() {
+            const today = new Date().toDateString();
+            if (state.lastReset !== today) {
+                state.lastReset = today;
+                Object.keys(state.progress).forEach(habit => {
+                    if (state.progress[habit] === 100) {
+                        state.streaks[habit] = (state.streaks[habit] || 0) + 1;
+                    } else {
+                        state.streaks[habit] = 0;
+                    }
+                    state.progress[habit] = 0;
+                });
+                saveState();
+            }
+        }
+
+        function renderPalette() {
+            const palette = document.getElementById('palette');
+            palette.innerHTML = '';
+            DEFAULT_HABITS.forEach(habit => {
+                const item = document.createElement('div');
+                item.className = 'palette-item';
+                item.draggable = true;
+                item.textContent = `${habit.emoji} ${habit.name}`;
+                item.addEventListener('dragstart', (e) => {
+                    draggedItem = habit;
+                    item.classList.add('dragging');
+                });
+                item.addEventListener('dragend', () => {
+                    item.classList.remove('dragging');
+                });
+                palette.appendChild(item);
+            });
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('habitGrid');
+            grid.innerHTML = '';
+
+            if (state.habits.length === 0) {
+                grid.innerHTML = '<div class="empty-state">Drag habits from the palette or add custom ones</div>';
+                return;
+            }
+
+            state.habits.forEach((habit, idx) => {
+                const tile = document.createElement('div');
+                tile.className = 'habit-tile';
+                tile.draggable = true;
+                tile.role = 'gridcell';
+                tile.tabIndex = 0;
+
+                const progress = state.progress[habit.name] || 0;
+                const isActive = progress > 0;
+                tile.classList.add(isActive ? 'active' : 'inactive');
+
+                const streak = state.streaks[habit.name] || 0;
+
+                tile.innerHTML = `
+                    <div class="tile-header">
+                        <span class="tile-emoji">${habit.emoji}</span>
+                        <button class="tile-close" aria-label="Remove habit">×</button>
+                    </div>
+                    <div class="tile-name">${habit.name}</div>
+                    <div class="tile-progress">
+                        <div class="progress-bar" role="slider" aria-valuenow="${progress}" aria-valuemin="0" aria-valuemax="100">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="progress-text">${progress}%</div>
+                    </div>
+                    ${streak > 0 ? `<div class="tile-streak">🔥 ${streak}-day streak</div>` : ''}
+                `;
+
+                tile.addEventListener('dragstart', (e) => {
+                    draggedItem = habit;
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+
+                tile.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    tile.classList.add('drag-over');
+                });
+
+                tile.addEventListener('dragleave', () => {
+                    tile.classList.remove('drag-over');
+                });
+
+                tile.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    tile.classList.remove('drag-over');
+                });
+
+                const closeBtn = tile.querySelector('.tile-close');
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    state.habits.splice(idx, 1);
+                    delete state.progress[habit.name];
+                    delete state.streaks[habit.name];
+                    saveState();
+                    renderGrid();
+                    updateStats();
+                });
+
+                const progressBar = tile.querySelector('.progress-bar');
+                progressBar.addEventListener('click', (e) => {
+                    const rect = progressBar.getBoundingClientRect();
+                    const percent = Math.round(((e.clientX - rect.left) / rect.width) * 100);
+                    state.progress[habit.name] = Math.max(0, Math.min(100, percent));
+                    if (state.progress[habit.name] === 100) {
+                        confetti();
+                    }
+                    saveState();
+                    renderGrid();
+                    updateStats();
+                });
+
+                tile.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        state.progress[habit.name] = state.progress[habit.name] === 100 ? 0 : 100;
+                        saveState();
+                        renderGrid();
+                        updateStats();
+                    } else if (e.key === 'ArrowUp') {
+                        state.progress[habit.name] = Math.min(100, (state.progress[habit.name] || 0) + 10);
+                        saveState();
+                        renderGrid();
+                        updateStats();
+                    } else if (e.key === 'ArrowDown') {
+                        state.progress[habit.name] = Math.max(0, (state.progress[habit.name] || 0) - 10);
+                        saveState();
+                        renderGrid();
+                        updateStats();
+                    }
+                });
+
+                grid.appendChild(tile);
+            });
+        }
+
+        function updateStats() {
+            const active = state.habits.filter(h => (state.progress[h.name] || 0) > 0).length;
+            const avgProgress = state.habits.length > 0 
+                ? Math.round(state.habits.reduce((sum, h) => sum + (state.progress[h.name] || 0), 0) / state.habits.length)
+                : 0;
+            const longestStreak = Math.max(0, ...Object.values(state.streaks));
+
+            document.getElementById('activeCount').textContent = active;
+            document.getElementById('avgProgress').textContent = avgProgress + '%';
+            document.getElementById('longestStreak').textContent = longestStreak;
+
+            drawChart(avgProgress);
+        }
+
+        function drawChart(percent) {
+            const canvas = document.getElementById('progressChart');
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 50;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#e0e0e0';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#4CAF50';
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.arc(centerX, centerY, radius, -Math.PI / 2, -Math.PI / 2 + (Math.PI * 2 * percent / 100));
+            ctx.lineTo(centerX, centerY);
+            ctx.fill();
+
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius - 12, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 16px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(percent + '%', centerX, centerY);
+        }
+
+        function confetti() {
+            const canvas = document.createElement('canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.position = 'fixed';
+            canvas.style.top = '0';
+            canvas.style.left = '0';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '999';
+            document.body.appendChild(canvas);
+
+            const ctx = canvas.getContext('2d');
+            const particles = [];
+
+            for (let i = 0; i < 50; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: Math.random() * 5 + 5,
+                    color: ['#4CAF50', '#2196F3', '#FFC107'][Math.floor(Math.random() * 3)],
+                    size: Math.random() * 6 + 2
+                });
+            }
+
+            let frame = 0;
+            const animate = () => {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                frame++;
+                if (frame < 120) requestAnimationFrame(animate);
+                else canvas.remove();
+            };
+            animate();
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        function encodeToHash() {
+            const data = {
+                habits: state.habits,
+                progress: state.progress
+            };
+            const encoded = btoa(JSON.stringify(data));
+            return '#' + encoded;
+        }
+
+        function loadFromHash() {
+            const hash = window.location.hash.slice(1);
+            if (hash) {
+                try {
+                    const data = JSON.parse(atob(hash));
+                    state.habits = data.habits;
+                    state.progress = data.progress;
+                    saveState();
+                    renderGrid();
+                    updateStats();
+                } catch (e) {
+                    console.error('Invalid hash');
+                }
+            }
+        }
+
+        document.getElementById('addBtn').addEventListener('click', () => {
+            document.getElementById('modal').classList.add('active');
+            document.getElementById('habitInput').focus();
+        });
+
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            document.getElementById('modal').classList.remove('active');
+        });
+
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            const name = document.getElementById('habitInput').value.trim();
+            if (name) {
+                const newHabit = { name, emoji: selectedEmoji, category: 'Custom' };
+                state.habits.push(newHabit);
+                state.progress[name] = 0;
+                state.streaks[name] = 0;
+                saveState();
+                renderGrid();
+                renderPalette();
+                updateStats();
+                document.getElementById('modal').classList.remove('active');
+                document.getElementById('habitInput').value = '';
+                showToast('Habit added!');
+            }
+        });
+
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            const url = window.location.origin + window.location.pathname + encodeToHash();
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('Share link copied!');
+            });
+        });
+
+        document.getElementById('resetBtn').addEventListener('click', () => {
+            if (confirm('Reset all progress for today?')) {
+                Object.keys(state.progress).forEach(h => state.progress[h] = 0);
+                saveState();
+                renderGrid();
+                updateStats();
+                showToast('Progress reset!');
+            }
+        });
+
+        const emojiPicker = document.getElementById('emojiPicker');
+        EMOJIS.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'emoji-btn';
+            btn.textContent = emoji;
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
+                btn.classList.add('selected');
+                selectedEmoji = emoji;
+            });
+            emojiPicker.appendChild(btn);
+        });
+        emojiPicker.firstChild.classList.add('selected');
+
+        document.getElementById('habitInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('confirmBtn').click();
+        });
+
+        document.getElementById('modal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal')) {
+                document.getElementById('modal').classList.remove('active');
+            }
+        });
+
+        initState();
+        renderPalette();
+        renderGrid();
+        updateStats();
+    </script>
+</body>
+</html>
