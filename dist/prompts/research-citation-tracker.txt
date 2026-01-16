@@ -17,3 +17,5 @@ Research Citation Tracker
 - **Export**: Button downloads JSON backup, "Clear All" with confirmation dialog.
 - Clean minimal design: Sans-serif font, card shadows, subtle animations (fade-in on add).
 - Test features: Add 3 citations, search/tag filter, sort, theme toggle, print preview (Ctrl+P), persistence after refresh.
+
+(Generated: 2026-01-16T14:39:40.030005Z, seed=57055, theme=research utilities, extras=keyboard-first UX, dark/light auto theme, print-friendly view, kind=html)
