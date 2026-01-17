@@ -22,3 +22,5 @@ Invoice Tracker Pro
 - **Data structure**: Array of objects {id: unique timestamp, client, amount: number, due: ISO date, status, notes}; validate inputs (amount>0, required fields).
 - **Edge cases**: Handle empty state with helpful message; overdue calc: due < today; due-soon: within 7 days.
 - **Constraints**: <800 lines total; vanilla JS only; CSS custom properties for theming; semantic HTML5.
+
+(Generated: 2026-01-17T20:33:32.515293Z, seed=48516, theme=small business utilities, extras=responsive grid, offline-first with localStorage, share via URL hash, kind=html)
