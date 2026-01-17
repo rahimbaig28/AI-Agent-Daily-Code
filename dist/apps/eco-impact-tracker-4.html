@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-17T05:35:19.092786Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Tracker</title>
+    <style>
+        :root {
+            --bg-primary: #f8f9fa;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6c757d;
+            --accent: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --border: #dee2e6;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] {
+            --bg-primary: #1a1f2b;
+            --bg-secondary: #2a3443;
+            --text-primary: #e8ecef;
+            --text-secondary: #adb5bd;
+            --accent: #228B22;
+            --warning: #e0a800;
+            --danger: #dc3545;
+            --border: #495057;
+            --shadow: 0 2px 15px rgba(0,0,0,0.3);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        .nav { 
+            position: fixed; top: 0; left: 0; right: 0; 
+            background: var(--bg-secondary); 
+            border-bottom: 1px solid var(--border);
+            padding: 1rem; 
+            display: flex; 
+            gap: 1rem; 
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+        .nav button { 
+            background: var(--accent); 
+            color: white; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        .nav button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .theme-toggle { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; }
+        .main { padding: 5rem 1rem 1rem; max-width: 1400px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        .card { background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        select, input, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; }
+        button { background: var(--accent); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; cursor: pointer; font-size: 1rem; transition: all 0.2s; }
+        button:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(40,167,69,0.3); }
+        button.danger { background: var(--danger); }
+        button.danger:hover { box-shadow: 0 4px 12px rgba(220,53,69,0.3); }
+        .summary { text-align: center; }
+        .impact-level { font-size: 2rem; font-weight: bold; margin: 0.5rem 0; }
+        .green { color: var(--accent); }
+        .yellow { color: var(--warning); }
+        .red { color: var(--danger); }
+        canvas { max-width: 100%; height: 300px; }
+        .history-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1rem; }
+        .entry { background: var(--bg-primary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--accent); }
+        .tips { display: flex; flex-direction: column; gap: 1rem; }
+        .tip { display: flex; gap: 1rem; align-items: flex-start; padding: 1rem; background: var(--bg-primary); border-radius: 8px; }
+        .tip-icon { width: 32px; height: 32px; flex-shrink: 0; }
+        @media (min-width: 600px) { 
+            .grid { grid-template-columns: repeat(2, 1fr); } 
+            .history-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+        }
+        @media (min-width: 1024px) { 
+            .grid { grid-template-columns: 2fr 1fr 1fr; } 
+            .sidebar { grid-column: 3; }
+        }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+        @media print { 
+            .nav, .theme-toggle, canvas { display: none !important; }
+            .grid { grid-template-columns: 1fr !important; }
+            body { background: white; color: black; }
+            .card { box-shadow: none; border: 1px solid black; break-inside: avoid; }
+        }
+        .hidden { display: none; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .card { animation: fadeIn 0.5s ease-out; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
+    </style>
+</head>
+<body data-theme="light">
+    <nav class="nav" role="navigation" aria-label="Main navigation">
+        <button onclick="navigate('home')" aria-current="true">🏠 Home</button>
+        <button onclick="navigate('track')">📊 Track</button>
+        <button onclick="navigate('history')">📈 History</button>
+        <button onclick="window.print()">🖨️ Print</button>
+        <div class="theme-toggle">
+            <label for="theme-toggle">Dark Mode</label>
+            <input type="checkbox" id="theme-toggle" aria-label="Toggle dark mode">
+        </div>
+    </nav>
+
+    <main class="main" role="main">
+        <div class="grid">
+            <section class="card" id="form-section" aria-labelledby="form-heading">
+                <h2 id="form-heading">Add Daily Entry</h2>
+                <form id="entry-form">
+                    <div class="form-group">
+                        <label for="entry-date">Date</label>
+                        <input type="date" id="entry-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">Select category</option>
+                            <option value="transport-car">Transport: Car (km)</option>
+                            <option value="transport-flight">Transport: Flight (km)</option>
+                            <option value="energy">Energy (kWh)</option>
+                            <option value="food-meat">Food: Meat meal</option>
+                            <option value="food-vegan">Food: Vegan meal</option>
+                            <option value="waste">Waste (kg)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="number" id="amount" min="0" step="0.1" required aria-describedby="amount-help">
+                        <small id="amount-help" class="sr-only">Enter positive number</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" rows="2" maxlength="100"></textarea>
+                    </div>
+                    <button type="submit">➕ Add Entry</button>
+                </form>
+            </section>
+
+            <section class="card summary" id="summary-section" aria-live="polite" role="status">
+                <h2>Weekly Impact</h2>
+                <div id="weekly-total">Loading...</div>
+                <div id="daily-avg">Daily avg: -- kgCO2e</div>
+                <div id="impact-level" class="impact-level" aria-label="Impact level">📊</div>
+                <div id="vs-average">vs global avg (15kg/day)</div>
+            </section>
+
+            <section class="card sidebar" id="chart-section">
+                <h2>Weekly Chart</h2>
+                <canvas id="chart" width="400" height="300" aria-label="Weekly carbon footprint by category"></canvas>
+            </section>
+
+            <section class="card sidebar" id="tips-section">
+                <h2>💡 Eco Tips</h2>
+                <div id="tips-list" class="tips"></div>
+            </section>
+
+            <section class="card" id="history-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h2>History (Last 7 days)</h2>
+                    <div>
+                        <button onclick="exportCSV()">📥 Export CSV</button>
+                        <button onclick="clearAllData()" class="danger">🗑️ Clear All</button>
+                    </div>
+                </div>
+                <div id="history-list" class="history-grid" role="region" aria-label="Entry history" tabindex="0"></div>
+                <div id="no-data" class="hidden">👋 Welcome! Add your first entry to start tracking your impact.</div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Emission factors (kgCO2e per unit) [2]
+        const EMISSION_FACTORS = {
+            'transport-car': 0.2,      // kg/km
+            'transport-flight': 0.25,  // kg/km
+            'energy': 0.4,             // kg/kWh
+            'food-meat': 5,            // per meal
+            'food-vegan': 1,           // per meal
+            'waste': 0.7               // kg/kg
+        };
+
+        // Category labels and colors
+        const CATEGORY_INFO = {
+            'transport-car': { label: 'Car', color: '#ff6b6b' },
+            'transport-flight': { label: 'Flight', color: '#ffa726' },
+            'energy': { label: 'Energy', color: '#42a5f5' },
+            'food-meat': { label: 'Meat', color: '#ef5350' },
+            'food-vegan': { label: 'Vegan', color: '#66bb6a' },
+            'waste': { label: 'Waste', color: '#78909c' }
+        };
+
+        // Tips by category
+        const TIPS = {
+            'transport-car': '🚲 Switch to biking: save 0.2kg/km',
+            'transport-flight': '🚆 Take train instead: saves ~80% emissions',
+            'energy': '💡 Use LED bulbs: save 0.3kgCO2/kWh',
+            'food-meat': '🥗 Try Meatless Monday: save 4kgCO2/meal',
+            'waste': '♻️ Recycle properly: reduces emissions by 50%',
+            'food-vegan': '👍 Great choice! Share vegan recipes!',
+            'default': '🌱 Track consistently to see your impact drop!'
+        };
+
+        let entries = [];
+        let currentView = 'home';
+
+        // Initialize app
+        function init() {
+            loadData();
+            setTodayDate();
+            updateTheme();
+            renderAll();
+            document.getElementById('entry-form').addEventListener('submit', addEntry);
+            document.getElementById('theme-toggle').addEventListener('change', toggleTheme);
+            window.addEventListener('keydown', handleKeyboard);
+            requestAnimationFrame(() => renderChart());
+        }
+
+        function setTodayDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entry-date').value = today;
+        }
+
+        function addEntry(e) {
+            e.preventDefault();
+            const form = e.target;
+            const entry = {
+                id: Date.now(),
+                date: form.date.value,
+                category: form.category.value,
+                amount: parseFloat(form.amount.value),
+                notes: form.notes.value.trim(),
+                emissions: parseFloat(form.amount.value) * EMISSION_FACTORS[form.category.value]
+            };
+            if (entry.amount <= 0 || isNaN(entry.amount)) return alert('Please enter a positive amount');
+            entries.push(entry);
+            saveData();
+            form.reset();
+            setTodayDate();
+            renderAll();
+            announce('Entry added successfully');
+        }
+
+        function deleteEntry(id) {
+            if (!confirm('Delete this entry?')) return;
+            entries = entries.filter(e => e.id !== id);
+            saveData();
+            renderAll();
+            announce('Entry deleted');
+        }
+
+        function getWeeklyData() {
+            const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const weekEntries = entries.filter(e => new Date(e.date) >= oneWeekAgo);
+            const dailyTotals = {};
+            const categoryTotals = {};
+
+            weekEntries.forEach(e => {
+                const date = e.date;
+                dailyTotals[date] = (dailyTotals[date] || 0) + e.emissions;
+                const cat = e.category.split('-')[0];
+                categoryTotals[cat] = (categoryTotals[cat] || 0) + e.emissions;
+            });
+
+            const total = Object.values(dailyTotals).reduce((sum, v) => sum + v, 0);
+            const days = Object.keys(dailyTotals).length;
+            const avg = days ? total / days : 0;
+            const highestCat = Object.entries(categoryTotals).reduce((a, b) => a[1] > b[1] ? a : b)[0];
+
+            return { total, avg, days, categoryTotals, highestCat, dailyTotals };
+        }
+
+        function renderSummary() {
+            const data = getWeeklyData();
+            const el = document.getElementById('summary-section');
+            const totalEl = document.getElementById('weekly-total');
+            const avgEl = document.getElementById('daily-avg');
+            const levelEl = document.getElementById('impact-level');
+            const vsEl = document.getElementById('vs-average');
+
+            totalEl.textContent = `${data.total.toFixed(1)} kgCO2e`;
+            avgEl.textContent = `Daily avg: ${data.avg.toFixed(1)} kgCO2e`;
+            
+            levelEl.textContent = data.avg < 10 ? '👍 LOW' : data.avg < 20 ? '⚠️ MEDIUM' : '🔥 HIGH';
+            levelEl.className = `impact-level ${data.avg < 10 ? 'green' : data.avg < 20 ? 'yellow' : 'red'}`;
+            
+            const vsAvg = data.avg - 15;
+            vsEl.textContent = vsAvg > 0 ? `+${vsAvg.toFixed(1)}kg above avg` : `${vsAvg.toFixed(1)}kg below avg`;
+
+            el.setAttribute('aria-label', `Total this week: ${data.total.toFixed(1)}kg CO2, average ${data.avg.toFixed(1)}kg per day`);
+        }
+
+        function renderChart() {
+            const canvas = document.getElementById('chart');
+            const ctx = canvas.getContext('2d');
+            const data = getWeeklyData();
+            const categories = Object.keys(data.categoryTotals);
+            
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw bars
+            const barWidth = canvas.width / categories.length * 0.8;
+            const maxHeight = 250;
+            const maxValue = Math.max(...Object.values(data.categoryTotals), 10);
+            
+            categories.forEach((cat, i) => {
+                const value = data.categoryTotals[cat];
+                const height = (value / maxValue) * maxHeight;
+                const x = i * (canvas.width / categories.length) + 20;
+                const color = CATEGORY_INFO[cat + (cat === 'transport' ? '-car' : cat === 'food' ? '-meat' : '')]?.color || '#666';
+                
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvas.height - height, barWidth, height);
+                ctx.fillStyle = '#000';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${value.toFixed(1)}`, x + barWidth/2, canvas.height - height - 5);
+                ctx.fillText(CATEGORY_INFO[cat + (cat === 'transport' ? '-car' : cat === 'food' ? '-meat' : '')]?.label || cat, x + barWidth/2, canvas.height - 5);
+            });
+        }
+
+        function renderTips() {
+            const data = getWeeklyData();
+            const highestCat = data.highestCat || 'default';
+            const tipsList = document.getElementById('tips-list');
+            const tip = TIPS[highestCat] || TIPS.default;
+            
+            tipsList.innerHTML = `
+                <div class="tip">
+                    <svg class="tip-icon" viewBox="0 0 32 32" fill="var(--accent)">
+                        <circle cx="16" cy="16" r="12"/>
+                        <path d="M16 8 L20 14 H26 L22 18 L24 24 L16 20 L8 24 L10 18 L6 14 H12 Z"/>
+                    </svg>
+                    <div><strong>Top Tip:</strong> ${tip}</div>
+                </div>
+            `;
+        }
+
+        function renderHistory() {
+            const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+            const recent = entries.filter(e => new Date(e.date) >= oneWeekAgo).sort((a,b) => b.date - a.date || b.id - a.id);
+            const list = document.getElementById('history-list');
+            const noData = document.getElementById('no-data');
+            
+            if (recent.length === 0) {
+                list.classList.add('hidden');
+                noData.classList.remove('hidden');
+                return;
+            }
+            
+            list.classList.remove('hidden');
+            noData.classList.add('hidden');
+            
+            list.innerHTML = recent.map(entry => {
+                const catInfo = CATEGORY_INFO[entry.category];
+                return `
+                    <article class="entry" tabindex="0">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong>${catInfo.label}</strong>
+                            <span style="color: ${catInfo.color}">${entry.emissions.toFixed(1)}kg</span>
+                        </div>
+                        <div>${entry.date} • ${entry.amount}${getUnit(entry.category)}</div>
+                        <div style="font-size: 0.9rem; color: var(--text-secondary);">${entry.notes || 'No notes'}</div>
+                        <button class="danger" onclick="deleteEntry(${entry.id})" style="margin-top: 0.5rem; padding: 0.25rem 0.75rem; font-size: 0.8rem;" aria-label="Delete entry">🗑️</button>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        function getUnit(category) {
+            if (category.includes('transport') || category === 'waste') return 'kg/km';
+            if (category === 'energy') return 'kWh';
+            return 'meals';
+        }
+
+        function renderAll() {
+            renderSummary();
+            renderChart();
+            renderTips();
+            renderHistory();
+        }
+
+        function saveData() {
+            localStorage.setItem('eco-entries', JSON.stringify(entries));
+            localStorage.setItem('eco-theme', document.body.getAttribute('data-theme'));
+        }
+
+        function loadData() {
+            const saved = localStorage.getItem('eco-entries');
+            entries = saved ? JSON.parse(saved) : [];
+        }
+
+        function navigate(view) {
+            currentView = view;
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('hidden'));
+            if (view === 'track') {
+                document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('entry-date').focus();
+            } else if (view === 'history') {
+                document.getElementById('history-section').scrollIntoView({ behavior: 'smooth' });
+            } else {
+                document.querySelector('.main').scrollIntoView({ behavior: 'smooth' });
+            }
+            // Update nav aria-current
+            document.querySelectorAll('.nav button').forEach((btn, i) => {
+                btn.setAttribute('aria-current', i === 0 && view === 'home' ? 'true' : 'false');
+            });
+        }
+
+        function toggleTheme() {
+            const isDark = document.getElementById('theme-toggle').checked;
+            document.body.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            saveData();
+        }
+
+        function updateTheme() {
+            const savedTheme = localStorage.getItem('eco-theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+            document.body.setAttribute('data-theme', theme);
+            document.getElementById('theme-toggle').checked = theme === 'dark';
+        }
+
+        function exportCSV() {
+            const csv = ['Date,Category,Amount,Emissions,Notes'].concat(
+                entries.map(e => `${e.date},"${e.category}",${e.amount},${e.emissions.toFixed(2)},"${e.notes.replace(/"/g,'""')}"`)
+            ).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eco-impact-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAllData() {
+            if (!confirm('Delete ALL data? This cannot be undone.')) return;
+            entries = [];
+            localStorage.removeItem('eco-entries');
+            renderAll();
+            announce('All data cleared');
+        }
+
+        function announce(message) {
+            const live = document.getElementById('summary-section');
+            live.setAttribute('aria-live', 'assertive');
+            setTimeout(() => live.setAttribute('aria-live', 'polite'), 1000);
+        }
+
+        function handleKeyboard(e) {
+            if (e.target.closest('#history-list') && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+                e.preventDefault();
+                const entries = [...document.querySelectorAll('.entry')];
+                const current = document.activeElement;
+                const index = entries.indexOf(current);
+                const next = e.key === 'ArrowDown' ? entries[index + 1] : entries[index - 1];
+                if (next) next.focus();
+            }
+        }
+
+        // Auto-save on storage change
+        window.addEventListener('storage', () => location.reload());
+
+        // Init on load
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+
+        // Resize observer for responsive chart
+        new ResizeObserver(() => renderChart()).observe(document.getElementById('chart-section'));
+    </script>
+</body>
+</html>
