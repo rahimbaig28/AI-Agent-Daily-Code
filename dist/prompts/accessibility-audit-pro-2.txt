@@ -19,3 +19,5 @@ Accessibility Audit Pro
 - Output format: color-coded terminal tables (ANSI escape codes), JSON export with remediation suggestions.
 - Error handling: validate inputs, handle missing files, network timeouts gracefully.
 - Keep under 800 LOC: modular functions (audit_html(), score_file(), print_table(), load_history()).
+
+(Generated: 2026-01-18T18:42:22.649485Z, seed=30000, theme=accessibility helpers, extras=drag-and-drop, share via URL hash, offline-first with localStorage, kind=py)
