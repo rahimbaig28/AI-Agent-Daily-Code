@@ -11,3 +11,5 @@ Flashcard Forge
 - Testable features: run script, add 3 cards, study (mark 1 good/1 bad), delete 1, share URL, verify ~/flashcards.json saves correctly.
 - Handle edge cases: empty deck, invalid inputs, file permissions.
 - Shebang #!/usr/bin/env python3; if __name__ == "__main__": main().
+
+(Generated: 2026-01-18T09:32:46.700301Z, seed=12265, theme=learning & study tools, extras=share via URL hash, keyboard-first UX, responsive grid, kind=py)
