@@ -14,3 +14,5 @@ Flashcard Forge
 - Colors: use ANSI escape codes for menu (green pass/red fail), deck list (yellow names, blue stats)
 - Stats screen: show global stats (total decks, cards, avg mastery %); accessible from main menu
 - Implementable in <800 lines; use functions for modularity (load_deck, save_deck, study_loop, hash_deck); if __name__ == "__main__" guard
+
+(Generated: 2026-01-20T09:46:42.524727Z, seed=26262, theme=learning & study tools, extras=export/import JSON, print-friendly view, share via URL hash, kind=py)
