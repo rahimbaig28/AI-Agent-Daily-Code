@@ -18,3 +18,5 @@ Eco Impact Tracker
 - JS logic: Event listeners for inputs, sum CO2 on change, Chart.js-free Canvas chart, localStorage CRUD, window.matchMedia for responsiveness.
 - Accessibility: Focus indicators, high contrast mode (@media prefers-contrast), screen reader friendly (semantic HTML5).
 - Testable: Load app, toggle 5 habits (score=450g), check weekly persistence, resize/print, keyboard-only use.
+
+(Generated: 2026-01-23T04:11:52.462642Z, seed=98414, theme=environment & sustainability, extras=responsive grid, print-friendly view, ARIA-compliant components, kind=html)

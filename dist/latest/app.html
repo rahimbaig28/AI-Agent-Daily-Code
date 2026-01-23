@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-23T04:12:41.240869Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Tracker</title>
+    <style>
+        :root {
+            --primary: #4CAF50;
+            --primary-dark: #45a049;
+            --bg: #E8F5E8;
+            --card-bg: #fff;
+            --text: #333;
+            --text-light: #666;
+            --danger: #f44336;
+            --warning: #ff9800;
+            --success: #4CAF50;
+            --shadow: 0 2px 10px rgba(0,0,0,0.1);
+            --border: #ddd;
+            --progress-height: 20px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        @media (prefers-contrast: high) {
+            :root {
+                --text: #000;
+                --bg: #fff;
+                --card-bg: #fff;
+            }
+        }
+
+        header {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .tagline {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 0.25rem;
+        }
+
+        .score-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        nav {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a:focus {
+            background: var(--bg);
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        section {
+            scroll-margin-top: 140px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+        }
+
+        section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .score-display {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .current-score {
+            font-size: 4rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .target {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+
+        .progress-container {
+            background: var(--border);
+            height: var(--progress-height);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 2rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success) 0%, var(--warning) 60%, var(--danger) 100%);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 10px;
+        }
+
+        .habit-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .habit-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .habit-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .habit-card:focus-within {
+            border-color: var(--primary);
+            outline: 3px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        .habit-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .habit-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .habit-btn {
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .habit-btn.primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .habit-btn.primary:hover:not(:disabled) {
+            background: var(--primary-dark);
+        }
+
+        .habit-btn.secondary {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .habit-btn.secondary:hover:not(:disabled) {
+            background: var(--bg);
+            border-color: var(--primary);
+        }
+
+        .habit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .habit-btn[aria-pressed="true"] {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+        .co2-value {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-left: 0.25rem;
+        }
+
+        .chart-container {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: var(--shadow);
+        }
+
+        #weeklyChart {
+            width: 100%;
+            height: 300px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-height: 48px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        .tips-section details {
+            margin-bottom: 1rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .tips-section summary {
+            padding: 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            list-style: none;
+        }
+
+        .tips-section summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .tips-section summary::before {
+            content: "▶";
+            display: inline-block;
+            margin-right: 0.75rem;
+            transition: transform 0.3s;
+        }
+
+        .tips-section details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        .tips-content {
+            padding: 0 1.25rem 1.25rem;
+        }
+
+        /* Responsive Grid */
+        @media (max-width: 768px) {
+            .habit-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            header {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            nav {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                gap: 1rem;
+                justify-content: center;
+            }
+            
+            main {
+                padding: 0 1rem;
+                margin: 1rem;
+            }
+            
+            .current-score {
+                font-size: 3rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .habit-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .current-score {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+            }
+        }
+
+        /* Print styles */
+        @media print {
+            nav, .controls {
+                display: none;
+            }
+            
+            header {
+                position: static;
+                box-shadow: none;
+            }
+            
+            .habit-grid {
+                grid-template-columns: repeat(3, 1fr);
+                break-inside: avoid;
+            }
+            
+            body {
+                background: white;
+                color: black;
+                font-size: 14pt;
+            }
+            
+            .habit-card {
+                box-shadow: none;
+                border: 1px solid black;
+                break-inside: avoid;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        [role="status"] {
+            border: 0;
+            clip: rect(0 0 0 0);
+            height: 1px;
+            margin: -1px;
+            overflow: hidden;
+            padding: 0;
+            position: absolute;
+            width: 1px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>Eco Impact Tracker</h1>
+                <div class="tagline">Track your daily habits for a greener planet</div>
+            </div>
+            <div class="score-badge" aria-live="polite" role="status">
+                <span id="currentScore">0g</span> CO₂ today
+            </div>
+        </div>
+    </header>
+
+    <nav>
+        <ul class="nav-links" role="tablist">
+            <li><a href="#home" role="tab" tabindex="0">🏠 Home</a></li>
+            <li><a href="#food" role="tab" tabindex="-1">🍎 Food</a></li>
+            <li><a href="#transport" role="tab" tabindex="-1">🚗 Transport</a></li>
+            <li><a href="#tips" role="tab" tabindex="-1">💡 Tips</a></li>
+        </ul>
+    </nav>
+
+    <main role="main" aria-label="Eco Impact Tracker application">
+        <section id="home">
+            <div class="score-display">
+                <div class="current-score" id="displayScore" aria-live="polite">0g</div>
+                <div class="target">Daily target: <500g CO₂</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0"></div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2 style="text-align: center; margin-bottom: 1.5rem; color: var(--primary);">Weekly Progress</h2>
+                <canvas id="weeklyChart" aria-label="Weekly CO2 emissions chart showing daily totals for the past 7 days"></canvas>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="exportCSV()">📊 Export CSV</button>
+                <button class="btn btn-danger" onclick="resetDay()">🔄 Reset Day</button>
+            </div>
+        </section>
+
+        <section id="food">
+            <h2>🍎 Food Habits</h2>
+            <div class="habit-grid" role="grid" aria-label="Food habit selection grid">
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Breakfast</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="50" data-type="food" data-habit="veg-breakfast" aria-pressed="false" aria-label="Vegetarian breakfast (50g CO2)">
+                            Veg Meal <span class="co2-value">(50g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="150" data-type="food" data-habit="meat-breakfast" aria-pressed="false" aria-label="Meat breakfast (150g CO2)">
+                            Meat Meal <span class="co2-value">(150g)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Lunch</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="70" data-type="food" data-habit="veg-lunch" aria-pressed="false" aria-label="Vegetarian lunch (70g CO2)">
+                            Veg Meal <span class="co2-value">(70g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="200" data-type="food" data-habit="meat-lunch" aria-pressed="false" aria-label="Meat lunch (200g CO2)">
+                            Meat Meal <span class="co2-value">(200g)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Dinner</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="80" data-type="food" data-habit="veg-dinner" aria-pressed="false" aria-label="Vegetarian dinner (80g CO2)">
+                            Veg Meal <span class="co2-value">(80g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="250" data-type="food" data-habit="meat-dinner" aria-pressed="false" aria-label="Meat dinner (250g CO2)">
+                            Meat Meal <span class="co2-value">(250g)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Snacks</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="30" data-type="food" data-habit="fruit-snack" aria-pressed="false" aria-label="Fruit snack (30g CO2)">
+                            Fruit <span class="co2-value">(30g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="100" data-type="food" data-habit="processed-snack" aria-pressed="false" aria-label="Processed snack (100g CO2)">
+                            Processed <span class="co2-value">(100g)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="transport">
+            <h2>🚗 Transport</h2>
+            <div class="habit-grid" role="grid" aria-label="Transport habit selection grid">
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Morning Commute</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="20" data-type="transport" data-habit="bike-commute" aria-pressed="false" aria-label="Bike commute (20g CO2)">
+                            Bike <span class="co2-value">(20g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="200" data-type="transport" data-habit="car-commute" aria-pressed="false" aria-label="Car commute (200g CO2)">
+                            Car <span class="co2-value">(200g)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Public Transport</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="50" data-type="transport" data-habit="bus" aria-pressed="false" aria-label="Bus ride (50g CO2)">
+                            Bus <span class="co2-value">(50g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="120" data-type="transport" data-habit="taxi" aria-pressed="false" aria-label="Taxi ride (120g CO2)">
+                            Taxi <span class="co2-value">(120g)</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Walk</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="0" data-type="transport" data-habit="walk" aria-pressed="false" aria-label="Walking (0g CO2)">
+                            Walk <span class="co2-value">(0g)</span> ✓
+                        </button>
+                    </div>
+                </div>
+                <div class="habit-card" role="gridcell">
+                    <div class="habit-title">Evening Trip</div>
+                    <div class="habit-buttons">
+                        <button class="habit-btn primary" data-co2="15" data-type="transport" data-habit="bike-evening" aria-pressed="false" aria-label="Evening bike ride (15g CO2)">
+                            Bike <span class="co2-value">(15g)</span> ✓
+                        </button>
+                        <button class="habit-btn secondary" data-co2="180" data-type="transport" data-habit="car-evening" aria-pressed="false" aria-label="Evening car trip (180g CO2)">
+                            Car <span class="co2-value">(180g)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tips">
+            <h2>💡 Sustainability Tips</h2>
+            <div class="tips-section">
+                <details>
+                    <summary>Bike instead of car</summary>
+                    <div class="tips-content">
+                        <p>Biking saves ~150g CO₂ per km compared to driving. Short trips add up quickly!</p>
+                    </div>
+                </details>
+                <details>
+                    <summary>Vegetarian meals</summary>
+                    <div class="tips-content">
+                        <p>One vegetarian meal saves 100-200g CO₂ vs. meat-based meals. Try Meatless Monday!</p>
+                    </div>
+                </details>
+                <details>
+                    <summary>Reduce food waste</summary>
+                    <div class="tips-content">
+                        <p>1kg of wasted food = 2.5kg CO₂ equivalent. Plan meals and use leftovers.</p>
+                    </div>
+                </details>
+                <details>
+                    <summary>Public transport</summary>
+                    <div class="tips-content">
+                        <p>Bus/Train emits 50-80g CO₂ per km vs 200g+ for cars. Great for daily commutes.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        class EcoTracker {
+            constructor() {
+                this.data = {
+                    current: { date: this.getTodayDate(), score: 0, habits: [] },
+                    weekly: {}
+                };
+                this.canvas = null;
+                this.init();
+            }
+
+            init() {
+                this.loadData();
+                this.attachEvents();
+                this.updateDisplay();
+                this.updateChart();
+                this.observeScroll();
+                this.handleKeyboardNav();
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.body.classList.add('smooth-scroll');
+            }
+
+            getTodayDate() {
+                return new Date().toISOString().split('T')[0];
+            }
+
+            loadData() {
+                const saved = localStorage.getItem('ecoTracker');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    const today = this.getTodayDate();
+                    
+                    // Load current day or start fresh
+                    if (parsed.current && parsed.current.date === today) {
+                        this.data.current = parsed.current;
+                    }
+                    
+                    // Load weekly data
+                    this.data.weekly = parsed.weekly || {};
+                }
+            }
+
+            saveData() {
+                localStorage.setItem('ecoTracker', JSON.stringify(this.data));
+            }
+
+            attachEvents() {
+                // Habit buttons
+                document.querySelectorAll('.habit-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.toggleHabit(e.target));
+                    btn.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.toggleHabit(e.target);
+                        }
+                    });
+                });
+
+                // Nav links
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(link.getAttribute('href'));
+                        target.scrollIntoView({ behavior: 'smooth' });
+                        this.updateTabFocus(link);
+                    });
+                });
+            }
+
+            toggleHabit(button) {
+                const isActive = button.getAttribute('aria-pressed') === 'true';
+                const co2 = parseInt(button.dataset.co2);
+                const habitId = button.dataset.habit;
+                const type = button.dataset.type;
+
+                if (isActive) {
+                    // Deactivate
+                    button.setAttribute('aria-pressed', 'false');
+                    button.classList.remove('active');
+                    this.data.current.score -= co2;
+                    this.data.current.habits = this.data.current.habits.filter(h => h.id !== habitId);
+                } else {
+                    // Activate
+                    button.setAttribute('aria-pressed', 'true');
+                    button.classList.add('active');
+                    this.data.current.score += co2;
+                    this.data.current.habits.push({ id: habitId, co2, type, name: button.textContent.trim() });
+                }
+
+                // Update sibling button state
+                const siblings = button.parentNode.querySelectorAll('.habit-btn');
+                siblings.forEach(sib => {
+                    if (sib !== button && sib.dataset.habit !== habitId) {
+                        sib.disabled = button.getAttribute('aria-pressed') === 'true';
+                    }
+                });
+
+                this.updateDisplay();
+                this.saveData();
+                this.updateChart();
+            }
+
+            updateDisplay() {
+                const scoreEl = document.getElementById('currentScore');
+                const displayScoreEl = document.getElementById('displayScore');
+                const progressBar = document.getElementById('progressBar');
+                const score = this.data.current.score;
+
+                scoreEl.textContent = score + 'g';
+                displayScoreEl.textContent = score + 'g';
+                progressBar.style.width = Math.min((score / 500) * 100, 100) + '%';
+                progressBar.setAttribute('aria-valuenow', score);
+
+                // Color zones
+                if (score < 300) {
+                    progressBar.style.background = 'var(--success)';
+                } else if (score < 400) {
+                    progressBar.style.background = 'var(--warning)';
+                } else {
+                    progressBar.style.background = 'var(--danger)';
+                }
+            }
+
+            updateChart() {
+                const canvas = document.getElementById('weeklyChart');
+                if (!canvas) return;
+
+                const ctx = canvas.getContext('2d');
+                const today = this.getTodayDate();
+                const days = 7;
+                const labels = [];
+                const data = [];
+
+                for (let i = days - 1; i >= 0; i--) {
+                    const date = new Date();
+                    date.setDate(date.getDate() - i);
+                    const dateStr = date.toISOString().split('T')[0];
+                    labels.push(dateStr.slice(-2)); // Day number
+                    data.push(this.data.weekly[dateStr] || 0);
+                }
+
+                // Clear canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Chart dimensions
+                const padding = 40;
+                const chartWidth = canvas.width - padding * 2;
+                const chartHeight = canvas.height - padding * 2;
+                const maxValue = Math.max(...data, 500);
+
+                // Draw grid
+                ctx.strokeStyle = '#e0e0e0';
+                ctx.lineWidth = 1;
+                for (let i = 0; i <= 5; i++) {
+                    const y = padding + (chartHeight * i / 5);
+                    ctx.beginPath();
+                    ctx.moveTo(padding, y);
+                    ctx.lineTo(canvas.width - padding, y);
+                    ctx.stroke();
+                }
+
+                // Draw bars
+                const barWidth = chartWidth / days * 0.7;
+                const barSpacing = chartWidth / days * 0.3;
+                
+                data.forEach((value, i) => {
+                    const barHeight = (value / maxValue) * chartHeight;
+                    const x = padding + i * (barWidth + barSpacing) + barSpacing / 2;
+                    const y = canvas.height - padding - barHeight;
+
+                    // Bar
+                    ctx.fillStyle = value < 300 ? '#4CAF50' : value < 400 ? '#FF9800' : '#F44336';
+                    ctx.fillRect(x, y, barWidth, barHeight);
+
+                    // Value label
+                    ctx.fillStyle = '#333';
+                    ctx.font = '12px system-ui';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'bottom';
+                    ctx.fillText(value + 'g', x + barWidth / 2, y - 5);
+                });
+
+                // Labels
+                ctx.fillStyle = '#666';
+                ctx.font = '14px system-ui';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                labels.forEach((label, i) => {
+                    const x = padding + i * (barWidth + barSpacing) + barSpacing / 2 + barWidth / 2;
+                    ctx.fillText(label, x, canvas.height - padding / 2);
+                });
+
+                // Border
+                ctx.strokeStyle = '#ddd';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(padding - 1, padding - 1, chartWidth + 2, chartHeight + 2);
+            }
+
+            observeScroll() {
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                        }
+                    });
+                }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+
+                document.querySelectorAll('section').forEach(section => {
+                    observer.observe(section);
+                });
+            }
+
+            handleKeyboardNav() {
+                document.querySelectorAll('.habit-grid').forEach(grid => {
+                    const cells = Array.from(grid.querySelectorAll('[role="gridcell"]'));
+                    let currentIndex = 0;
+
+                    grid.addEventListener('keydown', (e) => {
+                        if (e.key === 'ArrowRight' && currentIndex < cells.length - 1) {
+                            currentIndex++;
+                            cells[currentIndex].querySelector('.habit-btn').focus();
+                            e.preventDefault();
+                        } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                            currentIndex--;
+                            cells[currentIndex].querySelector('.habit-btn').focus();
+                            e.preventDefault();
+                        }
+                    });
+                });
+            }
+
+            updateTabFocus(activeTab) {
+                document.querySelectorAll('.nav-links a').forEach(tab => {
+                    tab.setAttribute('aria-selected', tab === activeTab);
+                    tab.tabIndex = tab === activeTab ? 0 : -1;
+                });
+            }
+        }
+
+        // Global functions
+        let tracker;
+
+        function initApp() {
+            tracker = new EcoTracker();
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        function resetDay() {
+            if (confirm('Reset today\'s data? This cannot be undone.')) {
+                tracker.data.current = { date: tracker.getTodayDate(), score: 0, habits: [] };
+                document.querySelectorAll('.habit-btn').forEach(btn => {
+                    btn.setAttribute('aria-pressed', 'false');
+                    btn.classList.remove('active');
+                    btn.disabled = false;
+                });
+                tracker.updateDisplay();
+                tracker.saveData();
+                tracker.updateChart();
+            }
+        }
+
+        function exportCSV() {
+            const headers = ['Date', 'Score (g CO2)', 'Habits'];
+            const rows = [headers];
+            
+            // Current day
+            rows.push([
+                tracker.data.current.date,
+                tracker.data.current.score,
+                tracker.data.current.habits.map(h => `${h.name} (${h.co2}g)`).join('; ')
+            ]);
+            
+            // Weekly data
+            Object.entries(tracker.data.weekly).forEach(([date, score]) => {
+                rows.push([date, score, 'Historical']);
+            });
+
+            const csv = rows.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `eco-impact-${tracker.getTodayDate()}.csv`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Handle resize for chart
+        window.addEventListener('resize', () => {
+            if (tracker && tracker.canvas) {
+                tracker.updateChart();
+            }
+        });
+
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initApp);
+    </script>
+</body>
+</html>
