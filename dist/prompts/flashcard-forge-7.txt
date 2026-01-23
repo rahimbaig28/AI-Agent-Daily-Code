@@ -10,3 +10,5 @@ Flashcard Forge
 - Stats: track per-deck mastery (correct/total attempts, stored in card dict); sort study by lowest mastery first.
 - Edge cases: handle empty decks, duplicate terms, JSON corruption (backup on load), Unicode terms.
 - Usage: python flashcard_forge.py [?deck=abc123] - runs in <800 lines, testable with sample decks on first run.
+
+(Generated: 2026-01-23T15:39:25.203185Z, seed=97795, theme=learning & study tools, extras=export/import JSON, dark/light auto theme, share via URL hash, kind=py)

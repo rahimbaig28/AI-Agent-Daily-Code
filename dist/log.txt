@@ -693,3 +693,6 @@
 [2026-01-23] Proceeding with run #2 of target 4.
 [2026-01-23T10:44:17.866128Z] Prompt OK  seed=46153  theme=research utilities  extras=dark/light auto theme, undo/redo, export/import JSON  title='Research Note Vault'  slug=research-note-vault  kind=html
 [2026-01-23T10:44:17.866128Z] Build OK  file=research-note-vault-4.html  kind=html  required_kind=html  
+[2026-01-23] Proceeding with run #3 of target 4.
+[2026-01-23T15:39:25.203185Z] Prompt OK  seed=97795  theme=learning & study tools  extras=export/import JSON, dark/light auto theme, share via URL hash  title='Flashcard Forge'  slug=flashcard-forge  kind=py
+[2026-01-23T15:39:25.203185Z] Build OK  file=flashcard-forge-6.py  kind=py  required_kind=py  
