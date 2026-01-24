@@ -1,18 +1,4 @@
-Hydration Habit Tracker
-
-- Single-file Python 3 script using only standard library (json, datetime, os, pathlib, shutil).
-- Console-based TUI with numbered menu: 1) Log water intake (cups, 8oz each), 2) View daily/weekly summary, 3) Set daily goal (cups), 4) Export JSON, 5) Import JSON, 6) Print-friendly report, 7) Quit.
-- Auto-detect dark/light terminal theme using os.environ['TERM'] and adjust color output (use ANSI escapes: \033[90m dim gray for dark, \033[37m white for light).
-- Data persistence: Store entries in 'hydration.json' as list of dicts: {'date': 'YYYY-MM-DD', 'cups': int, 'time': 'HH:MM'}. Load on start, auto-save after each log.
-- Features:
-  - Log entry: Prompt cups (1-20), auto-add timestamp, validate input.
-  - Daily summary: Show today’s cups/total goal progress (e.g., "12/16 cups - 75%"), streak days.
-  - Weekly summary: Last 7 days table (date | cups | % goal), avg daily intake.
-  - Goal: Default 8 cups, editable, persists in JSON metadata.
-  - Export: Write full data to 'hydration_export.json'.
-  - Import: Merge from JSON file, overwrite conflicts with prompt.
-  - Print-report: Generate text table of last 30 days, progress trends, motivational tips (e.g., "Stay hydrated!"), use print() for console-friendly fixed-width columns.
-- Keyboard support: Accept 'q' to quit any prompt, arrow keys via getch() polyfill using sys.stdin.read(1).
-- Error handling: Graceful file errors, input validation (ints only), backup JSON on corruption.
-- Testable: Run script, log 3 entries, check summary matches, export/import, verify print output copies cleanly.
-- Keep code <800 lines: Use dicts/lists, no classes, simple loops for menu.
+Habit        | Streak | Last Done
+  ------------|--------|----------
+  Water       | 5      | 2026-01-24
+  Exercise    | 2      | 2026-01-23
