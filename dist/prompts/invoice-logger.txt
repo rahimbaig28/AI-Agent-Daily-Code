@@ -16,3 +16,5 @@ Invoice Logger
 • Graceful error handling: file not found, invalid JSON, missing required fields
 • Human-readable output: currency formatted with two decimals, dates in YYYY-MM-DD format
 • No external dependencies; runs on Python 3.6+
+
+(Generated: 2026-01-25T16:40:09.147380Z, seed=43194, theme=small business utilities, extras=ARIA-compliant components, export/import JSON, offline-first with localStorage, kind=py)
