@@ -14,3 +14,5 @@ Study Session Tracker
 • On startup: load existing study_sessions.json if present; create empty file if missing
 • Keyboard support: all menu selections via number input; simple text prompts for data entry
 • No external libraries; use json, csv, datetime, and collections from standard library
+
+(Generated: 2026-01-26T08:50:16.581861Z, seed=63409, theme=learning & study tools, extras=print-friendly view, ARIA-compliant components, export/import JSON, kind=py)
