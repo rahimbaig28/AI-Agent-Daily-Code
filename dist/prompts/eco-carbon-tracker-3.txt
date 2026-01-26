@@ -32,3 +32,5 @@ Eco Carbon Tracker
   3. Undo add/delete, check chart refresh.
   4. Toggle views, export JSON, offline reload.
 - Max ~800 LOC: Efficient JS (no frameworks), modular functions (render(), calc(), storageOps(), historyStack(), chartDraw()).
+
+(Generated: 2026-01-26T17:45:00.876482Z, seed=96639, theme=environment & sustainability, extras=undo/redo, offline-first with localStorage, drag-and-drop, kind=html)
