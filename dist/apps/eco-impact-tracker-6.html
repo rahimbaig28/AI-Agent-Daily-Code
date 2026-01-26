@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-26T09:48:45.945592Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Tracker</title>
+    <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'Eco Impact Tracker',
+        'short_name': 'EcoTracker',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#2E7D32',
+        'theme_color': '#4CAF50',
+        'icons': [{'src': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjNENBRjUwIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5FPC90ZXh0Pgo8L3N2Zz4=', 'sizes': '192x192', 'type': 'image/svg+xml'}]
+    }">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            background: linear-gradient(135deg, #2E7D32 0%, #4CAF50 100%); 
+            color: #2E7D32; 
+            min-height: 100vh; 
+            padding: 1rem; 
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 2rem; padding: 2rem 1rem; background: rgba(255,255,255,0.95); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        h1 { color: #2E7D32; font-size: clamp(1.5rem, 5vw, 2.5rem); margin-bottom: 0.5rem; }
+        .tagline { color: #4CAF50; font-size: 1.1rem; margin-bottom: 1rem; }
+        .share-btn { background: #4CAF50; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 25px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; }
+        .share-btn:hover { background: #45a049; transform: translateY(-2px); }
+        .calendar { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem; }
+        .nav-btn { background: #A5D6A7; color: #2E7D32; border: none; padding: 0.5rem 1rem; border-radius: 20px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .nav-btn:hover { background: #4CAF50; color: white; }
+        .week-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1rem; }
+        @media (max-width: 768px) { .week-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .week-grid { grid-template-columns: repeat(7, 1fr); } }
+        .day { background: white; border-radius: 12px; padding: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.1); transition: transform 0.3s ease; min-height: 200px; }
+        .day:hover { transform: translateY(-4px); }
+        .day-header { font-weight: 700; margin-bottom: 1rem; text-align: center; color: #2E7D32; }
+        .action { margin-bottom: 1rem; }
+        .action-label { display: block; font-weight: 600; margin-bottom: 0.5rem; color: #4CAF50; }
+        .action-input { width: 100%; padding: 0.75rem; border: 2px solid #A5D6A7; border-radius: 8px; font-size: 1rem; transition: border-color 0.3s ease; }
+        .action-input:focus { outline: none; border-color: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.1); }
+        .unit { font-size: 0.85rem; color: #666; margin-left: 0.5rem; }
+        .dashboard { background: rgba(255,255,255,0.95); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+        .metrics-grid { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+        @media (min-width: 768px) { .metrics-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .metrics-grid { grid-template-columns: repeat(3, 1fr); } }
+        .metric-card { text-align: center; padding: 1.5rem; background: white; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }
+        .metric-value { font-size: 2rem; font-weight: 700; color: #2E7D32; margin-bottom: 0.5rem; }
+        .progress-bar { height: 8px; background: #A5D6A7; border-radius: 4px; overflow: hidden; margin-top: 0.5rem; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #4CAF50, #2E7D32); transition: width 0.5s ease; border-radius: 4px; }
+        .controls { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 2rem 0; }
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+        .btn-primary { background: #4CAF50; color: white; }
+        .btn-secondary { background: #A5D6A7; color: #2E7D32; }
+        .btn-danger { background: #d32f2f; color: white; }
+        .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .footer { text-align: center; margin-top: 2rem; padding-top: 2rem; border-top: 2px solid rgba(165,214,167,0.5); }
+        .tip { background: rgba(165,214,167,0.3); padding: 1rem; border-radius: 12px; margin-top: 1rem; font-style: italic; }
+        #confetti-canvas { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 1000; }
+        .empty-state { text-align: center; color: #666; font-style: italic; padding: 2rem; }
+        .warning { background: #ff9800; color: white; padding: 1rem; border-radius: 8px; margin: 1rem 0; text-align: center; }
+        @media (max-width: 768px) { body { padding: 0.5rem; } .container { padding: 0; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header role="banner">
+            <h1>Eco Impact Tracker</h1>
+            <p class="tagline">Track your daily sustainability actions</p>
+            <button class="share-btn" id="shareBtn" aria-label="Share current week data">📤 Share</button>
+        </header>
+
+        <main>
+            <section class="calendar" role="grid" aria-label="Weekly eco actions calendar">
+                <div class="calendar-header">
+                    <button class="nav-btn" id="prevWeek" aria-label="Previous week">← Prev</button>
+                    <h2 id="weekTitle">Week of Jan 26 - Feb 1, 2026</h2>
+                    <button class="nav-btn" id="nextWeek" aria-label="Next week">Next →</button>
+                </div>
+                <div class="week-grid" id="weekGrid" role="grid"></div>
+            </section>
+
+            <section class="dashboard" aria-label="Metrics dashboard">
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value" id="impactScore">0</div>
+                        <div>Weekly Impact Score</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="co2Saved">0kg</div>
+                        <div>CO₂ Saved</div>
+                    </div>
+                </div>
+                <div style="margin-top: 2rem;">
+                    <h3 style="text-align: center; margin-bottom: 1.5rem; color: #2E7D32;">Progress to Weekly Goals</h3>
+                    <div id="progressBars"></div>
+                </div>
+            </section>
+
+            <div class="controls">
+                <button class="btn btn-secondary" id="undoBtn" disabled>↶ Undo</button>
+                <button class="btn btn-secondary" id="redoBtn" disabled>↷ Redo</button>
+                <button class="btn btn-danger" id="clearBtn">🗑️ Clear Week</button>
+                <button class="btn btn-primary" id="exportBtn">📊 Export CSV</button>
+            </div>
+        </main>
+
+        <footer class="footer" role="contentinfo">
+            <button class="btn btn-secondary" id="resetWeek">Reset to Current Week</button>
+            <div class="tip" id="tipContainer">
+                <strong>Impact Tip:</strong> <span id="currentTip">Switching to LED bulbs can save up to 80% of energy!</span>
+            </div>
+        </footer>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+    <div id="warning" class="warning" style="display: none;" role="alert"></div>
+
+    <script>
+        // App state
+        const ACTIONS = [
+            { id: 'water', label: 'Water Saved', unit: 'L', weight: 1, co2: 0.00039, goal: 100 },
+            { id: 'energy', label: 'Energy Saved', unit: 'kWh', weight: 2, co2: 0.4, goal: 20 },
+            { id: 'waste', label: 'Waste Reduced', unit: 'kg', weight: 3, co2: 0.5, goal: 5 },
+            { id: 'transport', label: 'Transport Low-Carbon', unit: 'km', weight: 4, co2: 0.17, goal: 50 },
+            { id: 'meals', label: 'Plant-Based Meals', unit: 'meals', weight: 2, co2: 1.5, goal: 14 }
+        ];
+        const STORAGE_KEY = 'ecoData_v1';
+        const HISTORY_KEY = 'ecoHistory_v1';
+        const MAX_HISTORY = 10;
+        const AUTO_SAVE_INTERVAL = 30000;
+
+        let state = {
+            weekOffset: 0,
+            data: {}, // { '2026-01-26': { water: 10, energy: 2, ... } }
+            history: [],
+            historyIndex: -1
+        };
+
+        let currentDate = new Date('2026-01-26T09:00:00Z');
+        let saveTimeout, tipIndex = 0;
+        const tips = [
+            "Switching to LED bulbs can save up to 80% of energy!",
+            "Eating plant-based meals once a week reduces your carbon footprint by 1 ton per year!",
+            "Recycling aluminum saves 95% of the energy needed to make it from raw materials!",
+            "Walking or biking instead of driving saves ~0.17kg CO2 per km!",
+            "One minute in the shower uses 10L of water - every drop counts!"
+        ];
+
+        // Initialize
+        function init() {
+            loadState();
+            renderCalendar();
+            renderDashboard();
+            setupEventListeners();
+            rotateTips();
+            try { registerSW(); } catch(e) {}
+            updateHash();
+            setInterval(autoSave, AUTO_SAVE_INTERVAL);
+        }
+
+        // LocalStorage with quota handling
+        function safeLocalStorage(key, data = null) {
+            try {
+                if (data === null) return JSON.parse(localStorage.getItem(key) || 'null');
+                localStorage.setItem(key, JSON.stringify(data));
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    showWarning('Storage quota exceeded. Data may not persist.');
+                    console.error('localStorage quota exceeded');
+                }
+            }
+        }
+
+        // Load state
+        function loadState() {
+            const saved = safeLocalStorage(STORAGE_KEY);
+            if (saved) Object.assign(state, saved);
+            
+            const hash = location.hash.slice(1);
+            if (hash) {
+                try {
+                    const decoded = atob(hash);
+                    const { offset, data } = JSON.parse(decoded);
+                    state.weekOffset = parseInt(offset);
+                    state.data = data;
+                } catch(e) { console.error('Invalid hash data'); }
+            }
+            
+            const history = safeLocalStorage(HISTORY_KEY);
+            if (history) state.history = history.slice(-MAX_HISTORY);
+        }
+
+        // Save state
+        function saveState() {
+            safeLocalStorage(STORAGE_KEY, {
+                weekOffset: state.weekOffset,
+                data: state.data
+            });
+            safeLocalStorage(HISTORY_KEY, state.history);
+            updateHash();
+        }
+
+        // Update URL hash
+        function updateHash() {
+            const shareData = {
+                offset: state.weekOffset,
+                data: state.data
+            };
+            const encoded = btoa(JSON.stringify(shareData));
+            history.replaceState(null, null, `#${encoded}`);
+        }
+
+        // Get week dates
+        function getWeekDates(offset) {
+            const start = new Date(currentDate);
+            start.setDate(start.getDate() + offset * 7);
+            start.setDate(start.getDate() - start.getDay() + 1); // Monday
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(start);
+                d.setDate(d.getDate() + i);
+                dates.push(d.toISOString().split('T')[0]);
+            }
+            return dates;
+        }
+
+        // Render calendar
+        function renderCalendar() {
+            const dates = getWeekDates(state.weekOffset);
+            document.getElementById('weekTitle').textContent = 
+                `Week of ${dates[0]} - ${dates[6]}`;
+            
+            const grid = document.getElementById('weekGrid');
+            grid.innerHTML = dates.map(date => createDayHTML(date)).join('');
+        }
+
+        function createDayHTML(date) {
+            const dayData = state.data[date] || {};
+            const isEmpty = Object.values(dayData).every(v => !v);
+            
+            return `
+                <div class="day" data-date="${date}" role="row" tabindex="0">
+                    <div class="day-header">${new Date(date).toLocaleDateString('en-US', {weekday: 'short', month: 'short', day: 'numeric'})}</div>
+                    ${isEmpty ? '<div class="empty-state">No data</div>' : ''}
+                    ${ACTIONS.map(action => `
+                        <div class="action">
+                            <label class="action-label">${action.label} <span class="unit">${action.unit}</span></label>
+                            <input type="number" class="action-input" 
+                                   id="${action.id}-${date}" 
+                                   min="0" max="999" step="0.1"
+                                   value="${dayData[action.id] || ''}"
+                                   placeholder="0"
+                                   aria-label="${action.label} on ${date}">
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Render dashboard
+        function renderDashboard() {
+            const dates = getWeekDates(state.weekOffset);
+            const weekData = dates.map(date => state.data[date] || {});
+            
+            const totals = ACTIONS.reduce((acc, action) => {
+                acc[action.id] = weekData.reduce((sum, day) => sum + (day[action.id] || 0), 0);
+                return acc;
+            }, {});
+            
+            const impactScore = ACTIONS.reduce((sum, action) => 
+                sum + (totals[action.id] * action.weight), 0);
+            
+            const co2Saved = ACTIONS.reduce((sum, action) => 
+                sum + (totals[action.id] * action.co2), 0);
+            
+            document.getElementById('impactScore').textContent = Math.round(impactScore);
+            document.getElementById('co2Saved').textContent = co2Saved.toFixed(2) + 'kg';
+            
+            const progressHTML = ACTIONS.map(action => {
+                const percent = Math.min((totals[action.id] / action.goal) * 100, 100);
+                return `
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>${action.label}</span>
+                            <span>${totals[action.id].toFixed(1)}/${action.goal} ${action.unit}</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${percent}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('progressBars').innerHTML = progressHTML;
+            
+            checkGoals(impactScore);
+        }
+
+        // History management
+        function saveToHistory() {
+            state.history = state.history.slice(-MAX_HISTORY + 1);
+            state.history.push(JSON.parse(JSON.stringify({ weekOffset: state.weekOffset, data: state.data })));
+            state.historyIndex = state.history.length - 1;
+            updateUndoRedo();
+        }
+
+        function undo() {
+            if (state.historyIndex > 0) {
+                state.historyIndex--;
+                const prevState = state.history[state.historyIndex];
+                state.weekOffset = prevState.weekOffset;
+                state.data = prevState.data;
+                renderCalendar();
+                renderDashboard();
+                saveState();
+            }
+        }
+
+        function redo() {
+            if (state.historyIndex < state.history.length - 1) {
+                state.historyIndex++;
+                const nextState = state.history[state.historyIndex];
+                state.weekOffset = nextState.weekOffset;
+                state.data = nextState.data;
+                renderCalendar();
+                renderDashboard();
+                saveState();
+            }
+        }
+
+        function updateUndoRedo() {
+            document.getElementById('undoBtn').disabled = state.historyIndex <= 0;
+            document.getElementById('redoBtn').disabled = state.historyIndex >= state.history.length - 1;
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Navigation
+            document.getElementById('prevWeek').onclick = () => {
+                saveToHistory();
+                state.weekOffset--;
+                renderCalendar();
+                renderDashboard();
+                saveState();
+            };
+            document.getElementById('nextWeek').onclick = () => {
+                saveToHistory();
+                state.weekOffset++;
+                renderCalendar();
+                renderDashboard();
+                saveState();
+            };
+
+            // Controls
+            document.getElementById('resetWeek').onclick = () => {
+                if (confirm('Reset to current week?')) {
+                    saveToHistory();
+                    state.weekOffset = 0;
+                    renderCalendar();
+                    renderDashboard();
+                    saveState();
+                }
+            };
+
+            document.getElementById('clearBtn').onclick = () => {
+                if (confirm('Clear all data for this week?')) {
+                    saveToHistory();
+                    const dates = getWeekDates(state.weekOffset);
+                    dates.forEach(date => delete state.data[date]);
+                    renderCalendar();
+                    renderDashboard();
+                    saveState();
+                }
+            };
+
+            document.getElementById('undoBtn').onclick = undo;
+            document.getElementById('redoBtn').onclick = redo;
+
+            // Share
+            document.getElementById('shareBtn').onclick = () => {
+                navigator.clipboard.writeText(location.href).then(() => {
+                    alert('URL copied to clipboard!');
+                });
+            };
+
+            // Export CSV
+            document.getElementById('exportBtn').onclick = exportCSV;
+
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    if (e.key === 'z') { e.preventDefault(); undo(); }
+                    if (e.key === 'y') { e.preventDefault(); redo(); }
+                }
+                if (e.key === 'Escape') {
+                    document.activeElement.value = '';
+                    document.activeElement.blur();
+                }
+            });
+
+            // Input handling (delegated)
+            document.addEventListener('input', (e) => {
+                if (e.target.classList.contains('action-input')) {
+                    const val = parseFloat(e.target.value) || 0;
+                    if (val > 999) e.target.value = 999;
+                }
+            });
+
+            document.addEventListener('change', (e) => {
+                if (e.target.classList.contains('action-input')) {
+                    saveToHistory();
+                    const id = e.target.id.split('-');
+                    const date = id[1];
+                    const actionId = id[0];
+                    state.data[date] = state.data[date] || {};
+                    state.data[date][actionId] = parseFloat(e.target.value) || 0;
+                    renderDashboard();
+                    saveState();
+                }
+            });
+
+            // Day navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.target.classList.contains('day') && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+                    const days = document.querySelectorAll('.day');
+                    const current = Array.from(days).indexOf(e.target);
+                    const next = e.key === 'ArrowRight' ? (current + 1) % days.length : (current - 1 + days.length) % days.length;
+                    days[next].focus();
+                }
+            });
+        }
+
+        // Auto-save
+        function autoSave() {
+            if (saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(saveState, 1000);
+        }
+
+        // CSV Export
+        function exportCSV() {
+            const dates = getWeekDates(state.weekOffset);
+            let csv = 'Date,Action,Value,Score\n';
+            dates.forEach(date => {
+                const dayData = state.data[date] || {};
+                ACTIONS.forEach(action => {
+                    const value = dayData[action.id] || 0;
+                    csv += `"${date}","${action.label}",${value},${(value * action.weight).toFixed(1)}\n`;
+                });
+            });
+            downloadCSV(csv, 'eco-week.csv');
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Tips rotation
+        function rotateTips() {
+            document.getElementById('currentTip').textContent = tips[tipIndex];
+            tipIndex = (tipIndex + 1) % tips.length;
+            setTimeout(rotateTips, 5000);
+        }
+
+        // Goal celebration
+        function checkGoals(score) {
+            const dates = getWeekDates(state.weekOffset);
+            const complete = dates.every(date => state.data[date] && 
+                ACTIONS.every(action => (state.data[date][action.id] || 0) > 0));
+            
+            if (complete && score >= 100) {
+                confettiBurst();
+            }
+        }
+
+        // Confetti
+        function confettiBurst() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            for (let i = 0; i < 20; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: canvas.height + 10,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: -Math.random() * 15 - 5,
+                    size: Math.random() * 8 + 4,
+                    color: ['#4CAF50', '#A5D6A7', '#2E7D32'][Math.floor(Math.random() * 3)]
+                });
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2;
+                    p.vx *= 0.98;
+                    
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                if (particles.some(p => p.y < canvas.height)) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        // Warnings
+        function showWarning(msg) {
+            const el = document.getElementById('warning');
+            el.textContent = msg;
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', 5000);
+        }
+
+        // PWA stub
+        function registerSW() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('data:text/javascript;base64,' + 
+                    btoa('// PWA Service Worker Stub\nself.addEventListener("install",e=>e.waitUntil(self.skipWaiting()));\n' +
+                         'self.addEventListener("activate",e=>e.waitUntil(clients.claim()));\n' +
+                         'self.addEventListener("fetch",e=>e.respondWith(fetch(e.request)));\n')
+                ).catch(() => {});
+            }
+        }
+
+        // Resize handler
+        window.addEventListener('resize', () => {
+            const canvas = document.getElementById('confetti-canvas');
+            if (canvas) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+        });
+
+        // Initialize app
+        init();
+    </script>
+</body>
+</html>

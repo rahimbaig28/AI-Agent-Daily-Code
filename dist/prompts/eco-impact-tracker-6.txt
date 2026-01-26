@@ -14,3 +14,5 @@ Eco Impact Tracker
 - Animations: Smooth toggle transitions (0.3s ease), confetti burst on weekly goal hit (canvas-based, 20 particles).
 - Edge cases: Handle empty weeks (show "No data"), offline warning if localStorage quota hit, PWA-ready (manifest inline, service worker stub for cache).
 - Test features: Add data to 3 days, verify totals/CO2 calc, undo changes, share URL and load in incognito, resize to mobile.
+
+(Generated: 2026-01-26T09:48:17.518386Z, seed=94130, theme=environment & sustainability, extras=share via URL hash, undo/redo, offline-first with localStorage, kind=html)
