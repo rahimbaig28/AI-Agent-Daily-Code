@@ -19,3 +19,5 @@ Network Flow Visualizer
 - **Performance**: Limit to 100 nodes/300 edges; 60fps sim with requestAnimationFrame.
 - **Visual style**: Dark theme (#1a1a1a bg, #4a90e2 nodes, #7f8c8d edges), smooth transitions (0.3s ease), glow on hover.
 - Testable features: Load graph → drag 3 nodes → change sliders → undo → export JSON → reload verifies persistence.
+
+(Generated: 2026-01-27T08:49:47.669997Z, seed=67968, theme=data visualization, extras=ARIA-compliant components, undo/redo, offline-first with localStorage, kind=html)
