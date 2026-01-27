@@ -15,3 +15,5 @@ WCAG Contrast Checker Pro
   - Print → Clean table of ratios.
 - Responsive design (mobile/desktop); dark/light theme auto-detect (prefers-color-scheme).
 - Max 800 LOC; semantic HTML5, CSS Grid/Flexbox for layout.
+
+(Generated: 2026-01-27T23:33:40.147893Z, seed=36295, theme=accessibility helpers, extras=drag-and-drop, export/import JSON, print-friendly view, kind=html)
