@@ -22,3 +22,5 @@ Flashcard Forge
 - **Data format**: JSON in localStorage {decks: [{name, cards:[{front, back, rating:0, id}]}]}, auto-save on changes.
 - **Edge cases**: Handle no JS (static welcome), large decks (virtualize if >50 cards), mobile swipe for flip/nav.
 - **Accessibility**: ARIA labels on cards/buttons, focus management, high-contrast text, screen-reader friendly stats.
+
+(Generated: 2026-01-27T11:34:16.476862Z, seed=54994, theme=learning & study tools, extras=dark/light auto theme, responsive grid, print-friendly view, kind=html)
