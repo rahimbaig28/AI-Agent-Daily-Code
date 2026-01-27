@@ -14,3 +14,5 @@ WCAG Contrast Checker Pro
 - **Edge cases**: Handle invalid colors gracefully (reset to black/white); offline-first (no network calls); mobile-responsive (flex/grid, touch-friendly sliders).
 - **Testable features**: Verify AA/AAA pass (e.g., #000/#FFF=21:1 pass; #333/#CCC=4.2:1 pass AA); hash share works (e.g., #fg=ff0000&bg=ffff00); dark mode toggle persists; keyboard-only flow completes check/export.
 - Implementable in <800 lines: Use vanilla JS event listeners, Canvas API for eyedropper preview if needed, no frameworks.
+
+(Generated: 2026-01-27T09:47:00.710745Z, seed=46109, theme=accessibility helpers, extras=export/import JSON, share via URL hash, dark/light auto theme, kind=html)
