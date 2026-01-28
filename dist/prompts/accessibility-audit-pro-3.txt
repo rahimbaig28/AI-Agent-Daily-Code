@@ -20,3 +20,5 @@ Accessibility Audit Pro
   * `python audit.py --print > report.txt` → print output.
 - Error handling: Graceful failures for malformed HTML, permission issues; auto-create `reports/` dir.
 - Keep under 800 LOC: Use regex for HTML parsing, simple heuristics for ARIA validation.
+
+(Generated: 2026-01-28T21:44:07.113956Z, seed=67563, theme=accessibility helpers, extras=ARIA-compliant components, print-friendly view, drag-and-drop, kind=py)

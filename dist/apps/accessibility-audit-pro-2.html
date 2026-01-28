@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+#!/usr/bin/env python3
+import os
+import sys
+import json
+import re
+import argparse
+import time
+import curses
+import pathlib
+from datetime import datetime
+from collections import defaultdict, Counter
+from typing import List, Dict, Any, Optional
+
+class AccessibilityChecker:
+    def __init__(self):
+        self.rules = self._load_rules()
+        self.reports_dir = pathlib.Path("reports")
+        self.reports_dir.mkdir(exist_ok=True)
+    
+    def _load_rules(self) -> Dict[str, Dict[str, Any]]:
+        """Define 20+ accessibility rules with regex patterns and severity."""
+        return {
+            "missing_alt": {
+                "pattern": r'<img\b[^>]*>(?![^>]*\balt=)',
+                "severity": "critical",
+                "desc": "Images missing alt attribute"
+            },
+            "missing_lang": {
+                "pattern": r'<html\b(?![^>]*\blang=)',
+                "severity": "high",
+                "desc": "HTML missing lang attribute"
+            },
+            "invalid_role": {
+                "pattern": r'aria-role=["\']([^"\']+?)["\'][^>]*?(?<!presentation|button|link|checkbox|combobox|grid|img|listbox|menu|option|progressbar|radiogroup|scrollbar|searchbox|slider|spinbutton|switch|tab|tabpanel|textbox|timer|tooltip)',
+                "severity": "high",
+                "desc": "Invalid or suspicious ARIA role"
+            },
+            "empty_alt": {
+                "pattern": r'<img\b[^>]*alt=["\'][ \t\n\r]*["\'][^>]*>',
+                "severity": "high",
+                "desc": "Images with empty alt text"
+            },
+            "missing_label": {
+                "pattern": r'<input\b(?![^>]*\b(id=)[^>]*?(?=[^>]*label\sfor|\blabelledby=|\btitle=|\baria-label=))',
+                "severity": "critical",
+                "desc": "Form inputs without labels"
+            },
+            "missing_heading": {
+                "pattern": r'<body[^>]*>(?![^<]*(?:h1|h2|h3|h4|h5|h6)[^<]*</(?:h1|h2|h3|h4|h5|h6)>)(?=[^<]*?(?:p|div))',
+                "severity": "medium",
+                "desc": "No headings found in body"
+            },
+            "nested_headings": {
+                "pattern": r'(?P<h1>h[1-6]).*?(?P<h2>h[0-9])((?P<h1_start><\K(?P=h1))|(?P<h2_start><\K(?P=h2)))',
+                "severity": "medium",
+                "desc": "Improper heading hierarchy"
+            },
+            "missing_title": {
+                "pattern": r'<head[^>]*>(?![^<]*<title[^>]*>.*?</title>)',
+                "severity": "high",
+                "desc": "Missing page title"
+            },
+            "table_missing_header": {
+                "pattern": r'<table\b(?![^>]*\brole="grid")[^>]*>.*?(?:<tr\b[^>]*>|<th\b|<td\b)',
+                "severity": "medium",
+                "desc": "Data table missing headers or grid role"
+            },
+            "link_empty": {
+                "pattern": r'<a\b[^>]*href[^>]*>(?:[ \t\n\r]*|[^<]*?(?:&nbsp;)*)*?</a>',
+                "severity": "high",
+                "desc": "Links with no text content"
+            },
+            "keyboard_trap": {
+                "pattern": r'(tabindex=["\'][^"\']*[-1][^"\']*["\'])',
+                "severity": "critical",
+                "desc": "Negative tabindex detected (keyboard trap risk)"
+            },
+            "missing_landmark": {
+                "pattern": r'<main\b|\brole=["\']main["\']|\brole=["\'](banner|complementary|contentinfo|navigation|search)["\']',
+                "severity": "medium",
+                "desc": "Missing page landmarks"
+            },
+            "redundant_title": {
+                "pattern": r'<input\b[^>]*title=["\'][^"\']*["\'][^>]*?(?:aria-label|aria-labelledby)=',
+                "severity": "low",
+                "desc": "Redundant title with ARIA label"
+            },
+            "color_contrast": {
+                "pattern": r'(?:style|class)=["\'][^"\']*(?:text-(?:white|black|dark|light)|bg-(?:dark|light|white|black))["\'][^>]*?(?:color|background)',
+                "severity": "medium",
+                "desc": "Potential low contrast color combination"
+            },
+            "missing_form_label": {
+                "pattern": r'<form\b[^>]*>.*?(<input|<select|<textarea)(?![^>]*\b(id=)[^>]*?(?:label\sfor|\blabelledby=))',
+                "severity": "high",
+                "desc": "Form controls missing labels"
+            },
+            "invalid_aria": {
+                "pattern": r'aria-(?!hidden|label|labelledby|describedby|required|invalid|busy|live|atomic|relevant|dropdown|multiselectable|expanded|checked|selected|pressed|readonly|disabled|value)([^=\s]+)',
+                "severity": "high",
+                "desc": "Invalid ARIA attribute used"
+            },
+            "missing_alt_decorative": {
+                "pattern": r'<img\b[^>]*alt=["\']decorative["\'][^>]*>',
+                "severity": "low",
+                "desc": "Decorative images should have alt=''"
+            },
+            "frame_missing_title": {
+                "pattern": r'(<iframe|<frame)[^>]*>(?![^<]*title)',
+                "severity": "high",
+                "desc": "Frames missing title attribute"
+            },
+            "list_missing_role": {
+                "pattern": r'(<ul|<ol)[^>]*>(?![^<]*role=["\']list["\'])',
+                "severity": "low",
+                "desc": "Lists missing explicit role"
+            },
+            "button_missing_text": {
+                "pattern": r'<button\b[^>]*>(?:[ \t\n\r]*|\s*(?:&nbsp;|\u00A0)*\s*)</button>',
+                "severity": "critical",
+                "desc": "Buttons missing accessible text"
+            },
+            "fieldsets_missing_legend": {
+                "pattern": r'<fieldset\b[^>]*>(?![^<]*<legend)',
+                "severity": "medium",
+                "desc": "Fieldsets missing legend"
+            }
+        }
+    
+    def scan_file(self, filepath: str) -> Dict[str, Any]:
+        """Scan single HTML file for accessibility issues."""
+        try:
+            with open(filepath, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+        except Exception as e:
+            return {"errors": [f"Failed to read {filepath}: {e}"], "issues": []}
+        
+        issues = []
+        line_num = 1
+        for line in content.splitlines(keepends=True):
+            for rule_name, rule in self.rules.items():
+                matches = list(re.finditer(rule["pattern"], line, re.IGNORECASE | re.DOTALL))
+                for match in matches:
+                    issues.append({
+                        "rule": rule_name,
+                        "severity": rule["severity"],
+                        "description": rule["desc"],
+                        "line": line_num,
+                        "snippet": line[match.start():match.end()].strip()[:100] + "..."
+                    })
+            line_num += 1
+        
+        severity_counts = Counter(issue["severity"] for issue in issues)
+        return {
+            "filepath": filepath,
+            "issues": issues,
+            "stats": dict(severity_counts),
+            "total_issues": len(issues),
+            "timestamp": datetime.now().isoformat()
+        }
+
+def find_html_files(path: str, recursive: bool = False) -> List[str]:
+    """Find all HTML files in path."""
+    files = []
+    path_obj = pathlib.Path(path)
+    if path_obj.is_file() and path_obj.suffix.lower() in {'.html', '.htm'}:
+        return [str(path_obj)]
+    
+    for root, dirs, fs in os.walk(path) if recursive else [(path, [], os.listdir(path))]:
+        for f in fs:
+            if f.lower().endswith(('.html', '.htm')):
+                files.append(os.path.join(root, f))
+    return files
+
+class TUIManager:
+    def __init__(self, stdscr, checker: AccessibilityChecker):
+        self.stdscr = stdscr
+        self.checker = checker
+        self.files = []
+        self.current_file_idx = 0
+        self.scan_results = {}
+        self.mode = "browse"  # browse, results, help
+        self.search_term = ""
+        self.filtered_files = []
+        self.cursor_pos = 0
+        self.reports = self.load_reports()
+    
+    def load_reports(self) -> List[Dict]:
+        """Load previous scan reports."""
+        reports = []
+        for report_file in self.checker.reports_dir.glob("accessibility_audit_*.json"):
+            try:
+                reports.append(json.loads(report_file.read_text()))
+            except:
+                pass
+        return sorted(reports, key=lambda x: x.get('timestamp', ''), reverse=True)
+    
+    def save_report(self, results: Dict):
+        """Save scan results."""
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_file = self.checker.reports_dir / f"accessibility_audit_{timestamp}.json"
+        report = {
+            "timestamp": datetime.now().isoformat(),
+            "files": len(results),
+            "total_issues": sum(r.get("total_issues", 0) for r in results.values()),
+            "results": results
+        }
+        report_file.write_text(json.dumps(report, indent=2))
+        self.reports.insert(0, report)
+    
+    def setup_curses(self):
+        curses.curs_set(1)
+        curses.start_color()
+        curses.use_default_colors()
+        for i in range(1, 8):
+            curses.init_pair(i, i-1, -1)
+    
+    def draw_file_tree(self):
+        self.stdscr.clear()
+        height, width = self.stdscr.getmaxyx()
+        
+        # Header
+        self.stdscr.addstr(0, 0, f"Accessibility Audit Pro - {len(self.files)} files", curses.A_BOLD)
+        self.stdscr.addstr(0, width-20, f"Mode: {self.mode}", curses.color_pair(3))
+        
+        # File list
+        self.filtered_files = [f for f in self.files if self.search_term.lower() in f.lower()]
+        start_idx = max(0, self.cursor_pos - height + 4)
+        end_idx = min(len(self.filtered_files), start_idx + height - 4)
+        
+        for i, fname in enumerate(self.filtered_files[start_idx:end_idx]):
+            row = i + 3
+            status = "✓" if fname in self.scan_results else " "
+            issues = self.scan_results.get(fname, {}).get("total_issues", 0)
+            color = curses.color_pair(2) if fname == self.filtered_files[self.cursor_pos] else 0
+            display_name = pathlib.Path(fname).name[:width-10]
+            self.stdscr.addstr(row, 0, f"{status} {issues:3d} {display_name}", color)
+        
+        # Progress bar
+        scanned = sum(1 for f in self.filtered_files if f in self.scan_results)
+        prog = scanned / max(1, len(self.filtered_files))
+        bar = "█" * int(prog * 20) + "░" * (20 - int(prog * 20))
+        self.stdscr.addstr(height-3, 0, f"Progress: [{bar}] {scanned}/{len(self.filtered_files)}", 
+                          curses.color_pair(4))
+        
+        # Stats
+        if self.scan_results:
+            total_issues = sum(r.get("total_issues", 0) for r in self.scan_results.values())
+            self.stdscr.addstr(height-2, 0, f"Total Issues: {total_issues}", curses.color_pair(1))
+        
+        # Help
+        help_text = "hjkL:nav /:search Enter:scan Tab:results p:print q:quit ?:help"
+        self.stdscr.addstr(height-1, 0, help_text[:width-1])
+        
+        # Search box
+        if self.search_term:
+            self.stdscr.addstr(1, 0, f"Search: {self.search_term}", curses.A_REVERSE)
+        
+        self.stdscr.refresh()
+    
+    def draw_results(self):
+        self.stdscr.clear()
+        height, width = self.stdscr.getmaxyx()
+        
+        if not self.files or self.current_file_idx >= len(self.filtered_files):
+            self.stdscr.addstr(1, 0, "No scan results available")
+            self.stdscr.refresh()
+            return
+        
+        fname = self.filtered_files[self.current_file_idx]
+        result = self.scan_results.get(fname, {})
+        issues = result.get("issues", [])
+        
+        self.stdscr.addstr(0, 0, f"Results: {fname}", curses.A_BOLD)
+        self.stdscr.addstr(1, 0, f"Issues: {len(issues)}", curses.color_pair(1))
+        
+        # Severity stats
+        stats_line = " | ".join([f"{k}: {v}" for k, v in result.get("stats", {}).items()])
+        self.stdscr.addstr(2, 0, stats_line)
+        
+        # Issues list
+        for i, issue in enumerate(issues[:height-5]):
+            color = {
+                "critical": curses.color_pair(1),
+                "high": curses.color_pair(2),
+                "medium": curses.color_pair(3),
+                "low": curses.color_pair(4)
+            }.get(issue["severity"], 0)
+            line = f"{i+1:2d}. {issue['description']} (line {issue['line']})"
+            self.stdscr.addstr(i+4, 0, line[:width-1], color)
+        
+        self.stdscr.addstr(height-1, 0, "Esc:back hjkL:nav Enter:scan Tab:results p:print q:quit")
+        self.stdscr.refresh()
+    
+    def draw_help(self):
+        self.stdscr.clear()
+        height, width = self.stdscr.getmaxyx()
+        help_text = [
+            "Accessibility Audit Pro - Controls",
+            "",
+            "Navigation:    h(←) j(↓) k(↑) l(→)",
+            "Search:       / then type, Enter to search",
+            "Actions:",
+            "  Enter      - Scan selected file/folder",
+            "  Tab        - Toggle results view",
+            "  p          - Print current report",
+            "  r          - Rescan all files",
+            "Load/Save:",
+            "  L          - Load previous reports",
+            "CLI Flags:   --load, --print, --recursive",
+            "",
+            "Severity: 🔴 Critical 🔶 High 🟡 Medium ⚪ Low",
+            "",
+            "Press any key to continue..."
+        ]
+        
+        for i, line in enumerate(help_text):
+            if i < height-1:
+                self.stdscr.addstr(i, 2, line[:width-5])
+        
+        self.stdscr.refresh()
+    
+    def scan_current(self):
+        """Scan currently selected file."""
+        fname = self.filtered_files[self.current_file_idx]
+        if fname not in self.scan_results:
+            self.stdscr.addstr(3, 0, f"Scanning {pathlib.Path(fname).name}...", curses.A_BOLD)
+            self.stdscr.refresh()
+            result = self.checker.scan_file(fname)
+            self.scan_results[fname] = result
+            self.draw_file_tree()
+    
+    def print_report(self):
+        """Generate ASCII table report."""
+        if not self.scan_results:
+            return
+        
+        print("\n" + "="*80)
+        print("ACCESSIBILITY AUDIT REPORT")
+        print("="*80)
+        print(f"Scanned: {len(self.scan_results)} files")
+        print(f"Total Issues: {sum(r.get('total_issues', 0) for r in self.scan_results.values())}")
+        print()
+        
+        severity_order = ["critical", "high", "medium", "low"]
+        all_issues = []
+        for fname, result in self.scan_results.items():
+            for issue in result.get("issues", []):
+                issue["file"] = fname
+                all_issues.append(issue)
+        
+        for severity in severity_order:
+            sev_issues = [i for i in all_issues if i["severity"] == severity]
+            if sev_issues:
+                print(f"🔴 {severity.upper()}: {len(sev_issues)} issues")
+                print("-" * 80)
+                for issue in sev_issues[:10]:  # Top 10 per severity
+                    print(f"  {pathlib.Path(issue['file']).name}:{issue['line']} {issue['description']}")
+                if len(sev_issues) > 10:
+                    print(f"  ... and {len(sev_issues)-10} more")
+                print()
+    
+    def run(self, initial_files: List[str], args: argparse.Namespace):
+        self.files = initial_files
+        self.setup_curses()
+        
+        while True:
+            height, width = self.stdscr.getmaxyx()
+            if height < 10 or width < 40:
+                self.stdscr.addstr(0, 0, "Terminal too small. Resize and restart.")
+                self.stdscr.refresh()
+                self.stdscr.getch()
+                continue
+            
+            if self.mode == "browse":
+                self.draw_file_tree()
+            elif self.mode == "results":
+                self.draw_results()
+            elif self.mode == "help":
+                self.draw_help()
+            
+            key = self.stdscr.getch()
+            
+            if key == ord('q'):
+                break
+            elif key == ord('?'):
+                self.mode = "help"
+            elif self.mode == "help":
+                self.mode = "browse"
+                continue
+            elif key == 27:  # Esc
+                self.mode = "browse"
+            elif key == curses.KEY_TAB or key == ord('\t'):
+                self.mode = "results" if self.mode == "browse" else "browse"
+            elif key == ord('p'):
+                self.print_report()
+            elif key == ord('r'):
+                self.scan_results = {}
+                for f in self.files:
+                    self.scan_results[f] = self.checker.scan_file(f)
+                self.save_report(self.scan_results)
+            elif self.mode == "browse":
+                self.handle_browse_keys(key)
+            elif self.mode == "results":
+                self.handle_results_keys(key)
+        
+        curses.endwin()
+
+    def handle_browse_keys(self, key):
+        if key == ord('/'):
+            self.stdscr.move(1, 8)
+            self.stdscr.clrtoeol()
+            curses.echo()
+            self.search_term = self.stdscr.getstr(1, 8, 50).decode().strip()
+            curses.noecho()
+        elif self.search_term:
+            if key == curses.KEY_ENTER or key == 10 or key == 13:
+                self.cursor_pos = 0
+            self.search_term = ""
+        elif key == curses.KEY_UP or key == ord('k'):
+            self.cursor_pos = max(0, self.cursor_pos - 1)
+        elif key == curses.KEY_DOWN or key == ord('j'):
+            self.cursor_pos = min(len(self.filtered_files) - 1, self.cursor_pos + 1)
+        elif key == curses.KEY_LEFT or key == ord('h'):
+            self.current_file_idx = max(0, self.current_file_idx - 1)
+        elif key == curses.KEY_RIGHT or key == ord('l'):
+            self.current_file_idx = min(len(self.files) - 1, self.current_file_idx + 1)
+        elif key == curses.KEY_ENTER or key == 10 or key == 13:
+            if self.filtered_files:
+                self.scan_current()
+        elif key == ord('L'):
+            if self.reports:
+                self.scan_results = {r["filepath"]: r for r in self.reports[0]["results"].values()}
+    
+    def handle_results_keys(self, key):
+        if key == curses.KEY_UP or key == ord('k'):
+            self.current_file_idx = max(0, self.current_file_idx - 1)
+        elif key == curses.KEY_DOWN or key == ord('j'):
+            self.current_file_idx = min(len(self.files) - 1, self.current_file_idx + 1)
+        elif key == curses.KEY_ENTER or key == 10 or key == 13:
+            self.scan_current()
+
+def main():
+    parser = argparse.ArgumentParser(description="Accessibility Audit Pro")
+    parser.add_argument("path", nargs="?", help="HTML file or folder to scan")
+    parser.add_argument("-r", "--recursive", action="store_true", help="Scan recursively")
+    parser.add_argument("--load", action="store_true", help="Load previous reports")
+    parser.add_argument("--print", action="store_true", help="Print ASCII report")
+    args = parser.parse_args()
+    
+    checker = AccessibilityChecker()
+    
+    if args.print:
+        # Print mode - no TUI
+        files = []
+        if args.path:
+            files = find_html_files(args.path, args.recursive)
+        else:
+            files = find_html_files(".", True)
+        
+        results = {}
+        for f in files:
+            results[f] = checker.scan_file(f)
+        
+        # Print ASCII report
+        print("\n" + "="*80)
+        print("ACCESSIBILITY AUDIT REPORT")
+        print("="*80)
+        print(f"Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Scanned: {len(results)} files")
+        
+        severity_stats = Counter()
+        for fname, result in results.items():
+            issues = result.get("issues", [])
+            severity_stats.update(result.get("stats", {}))
+            print(f"\n📄 {pathlib.Path(fname).name}:")
+            print("-" * 50)
+            for issue in sorted(issues, key=lambda x: x["severity"])[::-1][:20]:
+                marker = {"critical": "🔴", "high": "🔶", "medium": "🟡", "low": "⚪"}[issue["severity"]]
+                print(f"  {marker} L{issue['line']:3d}: {issue['description']}")
+        
+        print("\n📊 SUMMARY:")
+        print("-" * 20)
+        for sev in ["critical", "high", "medium", "low"]:
+            count = severity_stats[sev]
+            print(f"  {sev.capitalize():8}: {count}")
+        return
+    
+    # TUI mode
+    files = []
+    if args.path:
+        files = find_html_files(args.path, args.recursive)
+    elif not args.load:
+        files = find_html_files(".", True)
+    
+    if not files and not args.load:
+        print("No HTML files found. Usage: python audit.py [path] [--recursive]")
+        return
+    
+    # Start curses TUI
+    curses.wrapper(TUIManager(checker).run, files, args)
+
+if __name__ == "__main__":
+    main()
