@@ -14,3 +14,5 @@ CashFlow Analyzer
 - Responsive terminal layout: use curses windows for header (current balance), menu, and status bar.
 - Testable features: add 5 sample transactions on first run if JSON empty; verify totals match (e.g., Food: $150, Net: +$200).
 - Keep under 800 LOC: compact curses usage, no external deps.
+
+(Generated: 2026-01-28T07:38:04.090697Z, seed=93717, theme=finance & budgeting, extras=share via URL hash, ARIA-compliant components, responsive grid, kind=py)
