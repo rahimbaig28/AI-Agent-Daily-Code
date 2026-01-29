@@ -16,3 +16,5 @@ Citation Tracker Pro
 - Testable: Pre-populate 3 sample citations on first run. Add --test flag prints sample data without saving.
 - Error handling: Pretty formatted errors, --help for all commands, backup before destructive ops
 - Keep under 800 LOC: Use pathlib for paths, json for data, csv for export, hashlib for IDs, argparse for CLI
+
+(Generated: 2026-01-29T20:46:44.974090Z, seed=87332, theme=research utilities, extras=dark/light auto theme, export/import JSON, drag-and-drop, kind=py)
