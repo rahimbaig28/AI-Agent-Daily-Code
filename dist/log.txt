@@ -756,3 +756,6 @@
 [2026-01-29] Proceeding with run #2 of target 5.
 [2026-01-29T13:23:11.079376Z] Prompt OK  seed=19049  theme=data visualization  extras=undo/redo, dark/light auto theme, responsive grid  title='Stock Tracker Viz'  slug=stock-tracker-viz  kind=py
 [2026-01-29T13:23:11.079376Z] Build OK  file=stock-tracker-viz.py  kind=py  required_kind=py  
+[2026-01-29] Proceeding with run #3 of target 5.
+[2026-01-29T14:57:14.215137Z] Prompt OK  seed=20189  theme=research utilities  extras=undo/redo, export/import JSON, keyboard-first UX  title='Research Citation Manager'  slug=research-citation-manager  kind=py
+[2026-01-29T14:57:14.215137Z] Build OK  file=research-citation-manager.py  kind=py  required_kind=py  

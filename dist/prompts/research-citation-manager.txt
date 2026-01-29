@@ -37,3 +37,5 @@ Research Citation Manager
   - Use pathlib for file paths
   - Use datetime for timestamps
   - Use sys/argparse for CLI arguments (optional: --config-path flag)
+
+(Generated: 2026-01-29T14:57:14.215137Z, seed=20189, theme=research utilities, extras=undo/redo, export/import JSON, keyboard-first UX, kind=py)
