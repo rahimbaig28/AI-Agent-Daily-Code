@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-01-30T08:57:12.680916Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco Impact Tracker</title>
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent: #10b981;
+            --accent-hover: #059669;
+            --border: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+
+        .nav-container {
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            z-index: 100;
+            transition: var(--transition);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+        }
+
+        .nav-links a:hover,
+        .nav-links a:focus {
+            color: var(--text-primary);
+            background: var(--accent);
+            outline: none;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover,
+        .theme-toggle:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        section {
+            scroll-margin-top: 80px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent), #34d399);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: var(--radius);
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2rem;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card {
+            grid-column: span 3;
+        }
+
+        @media (max-width: 768px) {
+            .stat-card {
+                grid-column: span 6;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stat-card {
+                grid-column: span 12;
+            }
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        .quantity-controls {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .qty-btn {
+            width: 44px;
+            height: 44px;
+            border: 2px solid var(--border);
+            background: var(--bg-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .qty-btn:hover,
+        .qty-btn:focus {
+            border-color: var(--accent);
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            outline: none;
+            box-shadow: var(--shadow);
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            border-left: 4px solid var(--accent);
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .edit-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .tip-item {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--accent), #34d399);
+            color: white;
+            border-radius: var(--radius);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tip-item::before {
+            content: '💡';
+            font-size: 2rem;
+            position: absolute;
+            left: 1rem;
+            top: 1rem;
+        }
+
+        .tip-item > * {
+            margin-left: 3rem;
+            margin-top: 0.5rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .modal[open] {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: var(--radius);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal[open] .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            nav {
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid {
+                gap: 1rem;
+            }
+            
+            .card {
+                padding: 1.5rem;
+            }
+        }
+
+        .live-region {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-container" role="banner">
+        <nav role="navigation" aria-label="Main navigation">
+            <div class="logo" aria-label="Eco Impact Tracker">🌿 Eco Impact</div>
+            <ul class="nav-links" role="list">
+                <li><a href="#hero">Home</a></li>
+                <li><a href="#dashboard">Dashboard</a></li>
+                <li><a href="#tracker">Tracker</a></li>
+                <li><a href="#history">History</a></li>
+                <li><a href="#tips">Tips</a></li>
+            </ul>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+                🌙
+            </button>
+        </nav>
+    </div>
+
+    <main>
+        <section id="hero" class="hero" role="banner">
+            <h1>Eco Impact Tracker</h1>
+            <p>Track your green impact daily</p>
+            <div class="score-badge" aria-live="polite" id="currentScore">
+                <span id="scoreValue">0</span> pts
+            </div>
+        </section>
+
+        <div class="container">
+            <section id="dashboard" class="grid">
+                <div class="card stat-card">
+                    <h3>Daily Score</h3>
+                    <div class="stat-number" id="dailyScore" aria-live="polite">0</div>
+                    <div>points today</div>
+                </div>
+                <div class="card stat-card">
+                    <h3>Weekly Total</h3>
+                    <div class="stat-number" id="weeklyScore">0</div>
+                    <div>points this week</div>
+                </div>
+                <div class="card stat-card">
+                    <h3>Monthly Avg</h3>
+                    <div class="stat-number" id="monthlyAvg">0</div>
+                    <div>points per day</div>
+                </div>
+                <div class="card stat-card">
+                    <h3>CO2 Saved</h3>
+                    <div class="stat-number" id="co2Saved">0</div>
+                    <div>kg this month</div>
+                </div>
+            </section>
+
+            <section id="tracker" class="grid">
+                <div class="card" style="grid-column: span 6;">
+                    <h2>Log Eco Action</h2>
+                    <form id="trackerForm" aria-label="Log eco action">
+                        <div class="form-group">
+                            <label for="actionSelect">Action</label>
+                            <select id="actionSelect" required>
+                                <option value="">Select action...</option>
+                                <option value="bike" data-points="10">Bike (10 pts/km)</option>
+                                <option value="recycle" data-points="5">Recycle (5 pts/kg)</option>
+                                <option value="water" data-points="2">Water saved (2 pts/L)</option>
+                                <option value="compost" data-points="8">Compost (8 pts/kg)</option>
+                                <option value="public-transport" data-points="6">Public transport (6 pts/trip)</option>
+                                <option value="vegetarian" data-points="15">Vegetarian meal (15 pts)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="quantity">Quantity</label>
+                            <div class="quantity-controls">
+                                <button type="button" class="qty-btn" id="decreaseQty" aria-label="Decrease quantity">−</button>
+                                <input type="number" id="quantity" value="1" min="1" max="100" required>
+                                <button type="button" class="qty-btn" id="increaseQty" aria-label="Increase quantity">+</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="actionDate">Date</label>
+                            <input type="date" id="actionDate" required>
+                        </div>
+                        <button type="submit" class="btn">Add Action</button>
+                    </form>
+                </div>
+            </section>
+
+            <section id="history" class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <h2>History</h2>
+                    <div style="margin-bottom: 1rem;">
+                        <input type="date" id="filterStart" aria-label="Start date">
+                        <input type="date" id="filterEnd" aria-label="End date">
+                        <button class="btn" id="filterBtn" style="width: auto; padding: 0.5rem 1rem;">Filter</button>
+                    </div>
+                    <div id="historyList" aria-label="History list"></div>
+                </div>
+            </section>
+
+            <section id="tips" class="grid">
+                <div class="card" style="grid-column: span 12;">
+                    <h2>Personalized Tips</h2>
+                    <div class="tips-list" id="tipsList"></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="editModal" class="modal" role="dialog" aria-labelledby="editModalTitle" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="editModalTitle">Edit Action</h3>
+                <button class="close-btn" aria-label="Close modal">×</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editIndex">
+                <div class="form-group">
+                    <label for="editAction">Action</label>
+                    <select id="editAction"></select>
+                </div>
+                <div class="form-group">
+                    <label for="editQuantity">Quantity</label>
+                    <input type="number" id="editQuantity" min="1" max="100" required>
+                </div>
+                <div class="form-group">
+                    <label for="editDate">Date</label>
+                    <input type="date" id="editDate" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit" class="btn">Save Changes</button>
+                    <button type="button" class="btn" style="background: #6b7280;" id="cancelEdit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="scoreAnnounce" class="live-region" aria-live="polite" aria-atomic="true"></div>
+
+    <script>
+        class EcoTracker {
+            constructor() {
+                this.entries = [];
+                this.actions = {
+                    bike: { name: 'Bike', points: 10, unit: 'km', co2: 0.2 },
+                    recycle: { name: 'Recycle', points: 5, unit: 'kg', co2: 0.1 },
+                    water: { name: 'Water saved', points: 2, unit: 'L', co2: 0.05 },
+                    compost: { name: 'Compost', points: 8, unit: 'kg', co2: 0.15 },
+                    'public-transport': { name: 'Public transport', points: 6, unit: 'trip', co2: 0.3 },
+                    vegetarian: { name: 'Vegetarian meal', points: 15, unit: 'meal', co2: 0.8 }
+                };
+                this.init();
+            }
+
+            init() {
+                this.loadData();
+                this.parseShareHash();
+                this.bindEvents();
+                this.updateDisplay();
+                this.setTheme();
+                this.setTodayDate();
+                this.updateTips();
+            }
+
+            bindEvents() {
+                // Theme toggle
+                document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+
+                // Form submission
+                document.getElementById('trackerForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.addEntry();
+                });
+
+                // Quantity controls
+                document.getElementById('increaseQty').addEventListener('click', () => this.adjustQuantity(1));
+                document.getElementById('decreaseQty').addEventListener('click', () => this.adjustQuantity(-1));
+
+                // History filter
+                document.getElementById('filterBtn').addEventListener('click', () => this.filterHistory());
+
+                // Edit form
+                document.getElementById('editForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.saveEdit();
+                });
+
+                // Modal controls
+                document.querySelectorAll('.close-btn, #cancelEdit').forEach(btn => {
+                    btn.addEventListener('click', () => this.closeModal());
+                });
+
+                // Keyboard navigation
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') this.closeModal();
+                    if (e.key === 'Enter' && document.activeElement.closest('#trackerForm')) {
+                        document.getElementById('trackerForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+
+                // Smooth scroll for nav links
+                document.querySelectorAll('.nav-links a, [href^="#"]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (target) {
+                            target.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    });
+                });
+
+                // Share hash update
+                window.addEventListener('hashchange', () => this.parseShareHash());
+            }
+
+            setTodayDate() {
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('actionDate').value = today;
+            }
+
+            adjustQuantity(delta) {
+                const qty = document.getElementById('quantity');
+                let value = parseInt(qty.value) || 1;
+                value = Math.max(1, Math.min(100, value + delta));
+                qty.value = value;
+            }
+
+            addEntry() {
+                const actionEl = document.getElementById('actionSelect');
+                const qtyEl = document.getElementById('quantity');
+                const dateEl = document.getElementById('actionDate');
+
+                const actionKey = actionEl.value;
+                if (!actionKey) return;
+
+                const entry = {
+                    date: dateEl.value,
+                    action: actionKey,
+                    quantity: parseInt(qtyEl.value),
+                    points: this.actions[actionKey].points * parseInt(qtyEl.value)
+                };
+
+                this.entries.unshift(entry);
+                this.saveData();
+                this.resetForm();
+                this.updateDisplay();
+                this.announceScore();
+            }
+
+            resetForm() {
+                document.getElementById('trackerForm').reset();
+                this.setTodayDate();
+                document.getElementById('quantity').value = 1;
+            }
+
+            saveEdit() {
+                const index = parseInt(document.getElementById('editIndex').value);
+                const actionKey = document.getElementById('editAction').value;
+                
+                this.entries[index] = {
+                    date: document.getElementById('editDate').value,
+                    action: actionKey,
+                    quantity: parseInt(document.getElementById('editQuantity').value),
+                    points: this.actions[actionKey].points * parseInt(document.getElementById('editQuantity').value)
+                };
+
+                this.saveData();
+                this.updateDisplay();
+                this.closeModal();
+            }
+
+            deleteEntry(index) {
+                if (confirm('Delete this entry?')) {
+                    this.entries.splice(index, 1);
+                    this.saveData();
+                    this.updateDisplay();
+                }
+            }
+
+            editEntry(index) {
+                const entry = this.entries[index];
+                document.getElementById('editIndex').value = index;
+                document.getElementById('editAction').value = entry.action;
+                document.getElementById('editQuantity').value = entry.quantity;
+                document.getElementById('editDate').value = entry.date;
+                
+                document.getElementById('editModal').setAttribute('open', 'true');
+                document.getElementById('editAction').focus();
+            }
+
+            closeModal() {
+                document.getElementById('editModal').removeAttribute('open');
+            }
+
+            filterHistory() {
+                const start = document.getElementById('filterStart').value;
+                const end = document.getElementById('filterEnd').value;
+                this.renderHistory(start, end);
+            }
+
+            getStats() {
+                const now = new Date();
+                const today = now.toISOString().split('T')[0];
+                const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+                const daily = this.entries
+                    .filter(e => e.date === today)
+                    .reduce((sum, e) => sum + e.points, 0);
+
+                const weekly = this.entries
+                    .filter(e => e.date >= weekAgo)
+                    .reduce((sum, e) => sum + e.points, 0);
+
+                const monthly = this.entries
+                    .filter(e => e.date >= monthAgo)
+                    .reduce((sum, e) => sum + e.points, 0) / 30;
+
+                const co2 = this.entries
+                    .filter(e => e.date >= monthAgo)
+                    .reduce((sum, e) => {
+                        const co2Rate = this.actions[e.action]?.co2 || 0;
+                        return sum + (co2Rate * e.quantity);
+                    }, 0).toFixed(1);
+
+                return { daily, weekly, monthly: Math.round(monthly), co2 };
+            }
+
+            updateDisplay() {
+                const stats = this.getStats();
+                const total = this.entries.reduce((sum, e) => sum + e.points, 0);
+
+                document.getElementById('scoreValue').textContent = total;
+                document.getElementById('dailyScore').textContent = stats.daily;
+                document.getElementById('weeklyScore').textContent = stats.weekly;
+                document.getElementById('monthlyAvg').textContent = stats.monthly;
+                document.getElementById('co2Saved').textContent = stats.co2;
+
+                this.renderHistory();
+                this.updateShareHash(stats);
+                this.updateTips();
+            }
+
+            renderHistory(start = '', end = '') {
+                const container = document.getElementById('historyList');
+                let filtered = this.entries;
+
+                if (start && end) {
+                    filtered = filtered.filter(e => e.date >= start && e.date <= end);
+                }
+
+                if (filtered.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No entries found</p>';
+                    return;
+                }
+
+                container.innerHTML = filtered.map((entry, index) => {
+                    const globalIndex = this.entries.indexOf(entry);
+                    const action = this.actions[entry.action];
+                    return `
+                        <div class="history-item" role="listitem">
+                            <div>
+                                <div><strong>${entry.date}</strong> - ${action.name} × ${entry.quantity} ${action.unit}</div>
+                                <div style="color: var(--accent); font-weight: 600;">${entry.points} pts</div>
+                            </div>
+                            <div class="history-actions">
+                                <button class="action-btn edit-btn" 
+                                        onclick="tracker.editEntry(${globalIndex})" 
+                                        aria-label="Edit entry">
+                                    ✏️
+                                </button>
+                                <button class="action-btn delete-btn" 
+                                        onclick="tracker.deleteEntry(${globalIndex})" 
+                                        aria-label="Delete entry">
+                                    🗑️
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            updateTips() {
+                const stats = this.getStats();
+                const lowAreas = [];
+
+                if (stats.daily < 20) lowAreas.push('transport');
+                if (stats.weekly < 100) lowAreas.push('waste');
+                if (stats.monthly < 10) lowAreas.push('diet');
+
+                const tips = lowAreas.length > 0 
+                    ? this.getPersonalizedTips(lowAreas)
+                    : this.getGeneralTips();
+
+                const container = document.getElementById('tipsList');
+                container.innerHTML = tips.map(tip => 
+                    `<div class="tip-item">${tip}</div>`
+                ).join('');
+            }
+
+            getPersonalizedTips(lowAreas) {
+                const tipMap = {
+                    transport: '🚲 Low transport score: Try biking 5km daily (50 pts) or public transport!',
+                    waste: '♻️ Low waste score: Recycle 2kg weekly (10 pts) and start composting!',
+                    diet: '🥗 Low diet score: Go vegetarian 3x/week (45 pts) for big impact!'
+                };
+                return Object.values(tipMap).slice(0, 3);
+            }
+
+            getGeneralTips() {
+                return [
+                    '🌱 Plant-based meals save ~1.5kg CO2 per meal!',
+                    '🚲 Every km biked saves 0.2kg CO2 vs driving.',
+                    '💧 Saving 10L water daily = 20 eco points!',
+                    '♻️ Recycling 1kg plastic = 5 points + resource conservation.',
+                    '🚌 Public transport trip = 6 points vs car.',
+                    '🍂 Composting 1kg food waste = 8 points.'
+                ];
+            }
+
+            updateShareHash(stats) {
+                const data = {
+                    score: Math.round(this.entries.reduce((sum, e) => sum + e.points, 0)),
+                    week: Math.round(stats.weekly),
+                    daily: Math.round(stats.daily),
+                    co2: stats.co2
+                };
+                const hash = `#data=${btoa(JSON.stringify(data))}`;
+                if (location.hash !== hash) {
+                    history.replaceState(null, null, hash);
+                }
+            }
+
+            parseShareHash() {
+                const hash = location.hash;
+                if (hash.includes('data=')) {
+                    try {
+                        const data = JSON.parse(atob(hash.split('data=')[1]));
+                        // Update display with shared stats (visual only)
+                        document.getElementById('scoreValue').textContent = data.score;
+                        document.getElementById('weeklyScore').textContent = data.week;
+                        document.getElementById('dailyScore').textContent = data.daily;
+                        document.getElementById('co2Saved').textContent = data.co2;
+                    } catch (e) {
+                        // Invalid hash, ignore
+                    }
+                }
+            }
+
+            announceScore() {
+                const total = this.entries.reduce((sum, e) => sum + e.points, 0);
+                const announce = document.getElementById('scoreAnnounce');
+                announce.textContent = `Score updated: ${total} points`;
+                setTimeout(() => announce.textContent = '', 1000);
+            }
+
+            saveData() {
+                localStorage.setItem('eco-entries', JSON.stringify(this.entries));
+            }
+
+            loadData() {
+                const saved = localStorage.getItem('eco-entries');
+                if (saved) {
+                    this.entries = JSON.parse(saved);
+                }
+            }
+
+            setTheme() {
+                const savedTheme = localStorage.getItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                
+                if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    document.getElementById('themeToggle').textContent = '☀️';
+                }
+            }
+
+            toggleTheme() {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const newTheme = isDark ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.getElementById('themeToggle').textContent = isDark ? '☀️' : '🌙';
+                localStorage.setItem('theme', newTheme);
+            }
+        }
+
+        // Populate edit modal action options
+        document.addEventListener('DOMContentLoaded', () => {
+            const selects = ['#actionSelect', '#editAction'];
+            selects.forEach(selector => {
+                const select = document.querySelector(selector);
+                Object.entries(tracker.actions).forEach(([key, action]) => {
+                    const option = document.createElement('option');
+                    option.value = key;
+                    option.textContent = action.name;
+                    option.dataset.points = action.points;
+                    select.appendChild(option);
+                });
+            });
+        });
+
+        // Initialize app
+        const tracker = new EcoTracker();
+
+        // Add test data button (remove in production)
+        // Uncomment to test: window.addTestData = () => { tracker.entries = [...]; tracker.saveData(); tracker.updateDisplay(); };
+    </script>
+</body>
+</html>
