@@ -25,3 +25,5 @@ Accessibility Auditor Pro
 - Output share hash example: base64.urlsafe_b64encode(json.dumps(summary).encode()).decode()[:32]
 - Error handling: safe for network drives, permission errors, huge dirs (limit recursion depth=5)
 - Exit cleanly with all data saved, shebang #!/usr/bin/env python3
+
+(Generated: 2026-01-30T02:50:53.008348Z, seed=49193, theme=accessibility helpers, extras=share via URL hash, keyboard-first UX, drag-and-drop, kind=py)
