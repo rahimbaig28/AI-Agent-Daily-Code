@@ -11,3 +11,5 @@ Pixel Puzzle Rush
 - **Responsive**: Mobile-first grid scales 1.5x on touch devices; swipe gestures for mobile sequence input; sticky header with score/timer.
 - **Polish**: Smooth pixel-reveal animation (0.2s scale/pop); confetti burst on win; subtle sound cues via Web Audio API (beep for correct, buzz for wrong); fullscreen toggle button.
 - **Edge cases**: Prevent duplicate puzzle solves; graceful offline mode (cache puzzle in localStorage); reset all data button.
+
+(Generated: 2026-02-01T20:41:36.228920Z, seed=58497, theme=micro games, extras=dark/light auto theme, print-friendly view, keyboard-first UX, kind=html)
