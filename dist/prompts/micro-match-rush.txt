@@ -12,3 +12,5 @@ Micro Match Rush
 - Persistence: localStorage saves high scores, best moves; auto-saves every 5s during play.
 - Testable features: Win in under 20 moves, export/import mid-game, drag to shuffle, keyboard-only playthrough, responsive on 320px width.
 - Total impl <800 LOC: Modular JS (initGame(), handleFlip(), handleDrag(), saveState(), loadState()).
+
+(Generated: 2026-02-01T19:35:43.059733Z, seed=36130, theme=micro games, extras=ARIA-compliant components, export/import JSON, drag-and-drop, kind=html)
