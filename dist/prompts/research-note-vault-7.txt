@@ -1,0 +1,17 @@
+Research Note Vault
+- Single HTML file with inline CSS and JS, no external dependencies, fully offline-first using localStorage for persistence.
+- Clean, print-friendly layout: fixed-width content area, high-contrast black/white theme, @media print styles hiding UI chrome and adding page breaks.
+- Central vault displays saved research notes as expandable cards; each card shows title, URL, capture date, preview snippet, and full saved content.
+- Drag-and-drop zone at top: drop any URL or webpage content to auto-extract title/snippet via pasted URL fetch (fetch API) or pasted text parsing.
+- "Capture Page" button: prompts for URL, fetches HTML, strips scripts/styles, extracts title/body snippet, saves as new note with timestamp.
+- Note actions: edit title/content inline (contenteditable), delete (confirm dialog), toggle expand/collapse, duplicate, export single note as printable HTML.
+- Search bar filters notes by title/content/URL in real-time (case-insensitive, highlights matches).
+- Sort notes by: newest first, oldest first, title A-Z (dropdown selector).
+- Keyboard support: Tab navigation through inputs/buttons, Enter to save edits/search, Escape to cancel dialogs/close expanded notes, Arrow keys to navigate note list.
+- Bulk actions: select multiple notes (checkboxes), delete selected, export all as ZIP (JSZip library inlined, <10KB minified).
+- Stats panel: total notes, newest capture date, largest note size.
+- Responsive: mobile-friendly grid layout, touch-drag for reordering notes.
+- Data migration: on load, check for old formats and upgrade silently.
+- Testable features: add 5 sample notes on first load, verify search finds "quantum computing", drag-drop works offline, print outputs clean PDF-ready pages.
+
+(Generated: 2026-02-02T17:56:51.918604Z, seed=68198, theme=research utilities, extras=print-friendly view, drag-and-drop, offline-first with localStorage, kind=html)

@@ -13,3 +13,5 @@ Invoice Tracker Pro
 - Command-line args: python invoice_tracker.py [--file custom.json] [--export output.csv].
 - Auto-save every 10 changes; confirm overwrites.
 - Testable: Run empty -> add 3 invoices -> undo/redo -> export CSV -> verify file contents match.
+
+(Generated: 2026-02-02T17:58:01.378052Z, seed=61528, theme=small business utilities, extras=undo/redo, keyboard-first UX, responsive grid, kind=py)
