@@ -13,3 +13,5 @@ CashFlow Grid
 - Error handling: Validate floats/dates, backup json on load, confirm deletes.
 - Testable features: Run script, add 5 transactions across 2 months, verify grid sums/diffs, reorder rows, toggle months, quit with data saved.
 - Compact: <800 LOC target, clear menu on startup/help key (? shows controls).
+
+(Generated: 2026-02-02T23:43:10.950488Z, seed=38031, theme=finance & budgeting, extras=responsive grid, keyboard-first UX, drag-and-drop, kind=py)
