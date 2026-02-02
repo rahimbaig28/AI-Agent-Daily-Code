@@ -14,3 +14,5 @@ Habit Tracker Visualizer
 - Visual polish: Color-coded bars (green good 7-10, yellow 4-6, red 0-3) using ANSI escapes; clear borders/labels.
 - Error handling: Validate inputs, graceful recovery from corrupt JSON (backup to habits_backup.json).
 - Testable: Run script, log 5 days data, verify bar chart scales correctly, export matches input.
+
+(Generated: 2026-02-02T13:34:51.199310Z, seed=91398, theme=data visualization, extras=export/import JSON, offline-first with localStorage, share via URL hash, kind=py)
