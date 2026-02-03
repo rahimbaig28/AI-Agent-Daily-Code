@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-02-03T06:05:43.844724Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Accessibility Auditor Pro</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a1a;
+      --border: #e0e0e0;
+      --primary: #0066cc;
+      --primary-hover: #0052a3;
+      --danger: #d73a49;
+      --warning: #dbab09;
+      --success: #28a745;
+      --surface: #f8f9fa;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --radius: 8px;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a;
+      --fg: #e8e8e8;
+      --border: #333;
+      --primary: #4dabf7;
+      --primary-hover: #339af0;
+      --surface: #2d2d2d;
+      --shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 1rem;
+      transition: all 0.3s ease;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 100vh;
+      gap: 1.5rem;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 0.75rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+    .theme-toggle:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    .theme-toggle:focus-visible {
+      outline: 2px solid var(--primary);
+      outline-offset: 2px;
+    }
+    main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      min-height: 500px;
+    }
+    .input-section {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      resize: vertical;
+      padding: 1rem;
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+      background: var(--surface);
+      color: var(--fg);
+      transition: border-color 0.2s;
+    }
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .audit-btn {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--primary);
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .audit-btn:hover:not(:disabled) {
+      background: var(--primary-hover);
+    }
+    .audit-btn:focus-visible {
+      outline: 2px solid white;
+      outline-offset: 2px;
+    }
+    .audit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid transparent;
+      border-top: 2px solid currentColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .results-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats {
+      display: flex;
+      gap: 1rem;
+    }
+    .stat {
+      font-weight: 600;
+    }
+    .severity-critical { color: var(--danger); }
+    .severity-serious { color: #fd7e14; }
+    .severity-moderate { color: var(--warning); }
+    .severity-minor { color: #6c757d; }
+    .issues-list {
+      list-style: none;
+    }
+    .issue {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 1rem;
+      padding: 1.25rem;
+      transition: all 0.2s;
+    }
+    .issue:hover {
+      box-shadow: var(--shadow);
+      transform: translateY(-1px);
+    }
+    .issue-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 1rem;
+    }
+    .issue-meta {
+      flex: 1;
+    }
+    .issue-severity {
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+    }
+    .issue-line {
+      font-family: monospace;
+      background: var(--bg);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.9rem;
+    }
+    .fix-btn {
+      padding: 0.5rem 1rem;
+      background: var(--success);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      min-height: 36px;
+      min-width: 80px;
+    }
+    .fix-btn:hover {
+      background: #218838;
+    }
+    .no-issues {
+      text-align: center;
+      padding: 3rem;
+      color: var(--success);
+      font-size: 1.1rem;
+    }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    .share-btn, .clear-history {
+      padding: 0.75rem 1.5rem;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--fg);
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 44px;
+    }
+    .share-btn:hover, .clear-history:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    @media (max-width: 768px) {
+      main {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+      }
+      .container {
+        gap: 1rem;
+        padding: 0.5rem;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+    [hidden] {
+      display: none !important;
+    }
+    dialog {
+      border: none;
+      border-radius: var(--radius);
+      padding: 0;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+    }
+    dialog::backdrop {
+      background: rgba(0,0,0,0.5);
+    }
+    .dialog-content {
+      padding: 2rem;
+    }
+    .dialog-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" role="main">
+    <header>
+      <h1>Accessibility Auditor Pro</h1>
+      <div class="controls">
+        <label for="theme-toggle" class="theme-toggle" role="switch" aria-checked="false" tabindex="0">
+          <span class="sr-only">Toggle dark/light theme</span>
+          <input type="checkbox" id="theme-toggle" class="sr-only">
+          <span aria-hidden="true">🌙☀️</span>
+        </label>
+      </div>
+    </header>
+
+    <main>
+      <section class="input-section" aria-labelledby="input-heading">
+        <h2 id="input-heading" class="sr-only">HTML Input</h2>
+        <textarea 
+          id="html-input"
+          placeholder="Paste your HTML snippet here...&#10;&#10;Example: &lt;img src=&quot;x&quot;&gt; will flag missing alt text&#10;&lt;input type=&quot;text&quot;&gt; will flag missing label&#10;&lt;div onclick=&quot;...&quot;&gt;Click&lt;/div&gt; will flag improper button"
+          aria-label="Paste HTML to audit"
+          autocomplete="off"
+        ></textarea>
+        <button class="audit-btn" id="audit-btn" role="button" aria-live="polite">
+          <span class="spinner" id="spinner" hidden></span>
+          Audit Accessibility
+        </button>
+      </section>
+
+      <section class="results-section" aria-labelledby="results-heading" aria-live="polite" aria-atomic="true">
+        <h2 id="results-heading" class="sr-only">Audit Results</h2>
+        <div class="results-header">
+          <div class="stats">
+            <div class="stat"><span id="critical-count">0</span> Critical</div>
+            <div class="stat"><span id="serious-count">0</span> Serious</div>
+            <div class="stat"><span id="moderate-count">0</span> Moderate</div>
+            <div class="stat"><span id="minor-count">0</span> Minor</div>
+          </div>
+          <div id="status" class="no-issues">Paste HTML and click Audit to begin</div>
+        </div>
+        <ul class="issues-list" id="issues-list" role="listbox" aria-label="Accessibility issues"></ul>
+      </section>
+    </main>
+
+    <footer>
+      <div id="share-section">
+        <button class="share-btn" id="share-btn" role="button" disabled>Share Results</button>
+      </div>
+      <button class="clear-history" id="clear-history" role="button">Clear History</button>
+    </footer>
+  </div>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title" aria-describedby="confirm-desc">
+    <div class="dialog-content">
+      <h3 id="confirm-title">Clear Audit History?</h3>
+      <p id="confirm-desc">This will permanently delete all saved audits from local storage.</p>
+      <div class="dialog-buttons">
+        <button id="cancel-btn">Cancel</button>
+        <button id="confirm-btn" class="audit-btn">Clear History</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    class AccessibilityAuditor {
+      constructor() {
+        this.audits = [];
+        this.maxAudits = 50;
+        this.init();
+      }
+
+      init() {
+        this.bindEvents();
+        this.loadTheme();
+        this.loadLatestAudit();
+        window.addEventListener('hashchange', () => this.loadFromHash());
+        document.addEventListener('keydown', (e) => this.handleKeydown(e));
+      }
+
+      bindEvents() {
+        const themeToggle = document.getElementById('theme-toggle');
+        const auditBtn = document.getElementById('audit-btn');
+        const htmlInput = document.getElementById('html-input');
+        const shareBtn = document.getElementById('share-btn');
+        const clearHistory = document.getElementById('clear-history');
+
+        themeToggle.addEventListener('change', () => this.toggleTheme());
+        themeToggle.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            themeToggle.checked = !themeToggle.checked;
+            this.toggleTheme();
+          }
+        });
+
+        auditBtn.addEventListener('click', () => this.runAudit());
+        htmlInput.addEventListener('keydown', (e) => {
+          if (e.ctrlKey && e.key === 'Enter') this.runAudit();
+        });
+
+        shareBtn.addEventListener('click', () => this.shareResults());
+        clearHistory.addEventListener('click', () => this.showClearConfirm());
+
+        document.getElementById('cancel-btn').addEventListener('click', () => {
+          document.getElementById('confirm-dialog').close();
+        });
+        document.getElementById('confirm-btn').addEventListener('click', () => {
+          this.clearHistory();
+          document.getElementById('confirm-dialog').close();
+        });
+
+        // Focus management
+        auditBtn.focus();
+      }
+
+      async runAudit() {
+        const btn = document.getElementById('audit-btn');
+        const input = document.getElementById('html-input');
+        const html = input.value.trim();
+
+        if (!html) {
+          this.announce('Please paste HTML to audit');
+          return;
+        }
+
+        btn.disabled = true;
+        btn.querySelector('.spinner').hidden = false;
+        btn.textContent = 'Auditing...';
+
+        // Simulate async processing
+        await new Promise(r => setTimeout(r, 800));
+
+        const results = this.analyzeHTML(html);
+        this.displayResults(results);
+        this.saveAudit(html, results);
+        this.updateShareBtn();
+
+        btn.disabled = false;
+        btn.querySelector('.spinner').hidden = true;
+        btn.textContent = 'Audit Again';
+        this.announce(`${results.length} issues found`);
+      }
+
+      analyzeHTML(html) {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const issues = [];
+        const lines = html.split('\n');
+
+        // Check images for alt text
+        doc.querySelectorAll('img').forEach((img, idx) => {
+          if (!img.alt || !img.alt.trim()) {
+            issues.push({
+              id: `img-${idx}`,
+              severity: 'critical',
+              description: 'Image missing alt attribute',
+              line: this.findLine(lines, img),
+              element: img.outerHTML,
+              fix: `<img src="${img.src || ''}" alt="Descriptive text">`
+            });
+          }
+        });
+
+        // Check form controls for labels
+        doc.querySelectorAll('input:not([type=hidden]), textarea, select').forEach((el, idx) => {
+          const hasLabel = el.labels?.length || el.hasAttribute('aria-label') || el.hasAttribute('aria-labelledby');
+          if (!hasLabel) {
+            issues.push({
+              id: `form-${idx}`,
+              severity: 'serious',
+              description: 'Form control missing associated label',
+              line: this.findLine(lines, el),
+              element: el.outerHTML,
+              fix: `<label for="${el.id || `id-${idx}`}">Label text</label>\n<input id="${el.id || `id-${idx}`}" ...>`
+            });
+          }
+        });
+
+        // Check buttons (divs with onclick, etc.)
+        doc.querySelectorAll('[onclick], [role=button]:not(button), div[tabindex="0"]').forEach((el, idx) => {
+          if (el.tagName !== 'BUTTON') {
+            issues.push({
+              id: `btn-${idx}`,
+              severity: 'serious',
+              description: 'Interactive element should be a button element',
+              line: this.findLine(lines, el),
+              element: el.outerHTML,
+              fix: `<button type="button">${el.textContent || 'Button'}</button>`
+            });
+          }
+        });
+
+        // Check ARIA roles
+        doc.querySelectorAll('[role]').forEach((el, idx) => {
+          const role = el.getAttribute('role');
+          if (!this.validRoles.includes(role)) {
+            issues.push({
+              id: `aria-${idx}`,
+              severity: 'moderate',
+              description: `Invalid ARIA role: "${role}"`,
+              line: this.findLine(lines, el),
+              element: el.outerHTML,
+              fix: `Remove invalid role="${role}" or use valid role`
+            });
+          }
+        });
+
+        // Simple contrast check (text on background)
+        const computeContrast = (fg, bg) => {
+          const l1 = this.luminance(fg) + 0.05;
+          const l2 = this.luminance(bg) + 0.05;
+          return l1 > l2 ? l1 / l2 : l2 / l1;
+        };
+        this.getComputedStyleColors(doc.body).forEach(({color, bgColor, line}) => {
+          const ratio = computeContrast(color, bgColor);
+          if (ratio < 4.5) {
+            issues.push({
+              id: `contrast-${line}`,
+              severity: 'moderate',
+              description: `Low contrast ratio ${ratio.toFixed(2)}:1 (needs 4.5:1)`,
+              line,
+              element: 'Text color',
+              fix: `Use higher contrast colors (WCAG 4.5:1 for normal text)`
+            });
+          }
+        });
+
+        // Check lang attribute
+        if (!doc.documentElement.lang) {
+          issues.push({
+            id: 'lang',
+            severity: 'minor',
+            description: 'HTML element missing lang attribute',
+            line: 1,
+            element: '<html>',
+            fix: '<html lang="en">'
+          });
+        }
+
+        // Heading structure
+        const headings = Array.from(doc.querySelectorAll('h1,h2,h3,h4,h5,h6'))
+          .map(h => parseInt(h.tagName[1]));
+        if (headings.length && Math.min(...headings) > 1) {
+          issues.push({
+            id: 'headings',
+            severity: 'minor',
+            description: 'No H1 heading found',
+            line: this.findLine(lines, doc.querySelector('h1,h2,h3,h4,h5,h6')),
+            element: 'Headings',
+            fix: 'Add logical heading hierarchy starting with H1'
+          });
+        }
+
+        return this.sortIssues(issues);
+      }
+
+      findLine(lines, el) {
+        const walker = document.createTreeWalker(
+          document.body,
+          NodeFilter.SHOW_TEXT,
+          null,
+          false
+        );
+        let line = 1;
+        while (walker.nextNode()) {
+          const range = document.createRange();
+          range.selectNodeContents(walker.currentNode);
+          if (range.toString().includes(el.outerHTML.slice(0, 20))) {
+            return line;
+          }
+          line++;
+        }
+        return 1;
+      }
+
+      getComputedStyleColors(body) {
+        const colors = [];
+        const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.parentElement) {
+            const style = window.getComputedStyle(node.parentElement);
+            colors.push({
+              color: style.color,
+              bgColor: style.backgroundColor,
+              line: 1
+            });
+          }
+        }
+        return colors.slice(0, 10); // Sample
+      }
+
+      luminance(rgb) {
+        const [r, g, b] = rgb.match(/\d+/g).map(n => +n / 255);
+        return 0.2126 * this.srgbToLinear(r) + 0.7152 * this.srgbToLinear(g) + 0.0722 * this.srgbToLinear(b);
+      }
+
+      srgbToLinear(c) {
+        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+      }
+
+      validRoles = ['button', 'checkbox', 'radio', 'slider', 'switch', 'tab', 'menuitem', 'option', 'progressbar', 'scrollbar', 'searchbox', 'separator', 'slider', 'spinbutton', 'status', 'tabpanel', 'textbox', 'timer'];
+
+      sortIssues(issues) {
+        const severityOrder = { critical: 4, serious: 3, moderate: 2, minor: 1 };
+        return issues.sort((a, b) => severityOrder[b.severity] - severityOrder[a.severity]);
+      }
+
+      displayResults(results) {
+        const list = document.getElementById('issues-list');
+        const status = document.getElementById('status');
+        const counts = { critical: 0, serious: 0, moderate: 0, minor: 0 };
+
+        results.forEach(issue => counts[issue.severity]++);
+
+        Object.entries(counts).forEach(([sev, count]) => {
+          document.getElementById(`${sev}-count`).textContent = count;
+          document.querySelector(`.stat:has(#${sev}-count)`).className = `stat severity-${sev}`;
+        });
+
+        if (results.length === 0) {
+          status.textContent = '✓ No accessibility issues found!';
+          status.className = 'no-issues';
+          list.innerHTML = '';
+        } else {
+          status.textContent = `${results.length} accessibility issues detected`;
+          status.className = '';
+          list.innerHTML = results.map(issue => `
+            <li class="issue" role="option" tabindex="-1">
+              <div class="issue-header">
+                <div class="issue-meta">
+                  <div class="issue-severity severity-${issue.severity}">${issue.severity.toUpperCase()}</div>
+                  <div class="issue-line">Line ${issue.line}</div>
+                </div>
+                <button class="fix-btn" onclick="navigator.clipboard.writeText('${issue.fix.replace(/'/g, "\\'")}'); this.textContent='Copied!'; setTimeout(() => this.textContent='Copy fix', 2000);">Copy fix</button>
+              </div>
+              <p>${issue.description}</p>
+              <details>
+                <summary>Code: ${issue.element.slice(0, 100)}${issue.element.length > 100 ? '...' : ''}</summary>
+                <pre>${issue.element}</pre>
+              </details>
+            </li>
+          `).join('');
+        }
+
+        // Focus first issue
+        if (results.length > 0) {
+          list.querySelector('.issue').focus();
+        }
+      }
+
+      saveAudit(html, results) {
+        const audit = {
+          id: Date.now(),
+          html,
+          results,
+          timestamp: new Date().toISOString()
+        };
+        this.audits.unshift(audit);
+        if (this.audits.length > this.maxAudits) {
+          this.audits = this.audits.slice(0, this.maxAudits);
+        }
+        localStorage.setItem('audits', JSON.stringify(this.audits));
+      }
+
+      loadLatestAudit() {
+        const saved = localStorage.getItem('audits');
+        if (saved) {
+          this.audits = JSON.parse(saved);
+          const latest = this.audits[0];
+          if (latest) {
+            document.getElementById('html-input').value = latest.html;
+            this.displayResults(latest.results);
+            this.updateShareBtn();
+          }
+        }
+      }
+
+      loadFromHash() {
+        const hash = location.hash.slice(1);
+        if (hash) {
+          try {
+            const params = new URLSearchParams(hash);
+            const issues = params.getAll('issue').map((issue, i) => ({
+              severity: params.get(`sev${i}`) || 'moderate',
+              description: issue,
+              line: +params.get(`line${i}`) || 1,
+              fix: 'See documentation'
+            }));
+            this.displayResults(issues);
+            document.getElementById('html-input').value = `<!-- Loaded from shared URL: ${issues.length} issues -->`;
+          } catch (e) {}
+        }
+      }
+
+      updateShareBtn() {
+        document.getElementById('share-btn').disabled = this.audits.length === 0;
+      }
+
+      async shareResults() {
+        if (this.audits.length === 0) return;
+        const latest = this.audits[0];
+        const params = new URLSearchParams();
+        latest.results.slice(0, 10).forEach((issue, i) => {
+          params.append('issue', issue.description);
+          params.append(`sev${i}`, issue.severity);
+          params.append(`line${i}`, issue.line);
+        });
+        const hash = params.toString();
+        location.hash = hash;
+        await navigator.clipboard.writeText(`${location.href} - Accessibility Audit: ${latest.results.length} issues`);
+        this.announce('Share URL copied to clipboard');
+      }
+
+      clearHistory() {
+        this.audits = [];
+        localStorage.removeItem('audits');
+        document.getElementById('html-input').value = '';
+        document.getElementById('issues-list').innerHTML = '';
+        Object.values(document.querySelectorAll('[id$="-count"]')).forEach(el => el.textContent = '0');
+        document.getElementById('status').textContent = 'History cleared';
+        this.updateShareBtn();
+        this.announce('Audit history cleared');
+      }
+
+      showClearConfirm() {
+        document.getElementById('confirm-dialog').showModal();
+      }
+
+      toggleTheme() {
+        const isDark = document.getElementById('theme-toggle').checked;
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        document.querySelector('.theme-toggle').setAttribute('aria-checked', isDark);
+      }
+
+      loadTheme() {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const isDark = saved === 'dark' || (!saved && prefersDark);
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        document.getElementById('theme-toggle').checked = isDark;
+        document.querySelector('.theme-toggle').setAttribute('aria-checked', isDark);
+      }
+
+      announce(message) {
+        const live = document.querySelector('[aria-live="polite"]');
+        live.textContent = message;
+      }
+
+      handleKeydown(e) {
+        const list = document.getElementById('issues-list');
+        const active = document.activeElement;
+        
+        if (e.key === 'Escape') {
+          document.getElementById('html-input').focus();
+          e.preventDefault();
+        }
+        
+        if (list.contains(active) && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) {
+          e.preventDefault();
+          const items = [...list.querySelectorAll('.issue')];
+          const current = items.indexOf(active);
+          const next = e.key === 'ArrowDown' ? current + 1 : current - 1;
+          if (items[next]) items[next].focus();
+        }
+      }
+    }
+
+    new AccessibilityAuditor();
+  </script>
+</body>
+</html>

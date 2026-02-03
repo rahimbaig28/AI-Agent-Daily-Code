@@ -22,3 +22,5 @@ Accessibility Auditor Pro
   5. Clear history → Confirms via dialog.
 - CSS: Use :focus-visible, custom properties for theming, smooth transitions.
 - JS: ~400 LOC max, event delegation, no frameworks.
+
+(Generated: 2026-02-03T06:05:01.199944Z, seed=12395, theme=accessibility helpers, extras=offline-first with localStorage, ARIA-compliant components, share via URL hash, kind=html)
