@@ -15,3 +15,5 @@ Habit Streak Tracker
 - Keyboard shortcuts in menu: support 'u' for undo, 'r' for redo, arrow keys for navigation (use simple input loop).
 - Validate dates with datetime; handle invalid JSON gracefully.
 - Testable: add 3 habits, mark one complete 2 days, undo, verify streak/list; import/export roundtrip.
+
+(Generated: 2026-02-04T10:59:25.313684Z, seed=90903, theme=personal productivity, extras=undo/redo, export/import JSON, drag-and-drop, kind=py)
