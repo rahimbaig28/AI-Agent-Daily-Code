@@ -15,3 +15,5 @@ CashFlow Sentinel
 - Keyboard shortcuts: 'a' add, 'v' view, 'f' filter, 'e' edit, ESC cancel input.
 - Exit gracefully: save + confirm unsaved changes.
 - Testable: seed data on first run (3 sample txns), print summary after each add.
+
+(Generated: 2026-02-05T03:09:28.650078Z, seed=18090, theme=finance & budgeting, extras=dark/light auto theme, offline-first with localStorage, responsive grid, kind=py)
