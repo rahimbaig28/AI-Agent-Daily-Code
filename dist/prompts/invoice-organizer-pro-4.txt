@@ -19,3 +19,5 @@ Invoice Organizer Pro
 - Example workflow: Add 3 test invoices on first run, show overdue warning if any due yesterday.
 - Keep total code <800 lines, robust error handling with colored output (ANSI escapes).
 - Friday feature: Weekly summary showing invoices due this week (Mon-Sun).
+
+(Generated: 2026-02-06T17:02:49.365933Z, seed=75579, theme=small business utilities, extras=share via URL hash, export/import JSON, responsive grid, kind=py)
