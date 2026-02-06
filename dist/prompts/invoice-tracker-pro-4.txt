@@ -22,3 +22,5 @@ Invoice Tracker Pro
 - Colors: Use ANSI escape codes for table headers (cyan), paid (green), unpaid (red), totals (yellow)
 - File structure: invoices.json (list of dicts), invoices_backup_N.json (undo stack), invoices.csv (export)
 - Testable: Run script, add 2 invoices, mark 1 paid, export CSV, undo, verify data matches
+
+(Generated: 2026-02-06T04:57:37.884748Z, seed=49069, theme=small business utilities, extras=undo/redo, print-friendly view, ARIA-compliant components, kind=py)
