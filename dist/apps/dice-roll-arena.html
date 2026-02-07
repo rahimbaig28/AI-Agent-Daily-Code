@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-02-07T09:44:48.205546Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dice Roll Arena</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            padding: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .settings-panel {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: none;
+        }
+        .settings-panel.active {
+            display: block;
+        }
+        .settings-row {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .setting-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        .setting-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        .setting-group select,
+        .setting-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .game-board {
+            display: none;
+        }
+        .game-board.active {
+            display: block;
+        }
+        .scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .score-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .score-card h2 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+        .score-value {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .round-info {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .game-controls {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .control-section {
+            margin-bottom: 20px;
+        }
+        .control-section:last-child {
+            margin-bottom: 0;
+        }
+        .control-label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .die-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .die-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        .die-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+        .die-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        .btn-secondary:hover:not(:disabled) {
+            background: #e0e0e0;
+        }
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+        .btn-danger:hover:not(:disabled) {
+            background: #ee5a52;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .roll-history {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .roll-item {
+            padding: 8px;
+            margin-bottom: 8px;
+            background: white;
+            border-left: 4px solid #667eea;
+            border-radius: 4px;
+            font-size: 0.95em;
+        }
+        .roll-item.cpu {
+            border-left-color: #764ba2;
+        }
+        .round-result {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            color: #2e7d32;
+            display: none;
+        }
+        .round-result.active {
+            display: block;
+        }
+        .round-result.cpu-wins {
+            background: #ffebee;
+            color: #c62828;
+        }
+        .match-over {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        .match-over.active {
+            display: block;
+        }
+        .match-over h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+        .match-stats {
+            margin: 20px 0;
+            font-size: 1.1em;
+        }
+        .match-stats p {
+            margin: 10px 0;
+        }
+        .keyboard-help {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #856404;
+        }
+        .keyboard-help strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .keyboard-help p {
+            margin: 5px 0;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .scores {
+                grid-template-columns: 1fr;
+            }
+            .die-buttons {
+                flex-direction: column;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎲 Dice Roll Arena</h1>
+        
+        <div class="settings-panel" id="settingsPanel">
+            <div class="settings-row">
+                <div class="setting-group">
+                    <label for="targetScore">Target Score:</label>
+                    <input type="number" id="targetScore" min="50" max="500" value="100" step="50">
+                </div>
+                <div class="setting-group">
+                    <label for="difficulty">Difficulty:</label>
+                    <select id="difficulty">
+                        <option value="easy">Easy</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="hard">Hard</option>
+                    </select>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="startGame()">Start Game</button>
+                <button class="btn btn-secondary" onclick="toggleSettings()">Cancel</button>
+            </div>
+        </div>
+
+        <div class="game-board" id="gameBoard">
+            <div class="scores">
+                <div class="score-card">
+                    <h2>You</h2>
+                    <div class="score-value" id="playerScore">0</div>
+                    <div class="round-info">Round: <span id="roundNum">1</span></div>
+                </div>
+                <div class="score-card">
+                    <h2>CPU</h2>
+                    <div class="score-value" id="cpuScore">0</div>
+                    <div class="round-info" id="cpuStrategy"></div>
+                </div>
+            </div>
+
+            <div class="round-result" id="roundResult"></div>
+
+            <div class="game-controls">
+                <div class="control-section">
+                    <label class="control-label">Select Die Type:</label>
+                    <div class="die-buttons">
+                        <button class="die-btn active" data-die="6" onclick="selectDie(6)">d6</button>
+                        <button class="die-btn" data-die="12" onclick="selectDie(12)">d12</button>
+                        <button class="die-btn" data-die="20" onclick="selectDie(20)">d20</button>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="rollBtn" onclick="rollDice()">Roll Dice (Enter)</button>
+                        <button class="btn btn-secondary" id="undoBtn" onclick="undoRoll()" disabled>Undo (U)</button>
+                        <button class="btn btn-secondary" id="redoBtn" onclick="redoRoll()" disabled>Redo (R)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="roll-history" id="rollHistory"></div>
+
+            <div class="action-buttons">
+                <button class="btn btn-secondary" onclick="toggleSettings()">Settings</button>
+                <button class="btn btn-danger" onclick="newGame()">New Game (N)</button>
+            </div>
+        </div>
+
+        <div class="match-over" id="matchOver">
+            <h2 id="matchWinner"></h2>
+            <div class="match-stats">
+                <p>Total Rounds: <span id="totalRounds">0</span></p>
+                <p id="finalScore"></p>
+            </div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="saveReplay()">Save Replay</button>
+                <button class="btn btn-secondary" onclick="newGame()">Play Again</button>
+            </div>
+        </div>
+
+        <div class="keyboard-help">
+            <strong>Keyboard Shortcuts:</strong>
+            <p>↑/↓ or 1/2/3: Select die type | Enter: Roll | U: Undo | R: Redo | N: New Game</p>
+        </div>
+    </div>
+
+    <script>
+        const gameState = {
+            playerScore: 0,
+            cpuScore: 0,
+            targetScore: 100,
+            difficulty: 'normal',
+            currentRound: 1,
+            selectedDie: 6,
+            roundRolls: [],
+            undoStack: [],
+            redoStack: [],
+            gameActive: false,
+            roundActive: false,
+            cpuStrategy: 'normal',
+            gameHistory: [],
+            savePath: '~/.dice_arena_game.json'
+        };
+
+        function loadGame() {
+            const saved = localStorage.getItem('diceArenaGame');
+            if (saved) {
+                const state = JSON.parse(saved);
+                Object.assign(gameState, state);
+                if (gameState.gameActive) {
+                    showGameBoard();
+                    updateDisplay();
+                }
+            }
+        }
+
+        function saveGame() {
+            localStorage.setItem('diceArenaGame', JSON.stringify(gameState));
+        }
+
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('active');
+            document.getElementById('gameBoard').classList.toggle('active');
+        }
+
+        function startGame() {
+            gameState.targetScore = parseInt(document.getElementById('targetScore').value);
+            gameState.difficulty = document.getElementById('difficulty').value;
+            gameState.playerScore = 0;
+            gameState.cpuScore = 0;
+            gameState.currentRound = 1;
+            gameState.gameActive = true;
+            gameState.roundActive = true;
+            gameState.gameHistory = [];
+            gameState.roundRolls = [];
+            gameState.undoStack = [];
+            gameState.redoStack = [];
+            showGameBoard();
+            updateDisplay();
+            saveGame();
+        }
+
+        function newGame() {
+            gameState.gameActive = false;
+            gameState.roundActive = false;
+            document.getElementById('matchOver').classList.remove('active');
+            document.getElementById('gameBoard').classList.remove('active');
+            document.getElementById('settingsPanel').classList.add('active');
+            document.getElementById('targetScore').value = 100;
+            document.getElementById('difficulty').value = 'normal';
+        }
+
+        function showGameBoard() {
+            document.getElementById('settingsPanel').classList.remove('active');
+            document.getElementById('gameBoard').classList.add('active');
+            document.getElementById('matchOver').classList.remove('active');
+        }
+
+        function selectDie(value) {
+            gameState.selectedDie = value;
+            document.querySelectorAll('.die-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-die="${value}"]`).classList.add('active');
+        }
+
+        function rollDice() {
+            if (!gameState.roundActive) return;
+
+            const playerRoll = Math.floor(Math.random() * gameState.selectedDie) + 1;
+            gameState.roundRolls.push({ player: playerRoll, cpu: null, timestamp: Date.now() });
+            gameState.undoStack = [];
+            gameState.redoStack = [];
+
+            addRollHistory(`You rolled: ${playerRoll} (d${gameState.selectedDie})`, false);
+            
+            setTimeout(() => {
+                const cpuRoll = cpuRollDice();
+                gameState.roundRolls[gameState.roundRolls.length - 1].cpu = cpuRoll;
+                addRollHistory(`CPU rolled: ${cpuRoll} (d${gameState.selectedDie})`, true);
+                
+                setTimeout(() => {
+                    resolveRound(playerRoll, cpuRoll);
+                }, 500);
+            }, 800);
+
+            document.getElementById('rollBtn').disabled = true;
+        }
+
+        function cpuRollDice() {
+            determineCpuStrategy();
+            const baseRoll = Math.floor(Math.random() * gameState.selectedDie) + 1;
+            
+            if (gameState.difficulty === 'hard' && gameState.cpuStrategy === 'aggressive') {
+                return Math.min(baseRoll + 2, gameState.selectedDie);
+            } else if (gameState.difficulty === 'easy' && gameState.cpuStrategy === 'defensive') {
+                return Math.max(baseRoll - 1, 1);
+            }
+            return baseRoll;
+        }
+
+        function determineCpuStrategy() {
+            const scoreDiff = gameState.playerScore - gameState.cpuScore;
+            const random = Math.random();
+
+            if (scoreDiff > 20) {
+                gameState.cpuStrategy = random > 0.3 ? 'aggressive' : 'defensive';
+            } else if (scoreDiff < -20) {
+                gameState.cpuStrategy = 'defensive';
+            } else {
+                gameState.cpuStrategy = 'normal';
+            }
+
+            const strategyText = {
+                aggressive: '🔥 Aggressive',
+                defensive: '🛡️ Defensive',
+                normal: '⚖️ Normal'
+            };
+            document.getElementById('cpuStrategy').textContent = strategyText[gameState.cpuStrategy];
+        }
+
+        function resolveRound(playerRoll, cpuRoll) {
+            let winner = '';
+            if (playerRoll > cpuRoll) {
+                gameState.playerScore += playerRoll;
+                winner = 'You win this round!';
+                document.getElementById('roundResult').classList.remove('cpu-wins');
+            } else if (cpuRoll > playerRoll) {
+                gameState.cpuScore += cpuRoll;
+                winner = 'CPU wins this round!';
+                document.getElementById('roundResult').classList.add('cpu-wins');
+            } else {
+                winner = 'Round tied! No points awarded.';
+                document.getElementById('roundResult').classList.remove('cpu-wins');
+            }
+
+            document.getElementById('roundResult').textContent = winner;
+            document.getElementById('roundResult').classList.add('active');
+            gameState.gameHistory.push({
+                round: gameState.currentRound,
+                playerRoll,
+                cpuRoll,
+                winner,
+                playerScore: gameState.playerScore,
+                cpuScore: gameState.cpuScore
+            });
+
+            updateDisplay();
+            gameState.roundActive = false;
+            document.getElementById('rollBtn').disabled = false;
+
+            setTimeout(() => {
+                if (gameState.playerScore >= gameState.targetScore) {
+                    endMatch('You');
+                } else if (gameState.cpuScore >= gameState.targetScore) {
+                    endMatch('CPU');
+                } else {
+                    nextRound();
+                }
+            }, 2000);
+        }
+
+        function nextRound() {
+            gameState.currentRound++;
+            gameState.roundRolls = [];
+            gameState.undoStack = [];
+            gameState.redoStack = [];
+            gameState.roundActive = true;
+            document.getElementById('roundResult').classList.remove('active');
+            document.getElementById('rollHistory').innerHTML = '';
+            updateDisplay();
+            saveGame();
+        }
+
+        function undoRoll() {
+            if (gameState.roundRolls.length === 0 || gameState.undoStack.length >= 3) return;
+            
+            const lastRoll = gameState.roundRolls.pop();
+            gameState.undoStack.push(lastRoll);
+            gameState.redoStack = [];
+            
+            updateRollHistory();
+            updateUndoRedoButtons();
+        }
+
+        function redoRoll() {
+            if (gameState.redoStack.length === 0) return;
+            
+            const roll = gameState.redoStack.pop();
+            gameState.roundRolls.push(roll);
+            gameState.undoStack.pop();
+            
+            updateRollHistory();
+            updateUndoRedoButtons();
+        }
+
+        function updateUndoRedoButtons() {
+            document.getElementById('undoBtn').disabled = gameState.roundRolls.length === 0 || gameState.undoStack.length >= 3;
+            document.getElementById('redoBtn').disabled = gameState.redoStack.length === 0;
+        }
+
+        function addRollHistory(text, isCpu) {
+            const history = document.getElementById('rollHistory');
+            const item = document.createElement('div');
+            item.className = `roll-item ${isCpu ? 'cpu' : ''}`;
+            item.textContent = text;
+            history.appendChild(item);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function updateRollHistory() {
+            const history = document.getElementById('rollHistory');
+            history.innerHTML = '';
+            gameState.gameHistory.forEach(h => {
+                const item = document.createElement('div');
+                item.className = 'roll-item';
+                item.textContent = `Round ${h.round}: You ${h.playerRoll} vs CPU ${h.cpuRoll} - ${h.winner}`;
+                history.appendChild(item);
+            });
+        }
+
+        function updateDisplay() {
+            document.getElementById('playerScore').textContent = gameState.playerScore;
+            document.getElementById('cpuScore').textContent = gameState.cpuScore;
+            document.getElementById('roundNum').textContent = gameState.currentRound;
+            updateUndoRedoButtons();
+        }
+
+        function endMatch(winner) {
+            gameState.gameActive = false;
+            gameState.roundActive = false;
+            document.getElementById('gameBoard').classList.remove('active');
+            document.getElementById('matchOver').classList.add('active');
+            
+            const winnerText = winner === 'You' ? '🎉 You Win!' : '🤖 CPU Wins!';
+            document.getElementById('matchWinner').textContent = winnerText;
+            document.getElementById('totalRounds').textContent = gameState.currentRound;
+            document.getElementById('finalScore').textContent = `Final Score: You ${gameState.playerScore} - CPU ${gameState.cpuScore}`;
+            
+            saveGame();
+        }
+
+        function saveReplay() {
+            const replay = `Dice Roll Arena - Game Replay\n`;
+            const timestamp = new Date().toLocaleString();
+            const content = `${replay}Date: ${timestamp}\nTarget Score: ${gameState.targetScore}\nDifficulty: ${gameState.difficulty}\n\n${gameState.gameHistory.map(h => `Round ${h.round}: Player ${h.playerRoll} vs CPU ${h.cpuRoll} - ${h.winner}`).join('\n')}\n\nFinal Score: Player ${gameState.playerScore} - CPU ${gameState.cpuScore}`;
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `dice_arena_replay_${Date.now()}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (!gameState.gameActive) return;
+            
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                if (gameState.roundActive) rollDice();
+            } else if (e.key === 'u' || e.key === 'U') {
+                e.preventDefault();
+                undoRoll();
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                redoRoll();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                newGame();
+            } else if (e.key === 'ArrowUp' || e.key === '1') {
+                selectDie(6);
+            } else if (e.key === 'ArrowRight' || e.key === '2') {
+                selectDie(12);
+            } else if (e.key === 'ArrowDown' || e.key === '3') {
+                selectDie(20);
+            }
+        });
+
+        loadGame();
+    </script>
+</body>
+</html>
