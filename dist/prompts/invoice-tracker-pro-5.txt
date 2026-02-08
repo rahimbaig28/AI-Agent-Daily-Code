@@ -16,3 +16,5 @@ Invoice Tracker Pro
 - **Empty State**: Helpful message with "Add First Invoice" CTA when list empty.
 - **Export**: "Download CSV" button generates client-ready file with all data.
 - Testable: Add 3 sample invoices on first load; verify undo, theme switch, filters, export.
+
+(Generated: 2026-02-08T08:49:16.663398Z, seed=52736, theme=small business utilities, extras=undo/redo, dark/light auto theme, keyboard-first UX, kind=html)
