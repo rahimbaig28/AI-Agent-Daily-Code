@@ -23,3 +23,5 @@ Flashcard Forge
   * Persistence survives script restart
 - Use pathlib for paths, tab-completion via readline, colored output with ANSI escapes
 - ~500 LOC max, shebang #!/usr/bin/env python3, if __name__ == "__main__" guard
+
+(Generated: 2026-02-08T18:54:19.272241Z, seed=27059, theme=learning & study tools, extras=undo/redo, drag-and-drop, offline-first with localStorage, kind=py)
