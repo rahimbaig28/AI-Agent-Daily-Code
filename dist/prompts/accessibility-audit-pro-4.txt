@@ -30,3 +30,5 @@ Accessibility Audit Pro
   * Keyboard test: 'a' -> select dir -> Enter -> navigate 10 issues -> 's' -> 'q'
 - Under 800 lines total: main(), parse_html(), audit_file(), curses_ui(), json persistence
 - Exit codes: 0=success, 1=audit found issues, 2=invalid input
+
+(Generated: 2026-02-08T07:06:23.198380Z, seed=16655, theme=accessibility helpers, extras=responsive grid, print-friendly view, ARIA-compliant components, kind=py)

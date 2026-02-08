@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-02-08T07:07:00.158861Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Audit Pro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', monospace; }
+        body { background: #1e1e1e; color: #ffffff; padding: 20px; line-height: 1.4; }
+        .header { background: #0d6efd; color: white; padding: 15px; margin: -20px -20px 20px -20px; text-align: center; font-size: 18px; font-weight: bold; }
+        .status { background: #333; padding: 10px; margin-bottom: 20px; border-radius: 4px; font-size: 14px; }
+        .panel { background: #2d2d2d; padding: 15px; margin-bottom: 20px; border-radius: 4px; border-left: 4px solid #0d6efd; }
+        .panel h3 { color: #0d6efd; margin-bottom: 10px; }
+        .file-item { padding: 8px; margin-bottom: 5px; background: #3d3d3d; border-radius: 3px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .file-item:hover { background: #4d4d4d; }
+        .file-item.selected { background: #0d6efd; }
+        .file-item.issues { border-left: 4px solid #dc3545; }
+        .issues-list { list-style: none; }
+        .issues-list li { padding: 8px; margin-bottom: 5px; background: #3d3d3d; border-radius: 3px; border-left: 4px solid #ffc107; }
+        .issues-list li.high { border-left-color: #dc3545; }
+        .issues-list li.medium { border-left-color: #ffc107; }
+        .summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0; }
+        .stat { background: #0d6efd; padding: 15px; text-align: center; border-radius: 4px; font-size: 16px; font-weight: bold; }
+        .input-group { margin: 15px 0; }
+        input[type="text"] { width: 100%; padding: 10px; background: #3d3d3d; border: 1px solid #555; color: white; border-radius: 4px; font-size: 14px; }
+        button { background: #0d6efd; color: white; border: none; padding: 10px 20px; margin: 5px; border-radius: 4px; cursor: pointer; font-size: 14px; font-weight: bold; }
+        button:hover { background: #0b5ed7; }
+        button.danger { background: #dc3545; }
+        button.danger:hover { background: #bb2d3b; }
+        .hidden { display: none; }
+        .print-mode .file-item, .print-mode button, .print-mode .status, .print-mode .input-group { display: none; }
+        .print-mode .panel { border-left: none; background: none; }
+        @media print { body { background: white; color: black; } .header { background: #0d6efd !important; color: white !important; } }
+        @media (max-width: 768px) { .summary { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div class="header">Accessibility Audit Pro</div>
+    
+    <div class="status" id="status">
+        F:0 audits | Issues:0 | a=audit l=load s=save p=print q=quit | Enter=detailed view
+    </div>
+    
+    <div class="input-group hidden" id="auditInput">
+        <label>Directory path:</label>
+        <input type="text" id="dirPath" placeholder="/path/to/html/files" value="./">
+        <br>
+        <button onclick="auditDirectory()">Audit Directory</button>
+        <button onclick="toggleInput()">Cancel</button>
+    </div>
+    
+    <div class="summary hidden" id="summary">
+        <div class="stat" id="filesCount">-</div>
+        <div class="stat" id="totalIssues">-</div>
+        <div class="stat" id="filesWithIssues">-</div>
+    </div>
+    
+    <div class="panel" id="filesPanel">
+        <h3>📁 Files (↑↓ arrows, Enter to view issues)</h3>
+        <div id="filesList">Press 'a' to audit a directory</div>
+    </div>
+    
+    <div class="panel hidden" id="issuesPanel">
+        <h3 id="fileTitle">File Issues</h3>
+        <div id="issuesSummary">-</div>
+        <ul class="issues-list" id="issuesList"></ul>
+    </div>
+
+    <script>
+        class AccessibilityAudit {
+            constructor() {
+                this.audits = JSON.parse(localStorage.getItem('audits') || '[]');
+                this.currentAudit = null;
+                this.selectedFile = 0;
+                this.printFriendly = false;
+                this.updateStatus();
+                document.addEventListener('keydown', this.handleKey.bind(this));
+            }
+
+            auditFile(filePath) {
+                // Simulate file audit - in real app would fetch/parse HTML
+                const issues = [];
+                const issueTypes = ['missing_lang', 'missing_alt', 'empty_link', 'heading_skip', 'missing_aria_label', 'low_contrast'];
+                
+                // Random issues for demo
+                const numIssues = Math.floor(Math.random() * 5) + (Math.random() > 0.5 ? 1 : 0);
+                for(let i = 0; i < numIssues; i++) {
+                    const type = issueTypes[Math.floor(Math.random() * issueTypes.length)];
+                    issues.push({
+                        type,
+                        severity: Math.random() > 0.3 ? 'medium' : 'high',
+                        element: `${type} on element #${i+1}`
+                    });
+                }
+                
+                return {
+                    file: filePath,
+                    issues,
+                    total: issues.length,
+                    timestamp: new Date().toISOString()
+                };
+            }
+
+            auditDirectory(dirPath) {
+                const files = [];
+                for(let i = 0; i < 8; i++) {
+                    files.push(`file_${i+1}.html`);
+                }
+                
+                const results = {};
+                let totalIssues = 0;
+                let filesWithIssues = 0;
+                
+                files.forEach(filename => {
+                    const result = this.auditFile(`${dirPath}/${filename}`);
+                    results[filename] = result;
+                    totalIssues += result.total;
+                    if(result.total > 0) filesWithIssues++;
+                });
+                
+                this.currentAudit = {
+                    directory: dirPath,
+                    files: files.length,
+                    total_issues: totalIssues,
+                    files_with_issues: filesWithIssues,
+                    timestamp: new Date().toISOString(),
+                    results: results
+                };
+                
+                this.audits.push(this.currentAudit);
+                if(this.audits.length > 10) this.audits = this.audits.slice(-10);
+                localStorage.setItem('audits', JSON.stringify(this.audits));
+                
+                this.render();
+                this.updateStatus();
+                toggleInput();
+            }
+
+            handleKey(e) {
+                if(this.printFriendly) return;
+                
+                switch(e.key) {
+                    case 'a': case 'A':
+                        e.preventDefault();
+                        toggleInput();
+                        break;
+                    case 'l': case 'L':
+                        this.loadAudit();
+                        break;
+                    case 's': case 'S':
+                        this.saveAudits();
+                        break;
+                    case 'p': case 'P':
+                        this.togglePrint();
+                        break;
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        if(this.currentAudit) this.selectedFile = Math.max(0, this.selectedFile - 1);
+                        this.render();
+                        break;
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        if(this.currentAudit) {
+                            const files = Object.keys(this.currentAudit.results);
+                            this.selectedFile = Math.min(this.selectedFile + 1, files.length - 1);
+                        }
+                        this.render();
+                        break;
+                    case 'Enter':
+                        e.preventDefault();
+                        this.showIssues();
+                        break;
+                }
+            }
+
+            togglePrint() {
+                this.printFriendly = !this.printFriendly;
+                document.body.classList.toggle('print-mode', this.printFriendly);
+                this.render();
+                this.updateStatus();
+            }
+
+            updateStatus() {
+                const status = document.getElementById('status');
+                status.textContent = `F:${this.audits.length} audits | Issues:${this.currentAudit?.total_issues || 0} | a=audit l=load s=save p=print ↑↓=nav Enter=issues`;
+            }
+
+            render() {
+                const filesPanel = document.getElementById('filesPanel');
+                const filesList = document.getElementById('filesList');
+                
+                if(!this.currentAudit) {
+                    filesList.innerHTML = 'Press <strong>a</strong> to audit a directory';
+                    document.getElementById('summary').classList.add('hidden');
+                    return;
+                }
+                
+                document.getElementById('summary').classList.remove('hidden');
+                document.getElementById('filesCount').textContent = `${this.currentAudit.files} files`;
+                document.getElementById('totalIssues').textContent = `${this.currentAudit.total_issues} issues`;
+                document.getElementById('filesWithIssues').textContent = `${this.currentAudit.files_with_issues} files`;
+                
+                const files = Object.entries(this.currentAudit.results);
+                filesList.innerHTML = files.map(([fname, data], i) => `
+                    <div class="file-item ${i === this.selectedFile ? 'selected' : ''} ${data.total > 0 ? 'issues' : ''}"
+                         onclick="auditApp.selectFile(${i})"
+                         title="${fname} - ${data.total} issues">
+                        <span>${fname}</span>
+                        <span style="color: ${data.total > 0 ? '#ffc107' : '#28a745'}">${data.total} issues</span>
+                    </div>
+                `).join('');
+            }
+
+            selectFile(index) {
+                this.selectedFile = index;
+                this.render();
+            }
+
+            showIssues() {
+                if(!this.currentAudit) return;
+                
+                const files = Object.keys(this.currentAudit.results);
+                const fname = files[this.selectedFile];
+                const data = this.currentAudit.results[fname];
+                
+                document.getElementById('filesPanel').classList.add('hidden');
+                document.getElementById('issuesPanel').classList.remove('hidden');
+                document.getElementById('fileTitle').textContent = `📄 ${fname}`;
+                document.getElementById('issuesSummary').innerHTML = `
+                    <strong>${data.issues.length} issues</strong> | 
+                    ${Object.entries(data.issues.reduce((acc, issue) => {
+                        acc[issue.type] = (acc[issue.type] || 0) + 1;
+                        return acc;
+                    }, {})).map(([type, count]) => `${type}: ${count}`).join(', ')}
+                `;
+                
+                document.getElementById('issuesList').innerHTML = data.issues.map(issue => 
+                    `<li class="${issue.severity}">${issue.type.toUpperCase()}: ${issue.element}</li>`
+                ).join('');
+            }
+
+            loadAudit() {
+                const idx = prompt(`Load audit (0-${this.audits.length-1}):`);
+                if(idx !== null && !isNaN(idx) && this.audits[idx]) {
+                    this.currentAudit = this.audits[idx];
+                    this.selectedFile = 0;
+                    this.render();
+                    this.updateStatus();
+                }
+            }
+
+            saveAudits() {
+                localStorage.setItem('audits', JSON.stringify(this.audits));
+                alert('Audits saved!');
+            }
+        }
+
+        const auditApp = new AccessibilityAudit();
+
+        function toggleInput() {
+            document.getElementById('auditInput').classList.toggle('hidden');
+            document.getElementById('filesPanel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function auditDirectory() {
+            const dirPath = document.getElementById('dirPath').value.trim();
+            if(dirPath) {
+                auditApp.auditDirectory(dirPath);
+            }
+        }
+
+        // Back to files button
+        setTimeout(() => {
+            const issuesPanel = document.getElementById('issuesPanel');
+            const backBtn = document.createElement('button');
+            backBtn.textContent = '← Back to Files';
+            backBtn.onclick = () => {
+                issuesPanel.classList.add('hidden');
+                document.getElementById('filesPanel').classList.remove('hidden');
+                auditApp.render();
+            };
+            issuesPanel.insertBefore(backBtn, issuesPanel.firstChild);
+        }, 100);
+    </script>
+</body>
+</html>
