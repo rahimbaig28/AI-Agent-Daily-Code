@@ -21,3 +21,5 @@ Invoice Batch Organizer
   * Total calculation accurate to 2 decimals.
 - Argparse: --export to auto-export and quit; --add "client amount date desc" for batch add.
 - Keep under 800 lines: Compact table printing with fixed-width columns; no external deps.
+
+(Generated: 2026-02-09T05:44:06.792840Z, seed=64754, theme=small business utilities, extras=responsive grid, keyboard-first UX, ARIA-compliant components, kind=py)
