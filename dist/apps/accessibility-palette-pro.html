@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Auto-generated via Perplexity on 2026-02-10T17:22:13.244959Z -->
+
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Accessibility Palette Pro</title>
+<style>
+:root {
+--bg: #ffffff;
+--bg-alt: #f8f9fa;
+--text: #1a1a1a;
+--text-muted: #6c757d;
+--border: #dee2e6;
+--accent: #007bff;
+--accent-hover: #0056b3;
+--success: #28a745;
+--warning: #ffc107;
+--danger: #dc3545;
+--shadow: 0 2px 4px rgba(0,0,0,0.1);
+--radius: 8px;
+--contrast-bg: #000;
+--contrast-text: #fff;
+}
+
+@media (prefers-contrast: high) {
+:root {
+--bg: var(--contrast-bg);
+--bg-alt: #333;
+--text: var(--contrast-text);
+--text-muted: #ccc;
+--border: #666;
+}
+}
+
+[data-high-contrast="true"] {
+--bg: var(--contrast-bg);
+--bg-alt: #333;
+--text: var(--contrast-text);
+--text-muted: #ccc;
+--border: #666;
+--accent: #4dabf7;
+--accent-hover: #339af0;
+}
+
+* {box-sizing:border-box;margin:0;padding:0}
+body {
+font-family:system-ui,-apple-system,sans-serif;
+background:var(--bg);
+color:var(--text);
+line-height:1.5;
+transition:all .2s;
+}
+
+.header,.footer {padding:1rem;background:var(--bg-alt);border-bottom:1px solid var(--border)}
+.header {display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.main {display:grid;grid-template-columns:1fr minmax(300px,1fr);gap:2rem;padding:2rem;max-width:1400px;margin:0 auto}
+@media (max-width:1024px){.main{grid-template-columns:1fr}}
+@media (max-width:768px){.main{padding:1rem;gap:1rem}}
+
+.palette-grid {
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:1rem;
+max-width:800px;
+}
+@media (max-width:1024px){.palette-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.palette-grid{grid-template-columns:1fr}}
+
+.tile {
+position:relative;
+aspect-ratio:1;
+border:2px solid var(--border);
+border-radius:var(--radius);
+cursor:grab;
+transition:all .2s;
+display:flex;flex-direction:column;align-items:center;justify-content:center;
+font-size:.875rem;font-weight:500;text-align:center;
+background:var(--bg-alt);
+}
+.tile:focus{outline:3px solid var(--accent);outline-offset:2px}
+.tile:hover:not(.editing){border-color:var(--accent);transform:scale(1.05)}
+.tile:active{cursor:grabbing;transform:scale(0.98)}
+.tile.editing{border-color:var(--accent);box-shadow:var(--shadow)}
+
+.swatch {
+flex:1;width:100%;border-radius:var(--radius) var(--radius) 0 0;
+}
+.role-badge {
+padding:.25rem .5rem;font-size:.75rem;font-weight:600;
+border-radius:0 0 var(--radius) var(--radius);
+background:var(--bg);
+white-space:nowrap;
+}
+.role-text{background:var(--success);color:#fff}
+.role-fill{background:var(--warning);color:#000}
+.role-border{background:var(--danger);color:#fff}
+
+.controls {
+position:absolute;top:4px;right:4px;display:flex;gap:.25rem;opacity:0;transition:opacity .2s
+}
+.tile:hover .controls,.tile:focus .controls{opacity:1}
+.btn {
+padding:.25rem .5rem;border:none;border-radius:4px;font-size:.75rem;cursor:pointer;
+background:var(--accent);color:#fff;transition:all .2s
+}
+.btn:hover{background:var(--accent-hover)}
+.btn-danger{background:var(--danger)}
+.btn-tiny{padding:.125rem .25rem;font-size:.7rem}
+
+.sidebar {background:var(--bg-alt);padding:1.5rem;border-radius:var(--radius);border:1px solid var(--border)}
+.contrast-display {
+font-size:3rem;font-weight:700;line-height:1;text-align:center;margin:1rem 0;
+background:linear-gradient(135deg,var(--accent),var(--accent-hover));
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+background-clip:text
+}
+.contrast-badges{display:flex;justify-content:center;gap:.5rem;margin:1rem 0;flex-wrap:wrap}
+.badge {
+padding:.5rem 1rem;border-radius:20px;font-size:.875rem;font-weight:600;
+border:2px solid;
+}
+.badge.pass{background:var(--success);color:#fff;border-color:var(--success)}
+.badge.fail{background:#fff;color:var(--danger);border-color:var(--danger)}
+
+.color-inputs{display:flex;flex-direction:column;gap:.5rem;margin:1rem 0}
+.color-inputs label{display:flex;align-items:center;gap:.5rem;font-weight:500}
+.color-inputs input[type=color]{width:2rem;height:2rem;border:none;border-radius:4px;cursor:pointer}
+.color-inputs input[type=text]{flex:1;padding:.5rem;border:1px solid var(--border);border-radius:4px}
+
+.btn-group{display:flex;flex-direction:column;gap:.5rem}
+.btn-lg{padding:1rem;border-radius:var(--radius);font-size:1rem;font-weight:600;width:100%}
+
+.modal {
+position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);
+display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;
+transition:all .2s
+}
+.modal[open]{opacity:1;visibility:visible}
+.modal-content {
+background:var(--bg);padding:2rem;max-width:500px;width:90%;border-radius:var(--radius);
+max-height:80vh;overflow-y:auto
+}
+.shortcuts{list-style:none}
+.shortcuts li{padding:.5rem 0;border-bottom:1px solid var(--border)}
+.shortcuts li:last-child{border-bottom:none}
+
+.sr-only {
+position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+clip:rect(0,0,0,0);white-space:nowrap;border:0
+}
+.live-region {
+position:fixed;left:-9999px;min-height:1px
+}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+@media (max-width:600px){
+.header{flex-direction:column;text-align:center}
+.main{padding:1rem}
+.palette-grid{gap:.75rem}
+.tile{font-size:.75rem}
+}
+</style>
+</head>
+<body>
+<header class="header" role="banner">
+<h1 id="title">Accessibility Palette Pro</h1>
+<div style="display:flex;gap:1rem">
+<button id="contrastToggle" class="btn" aria-pressed="false" aria-label="Toggle high contrast mode">High Contrast</button>
+<button id="shareBtn" class="btn">Share</button>
+<button id="exportBtn" class="btn">Export</button>
+</div>
+</header>
+
+<main class="main" role="main">
+<section aria-label="Palette builder" class="palette-section">
+<div class="palette-grid" id="paletteGrid" role="grid" aria-label="Color palette tiles">
+<!-- Tiles will be generated by JS -->
+</div>
+<button id="addTile" class="btn btn-lg" style="margin-top:1rem;grid-column:1/-1" aria-label="Add new color tile">+</button>
+</section>
+
+<aside class="sidebar" aria-label="Contrast checker and controls">
+<div>
+<h2>Contrast Checker</h2>
+<div class="contrast-display" id="contrastRatio" aria-live="polite">0:1</div>
+<div class="contrast-badges" id="contrastBadges" aria-live="polite"></div>
+<div class="color-inputs">
+<label>
+<span>Color 1:</span>
+<input type="color" id="color1" value="#000000" aria-label="First color for contrast check">
+<input type="text" id="color1Hex" value="#000000" maxlength="7" aria-label="First color hex code">
+</label>
+<label>
+<span>Color 2:</span>
+<input type="color" id="color2" value="#ffffff" aria-label="Second color for contrast check">
+<input type="text" id="color2Hex" value="#ffffff" maxlength="7" aria-label="Second color hex code">
+</label>
+</div>
+<button id="randomPair" class="btn">Random Accessible Pair</button>
+</div>
+
+<div style="margin-top:2rem">
+<h2>Palette</h2>
+<input type="text" id="paletteName" placeholder="Palette name" maxlength="50" aria-label="Palette name">
+<div class="btn-group">
+<button id="clearPalette" class="btn" style="background:var(--warning);color:#000">Clear</button>
+<button id="savePalette" class="btn btn-lg">Save Palette</button>
+</div>
+</div>
+</aside>
+</main>
+
+<footer class="footer">
+<button id="helpBtn" class="btn" style="margin:0 auto;display:block">Keyboard Shortcuts (?)</button>
+</footer>
+
+<div id="liveRegion" class="live-region" aria-live="polite" aria-atomic="true"></div>
+
+<div id="helpModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
+<div class="modal-content">
+<h2 id="modalTitle">Keyboard Shortcuts</h2>
+<ul class="shortcuts">
+<li><kbd>Tab</kbd> - Navigate between tiles and controls</li>
+<li><kbd>Enter</kbd> or <kbd>Space</kbd> - Edit focused tile color</li>
+<li><kbd>Arrow Keys</kbd> - Reorder tiles (when focused)</li>
+<li><kbd>Escape</kbd> - Close editors</li>
+<li><kbd>Delete</kbd> - Remove focused tile</li>
+<li><kbd>+</kbd> - Add new tile</li>
+</ul>
+<button id="closeHelp" class="btn" style="margin-top:1rem;width:100%">Close</button>
+</div>
+</div>
+
+<script>
+class AccessibilityPalettePro {
+constructor() {
+this.palettes = JSON.parse(localStorage.getItem('accessibilityPalettes') || '[]');
+this.currentPalette = {name: '', colors: []};
+this.tiles = [];
+this.draggedTile = null;
+this.isHighContrast = localStorage.getItem('highContrast') === 'true';
+this.init();
+}
+
+init() {
+this.bindElements();
+this.loadFromHash();
+this.loadCurrentPalette();
+this.updateHighContrast();
+this.bindEvents();
+this.autoSaveInterval = setInterval(() => this.saveCurrentPalette(), 30000);
+this.announce('Accessibility Palette Pro loaded');
+}
+
+bindElements() {
+this.elements = {
+grid: document.getElementById('paletteGrid'),
+addBtn: document.getElementById('addTile'),
+contrastToggle: document.getElementById('contrastToggle'),
+shareBtn: document.getElementById('shareBtn'),
+exportBtn: document.getElementById('exportBtn'),
+helpBtn: document.getElementById('helpBtn'),
+closeHelp: document.getElementById('closeHelp'),
+helpModal: document.getElementById('helpModal'),
+paletteName: document.getElementById('paletteName'),
+saveBtn: document.getElementById('savePalette'),
+clearBtn: document.getElementById('clearPalette'),
+contrastRatio: document.getElementById('contrastRatio'),
+contrastBadges: document.getElementById('contrastBadges'),
+color1: document.getElementById('color1'),
+color1Hex: document.getElementById('color1Hex'),
+color2: document.getElementById('color2'),
+color2Hex: document.getElementById('color2Hex'),
+randomPair: document.getElementById('randomPair'),
+liveRegion: document.getElementById('liveRegion'),
+title: document.getElementById('title')
+};
+}
+
+bindEvents() {
+this.elements.addBtn.addEventListener('click', () => this.addTile());
+this.elements.contrastToggle.addEventListener('click', () => this.toggleHighContrast());
+this.elements.shareBtn.addEventListener('click', () => this.sharePalette());
+this.elements.exportBtn.addEventListener('click', () => this.exportPalette());
+this.elements.helpBtn.addEventListener('click', () => this.toggleHelp());
+this.elements.closeHelp.addEventListener('click', () => this.toggleHelp());
+this.elements.saveBtn.addEventListener('click', () => this.saveCurrentPalette());
+this.elements.clearBtn.addEventListener('click', () => this.clearPalette());
+this.elements.randomPair.addEventListener('click', () => this.generateRandomPair());
+
+['color1','color2','color1Hex','color2Hex'].forEach(id => {
+const el = this.elements[id];
+el.addEventListener('input', () => this.updateContrast());
+el.addEventListener('change', () => this.syncColorInputs(id));
+});
+
+document.addEventListener('keydown', e => this.handleKeydown(e));
+document.addEventListener('dragover', e => e.preventDefault());
+document.addEventListener('drop', e => e.preventDefault());
+window.addEventListener('blur', () => this.saveCurrentPalette());
+}
+
+loadFromHash() {
+const hash = location.hash.match(/#palette=([^&]+)/)?.[1];
+if (!hash) return;
+try {
+const decoded = atob(decodeURIComponent(hash)).split(',');
+this.currentPalette.colors = decoded.map(hex => ({hex: this.normalizeHex(hex), role: 'text'}));
+this.renderTiles();
+this.elements.paletteName.value = `Palette from ${new Date().toLocaleDateString()}`;
+this.announce('Palette loaded from URL');
+} catch(e) {
+this.announce('Failed to load palette from URL');
+}
+}
+
+loadCurrentPalette() {
+try {
+const saved = localStorage.getItem('currentPalette');
+if (saved) {
+this.currentPalette = JSON.parse(saved);
+this.elements.paletteName.value = this.currentPalette.name;
+this.renderTiles();
+}
+} catch(e) {
+this.handleStorageError();
+}
+}
+
+saveCurrentPalette() {
+try {
+localStorage.setItem('currentPalette', JSON.stringify(this.currentPalette));
+} catch(e) {
+this.handleStorageError();
+}
+}
+
+savePalette() {
+if (!this.currentPalette.name.trim()) {
+this.elements.paletteName.focus();
+this.announce('Please enter a palette name');
+return;
+}
+const palette = {...this.currentPalette};
+this.palettes.unshift(palette);
+try {
+localStorage.setItem('accessibilityPalettes', JSON.stringify(this.palettes));
+this.announce('Palette saved');
+} catch(e) {
+this.handleStorageError();
+}
+}
+
+clearPalette() {
+this.currentPalette = {name: '', colors: []};
+this.elements.paletteName.value = '';
+this.renderTiles();
+localStorage.removeItem('currentPalette');
+this.announce('Palette cleared');
+}
+
+addTile() {
+const roles = ['text','fill','border'];
+const role = roles[this.currentPalette.colors.length % roles.length];
+this.currentPalette.colors.push({hex: '#007bff', role});
+this.renderTiles();
+this.announce('New tile added');
+}
+
+renderTiles() {
+this.elements.grid.innerHTML = '';
+this.tiles = [];
+this.currentPalette.colors.forEach((color, index) => {
+const tile = this.createTile(color, index);
+this.elements.grid.appendChild(tile);
+this.tiles.push(tile);
+});
+this.updateGridRoles();
+}
+
+createTile(color, index) {
+const tile = document.createElement('div');
+tile.className = 'tile';
+tile.setAttribute('role', 'gridcell');
+tile.setAttribute('tabindex', '0');
+tile.setAttribute('draggable', 'true');
+tile.dataset.index = index;
+tile.dataset.hex = color.hex;
+tile.dataset.role = color.role;
+tile.innerHTML = `
+<div class="swatch" style="background:${color.hex}" role="img" aria-label="Color ${color.hex}"></div>
+<div class="role-badge role-${color.role}">${color.role.toUpperCase()}</div>
+<div class="controls">
+<button class="btn btn-tiny" data-action="edit" aria-label="Edit color">✏️</button>
+<button class="btn btn-tiny btn-danger" data-action="copy" aria-label="Copy hex code">📋</button>
+<button class="btn btn-tiny btn-danger" data-action="delete" aria-label="Delete tile">×</button>
+</div>
+`;
+tile.addEventListener('dragstart', e => this.handleDragStart(e, tile));
+tile.addEventListener('dragover', e => this.handleDragOver(e));
+tile.addEventListener('drop', e => this.handleDrop(e, tile));
+tile.addEventListener('dragend', () => this.draggedTile = null);
+tile.addEventListener('keydown', e => this.handleTileKeydown(e, tile));
+tile.addEventListener('click', () => tile.focus());
+Array.from(tile.querySelectorAll('[data-action]')).forEach(btn => {
+btn.addEventListener('click', e => this.handleTileAction(e, tile));
+});
+return tile;
+}
+
+updateGridRoles() {
+this.tiles.forEach((tile, index) => {
+tile.dataset.index = index;
+tile.setAttribute('aria-label', `Tile ${index + 1}: ${tile.dataset.hex}, role ${tile.dataset.role}`);
+});
+}
+
+handleDragStart(e, tile) {
+this.draggedTile = tile;
+e.dataTransfer.effectAllowed = 'move';
+e.dataTransfer.setData('text/plain', tile.dataset.index);
+setTimeout(() => tile.style.display = 'none', 0);
+}
+
+handleDragOver(e) {
+e.preventDefault();
+e.dataTransfer.dropEffect = 'move';
+}
+
+handleDrop(e, target) {
+if (!this.draggedTile) return;
+e.preventDefault();
+const fromIndex = parseInt(this.draggedTile.dataset.index);
+const toIndex = parseInt(target.dataset.index);
+this.reorderColors(fromIndex, toIndex);
+this.renderTiles();
+this.draggedTile.style.display = '';
+this.announce(`Tile moved from position ${fromIndex + 1} to ${toIndex + 1}`);
+}
+
+reorderColors(from, to) {
+const [moved] = this.currentPalette.colors.splice(from, 1);
+this.currentPalette.colors.splice(to, 0, moved);
+}
+
+handleTileAction(e, tile) {
+const action = e.target.dataset.action;
+if (action === 'edit') {
+this.editTileColor(tile);
+} else if (action === 'copy') {
+navigator.clipboard.writeText(tile.dataset.hex).then(() => {
+this.announce(`Copied ${tile.dataset.hex} to clipboard`);
+});
+} else if (action === 'delete') {
+const index = parseInt(tile.dataset.index);
+this.currentPalette.colors.splice(index, 1);
+this.renderTiles();
+this.announce('Tile deleted');
+}
+}
+
+editTileColor(tile) {
+const input = document.createElement('input');
+input.type = 'color';
+input.value = tile.dataset.hex;
+input.style.position = 'absolute';
+input.style.inset = '0';
+input.style.width = '100%';
+input.style.height = '100%';
+input.style.border = 'none';
+input.style.borderRadius = 'var(--radius)';
+input.style.cursor = 'copy';
+input.setAttribute('aria-label', `Edit color for ${tile.dataset.role} tile`);
+tile.classList.add('editing');
+tile.style.cursor = 'default';
+tile.appendChild(input);
+input.focus();
+input.addEventListener('change', () => {
+tile.dataset.hex = input.value;
+tile.querySelector('.swatch').style.background = input.value;
+const index = parseInt(tile.dataset.index);
+this.currentPalette.colors[index].hex = input.value;
+this.updateContrast();
+this.announce(`Color changed to ${input.value}`);
+});
+input.addEventListener('blur', () => {
+tile.classList.remove('editing');
+tile.style.cursor = 'grab';
+tile.removeChild(input);
+});
+}
+
+handleTileKeydown(e, tile) {
+const index = parseInt(tile.dataset.index);
+if (e.key === 'Enter' || e.key === ' ') {
+e.preventDefault();
+this.editTileColor(tile);
+} else if (e.key === 'ArrowUp' && index > 3) {
+e.preventDefault();
+this.reorderColors(index, index - 4);
+this.renderTiles();
+this.tiles[index - 4]?.focus();
+} else if (e.key === 'ArrowDown' && index < this.tiles.length - 4) {
+e.preventDefault();
+this.reorderColors(index, index + 4);
+this.renderTiles();
+this.tiles[index + 4]?.focus();
+} else if (e.key === 'ArrowLeft' && index > 0) {
+e.preventDefault();
+this.reorderColors(index, index - 1);
+this.renderTiles();
+this.tiles[index - 1]?.focus();
+} else if (e.key === 'ArrowRight' && index < this.tiles.length - 1) {
+e.preventDefault();
+this.reorderColors(index, index + 1);
+this.renderTiles();
+this.tiles[index + 1]?.focus();
+} else if (e.key === 'Delete') {
+this.currentPalette.colors.splice(index, 1);
+this.renderTiles();
+this.announce('Tile deleted');
+} else if (e.key === '+') {
+this.addTile();
+}
+}
+
+handleKeydown(e) {
+if (e.key === '+' && e.target === document.body) {
+e.preventDefault();
+this.addTile();
+}
+}
+
+updateContrast() {
+const c1 = this.normalizeHex(this.elements.color1.value);
+const c2 = this.normalizeHex(this.elements.color2.value);
+const ratio = this.calculateContrast(c1, c2);
+this.elements.contrastRatio.textContent = `${ratio.toFixed(2)}:1`;
+this.elements.contrastBadges.innerHTML = '';
+
+const badges = [];
+if (ratio >= 7) badges.push({text: 'Pass AAA', pass: true});
+else if (ratio >= 4.5) badges.push({text: 'Pass AA', pass: true});
+if (ratio < 3) badges.push({text: 'Fail', pass: false});
+
+badges.forEach(badge => {
+const span = document.createElement('span');
+span.className = `badge ${badge.pass ? 'pass' : 'fail'}`;
+span.textContent = badge.text;
+span.setAttribute('role', 'status');
+this.elements.contrastBadges.appendChild(span);
+});
+
+this.elements.color1Hex.value = c1;
+this.elements.color2Hex.value = c2;
+}
+
+syncColorInputs(id) {
+if (id === 'color1' || id === 'color1Hex') {
+const hex = this.normalizeHex(this.elements.color1Hex.value);
+this.elements.color1.value = hex;
+} else {
+const hex = this.normalizeHex(this.elements.color2Hex.value);
+this.elements.color2.value = hex;
+}
+this.updateContrast();
+}
+
+generateRandomPair() {
+const pairs = [
+['#000000', '#ffffff'],
+['#1a1a1a', '#e9ecef'],
+['#007bff', '#ffffff'],
+['#28a745', '#ffffff'],
+['#ffc107', '#000000']
+];
+const [c1, c2] = pairs[Math.floor(Math.random() * pairs.length)];
+this.elements.color1.value = this.elements.color1Hex.value = c1;
+this.elements.color2.value = this.elements.color2Hex.value = c2;
+this.updateContrast();
+this.announce('Random accessible color pair generated');
+}
+
+calculateContrast(hex1, hex2) {
+const rgb1 = this.hexToRgb(hex1);
+const rgb2 = this.hexToRgb(hex2);
+const l1 = this.relativeLuminance(rgb1);
+const l2 = this.relativeLuminance(rgb2);
+const lighter = Math.max(l1, l2);
+const darker = Math.min(l1, l2);
+return (lighter + 0.05) / (darker + 0.05);
+}
+
+relativeLuminance({r, g, b}) {
+const [rs, gs, bs] = [r, g, b].map(c => c / 255 <= 0.03928 ? c / 255 / 12.92 : Math.pow((c / 255 + 0.055) / 1.055, 2.4));
+return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+}
+
+hexToRgb(hex) {
+const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+return result ? {
+r: parseInt(result[1], 16),
+g: parseInt(result[2], 16),
+b: parseInt(result[3], 16)
+} : {r: 0, g: 0, b: 0};
+}
+
+normalizeHex(hex) {
+return hex.replace('#', '').slice(0, 6).padEnd(6, '0').toUpperCase();
+}
+
+toggleHighContrast() {
+this.isHighContrast = !this.isHighContrast;
+localStorage.setItem('highContrast', this.isHighContrast);
+this.updateHighContrast();
+this.announce(this.isHighContrast ? 'High contrast mode enabled' : 'High contrast mode disabled');
+}
+
+updateHighContrast() {
+document.documentElement.dataset.highContrast = this.isHighContrast;
+this.elements.contrastToggle.setAttribute('aria-pressed', this.isHighContrast);
+this.elements.contrastToggle.textContent = this.isHighContrast ? 'Normal Contrast' : 'High Contrast';
+}
+
+toggleHelp() {
+const isOpen = this.elements.helpModal.hasAttribute('open');
+this.elements.helpModal.toggleAttribute('open');
+this.elements.helpModal.setAttribute('aria-hidden', isOpen);
+}
+
+sharePalette() {
+if (this.currentPalette.colors.length === 0) {
+this.announce('No colors to share');
+return;
+}
+const hexes = this.currentPalette.colors.map(c => c.hex).join(',');
+const encoded = btoa(hexes);
+const hash = `#palette=${encodeURIComponent(encoded)}`;
+navigator.clipboard.writeText(`${location.origin}${location.pathname}${hash}`).then(() => {
+this.announce('Share URL copied to clipboard');
+});
+}
+
+exportPalette() {
+if (this.currentPalette.colors.length === 0) {
+this.announce('No colors to export');
+return;
+}
+const cssVars = this.currentPalette.colors.map((c, i) => `--color-${i + 1}: ${c.hex};`).join('\n');
+const css = `:root {\n${cssVars}\n}\n\n/* Palette: ${this.currentPalette.name || 'Untitled'} */`;
+const blob = new Blob([css], {type: 'text/css'});
+const url = URL.createObjectURL(blob);
+const a = document.createElement('a');
+a.href = url;
+a.download = `${this.currentPalette.name || 'palette'}.css`;
+a.click();
+URL.revokeObjectURL(url);
+this.announce('CSS exported');
+}
+
+handleStorageError() {
+try {
+sessionStorage.setItem('fallback', 'true');
+alert('Storage quota exceeded. Using session storage as fallback.');
+} catch(e) {
+console.error('Storage unavailable');
+}
+}
+
+announce(message) {
+this.elements.liveRegion.textContent = message;
+}
+}
+
+new AccessibilityPalettePro();
+</script>
+</body>
+</html>

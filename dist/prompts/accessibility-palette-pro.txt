@@ -30,3 +30,5 @@ Accessibility Palette Pro
   - Share URL loads identical palette
   - Contrast shows "Pass AA" for #000/#FFF pair
   - Works offline after first load
+
+(Generated: 2026-02-10T17:21:18.412717Z, seed=76982, theme=accessibility helpers, extras=offline-first with localStorage, share via URL hash, responsive grid, kind=html)
