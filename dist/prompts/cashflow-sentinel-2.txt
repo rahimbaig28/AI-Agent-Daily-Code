@@ -15,3 +15,5 @@ CashFlow Sentinel
 - Keyboard shortcuts: 'a' add, 'v' view, 'f' filter, 'e' export, 'i' import, 's' share, '?' help.
 - Testable: add 5 sample transactions on first run; verify summary/net=0; export/import roundtrip; share hash matches recomputed hash.
 - Under 800 LOC: compact curses loops, JSON dict ops, strftime parsing.
+
+(Generated: 2026-02-10T15:24:23.551367Z, seed=72534, theme=finance & budgeting, extras=dark/light auto theme, export/import JSON, share via URL hash, kind=py)
