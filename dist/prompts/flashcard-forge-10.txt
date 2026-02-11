@@ -16,3 +16,5 @@ Flashcard Forge
 - Dark mode toggle (system preference + button), smooth CSS transitions for flips/drags
 - Testable features: create deck "Capitals", add 3 cards, rate 2 easy/1 hard, verify sorting by due date, share URL loads same deck
 - Accessibility: role="application", aria-live for feedback, focus management, high contrast mode support
+
+(Generated: 2026-02-11T20:54:45.682208Z, seed=20104, theme=learning & study tools, extras=ARIA-compliant components, share via URL hash, drag-and-drop, kind=html)
