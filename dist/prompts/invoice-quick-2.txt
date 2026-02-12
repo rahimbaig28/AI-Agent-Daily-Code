@@ -28,3 +28,5 @@ Invoice Quick
   - No external libraries or CDNs.
   - Standard browser APIs only (localStorage, print API, clipboard API).
   - Works offline; all data client-side.
+
+(Generated: 2026-02-12T19:19:07.853205Z, seed=66319, theme=small business utilities, extras=keyboard-first UX, dark/light auto theme, offline-first with localStorage, kind=html)
