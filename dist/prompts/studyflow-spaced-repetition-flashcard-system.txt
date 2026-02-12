@@ -1,0 +1,16 @@
+StudyFlow: Spaced Repetition Flashcard System
+
+• Single-file Python 3 script using only the standard library (json, sqlite3, datetime, argparse, random)
+• Core feature: Create, organize, and review flashcards with automatic spaced repetition scheduling
+• Users can add cards via CLI with front/back text; cards stored in local JSON file (cards.json)
+• Review mode shows one card at a time; user grades recall (1-5 scale) to adjust next review date
+• Algorithm: Cards scheduled using simplified SM-2 (ease factor, interval multiplier based on grade)
+• Keyboard-first: Navigate with arrow keys, enter grade with number keys (1–5), 'q' to quit, 'a' to add new card
+• Statistics dashboard: Shows total cards, cards due today, average ease, and study streak (consecutive days studied)
+• Persistence: All card data, grades, and review history saved to cards.json; no external dependencies
+• Offline-first: Fully functional without internet; all computation local
+• Import/export: Ability to load cards from plain-text file (one card per line, format: "front|back")
+• Study session summary: After reviewing, display cards mastered, cards to review again, and optimal next session time
+• Accessibility: Clear prompts, no colors required for functionality, all text-based interface
+
+(Generated: 2026-02-12T21:48:44.122432Z, seed=38000, theme=learning & study tools, extras=offline-first with localStorage, drag-and-drop, keyboard-first UX, kind=py)
