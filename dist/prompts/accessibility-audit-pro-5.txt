@@ -18,3 +18,5 @@ Accessibility Audit Pro
 - **Print-friendly**: @media print hides UI, shows full audit report as styled list
 - Responsive design: Mobile-first, works offline, <800 lines total code
 - Test cases: Include sample HTML snippets button to load broken/good examples for demo
+
+(Generated: 2026-02-12T17:15:18.721215Z, seed=24225, theme=accessibility helpers, extras=dark/light auto theme, ARIA-compliant components, print-friendly view, kind=html)
