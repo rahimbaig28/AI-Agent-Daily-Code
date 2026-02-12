@@ -15,3 +15,5 @@ Flashcard Forge
 - **Input UX**: Add card modal with validation (no empty fields); live preview flip.
 - **Edge cases**: Handle empty decks gracefully; confirm deletes; max 50 cards/deck warning.
 - Testable: Load, add 3 cards, study (2 correct/1 wrong), share URL, reload verifies state.
+
+(Generated: 2026-02-12T22:48:29.321563Z, seed=31287, theme=learning & study tools, extras=offline-first with localStorage, responsive grid, share via URL hash, kind=html)
