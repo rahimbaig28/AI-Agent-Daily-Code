@@ -892,3 +892,6 @@
 [2026-02-13] Proceeding with run #1 of target 4.
 [2026-02-13T13:35:28.918650Z] Prompt OK  seed=37045  theme=small business utilities  extras=keyboard-first UX, undo/redo, drag-and-drop  title='Service Schedule Manager'  slug=service-schedule-manager  kind=html
 [2026-02-13T13:35:28.918650Z] Build OK  file=service-schedule-manager-2.html  kind=html  required_kind=html  
+[2026-02-13] Proceeding with run #2 of target 4.
+[2026-02-13T19:51:37.284688Z] Prompt OK  seed=28415  theme=learning & study tools  extras=offline-first with localStorage, undo/redo, ARIA-compliant components  title='Study Deck Master'  slug=study-deck-master  kind=html
+[2026-02-13T19:51:37.284688Z] Build OK  file=study-deck-master.html  kind=html  required_kind=html  
