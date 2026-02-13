@@ -13,3 +13,5 @@ Service Schedule Manager
 • Responsive single-column layout on mobile (stack calendar vertically); desktop shows full grid
 • Simple, clean design with high contrast text, large touch targets (min 44px), and clear labels per accessibility best practices
 • Status indicator at top showing total services this week and next available slot
+
+(Generated: 2026-02-13T13:35:28.918650Z, seed=37045, theme=small business utilities, extras=keyboard-first UX, undo/redo, drag-and-drop, kind=html)
