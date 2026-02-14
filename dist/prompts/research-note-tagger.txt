@@ -18,3 +18,5 @@ Research Note Tagger
 - Cross-platform: uses pathlib.Path for paths, os.environ for temp dirs if needed.
 - Shebang: #!/usr/bin/env python3.
 - Keep total impl <800 lines: concise JSON I/O, no external deps.
+
+(Generated: 2026-02-14T10:45:41.580821Z, seed=10827, theme=research utilities, extras=print-friendly view, share via URL hash, drag-and-drop, kind=py)
