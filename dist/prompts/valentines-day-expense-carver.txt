@@ -16,3 +16,5 @@ Valentine's Day Expense Carver
 - Responsive grid: category tables use fixed-width columns, adapt to terminal width (os.get_terminal_size().columns).
 - Testable: sample data on first run; unit tests in if __name__=='__main__': mode (test add/view/export).
 - Under 800 LOC: use classes for Expense/CategoryTracker; functions for menu/draw_table/color_print.
+
+(Generated: 2026-02-14T09:45:31.501136Z, seed=23153, theme=finance & budgeting, extras=dark/light auto theme, export/import JSON, responsive grid, kind=py)
