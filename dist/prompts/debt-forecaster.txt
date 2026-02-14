@@ -11,3 +11,5 @@ Debt Forecaster
 - Handle edge cases: zero balance (mark paid), invalid inputs (retry), empty file (start fresh).
 - Use print tables with '-' borders for readability; keyboard-only (no GUI).
 - Testable: Run script, add 3 debts (e.g. CreditCard $5000 18% $150, Loan $2000 8% $100, Auto $10000 5% $300), forecast, verify payoff dates ~2-5 years, export CSV.
+
+(Generated: 2026-02-14T07:46:51.804299Z, seed=43388, theme=finance & budgeting, extras=responsive grid, share via URL hash, offline-first with localStorage, kind=py)
