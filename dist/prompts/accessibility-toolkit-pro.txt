@@ -29,3 +29,5 @@ Accessibility Toolkit Pro
 - CSS: Use CSS custom properties (--text-size: 1rem; etc.) for live updates.
 - JS: Event listeners on buttons, mutation observer for dynamic content, no frameworks.
 - Max ~800 LOC: Compact, modular functions for each toggle.
+
+(Generated: 2026-02-15T17:41:31.946577Z, seed=97400, theme=accessibility helpers, extras=drag-and-drop, dark/light auto theme, undo/redo, kind=html)
