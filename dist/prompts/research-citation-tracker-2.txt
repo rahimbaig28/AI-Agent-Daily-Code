@@ -13,3 +13,5 @@ Research Citation Tracker
 - Responsive: Mobile-first grid (1-col mobile, 2-4 col desktop); touch-friendly buttons (>44px).
 - Export/Import: Buttons to download citations as JSON file; file input to upload/merge JSON.
 - Testable features: Add 3 citations, search "author name", toggle theme, share URL and verify restore, sort by year, delete one, confirm persistence after refresh.
+
+(Generated: 2026-02-16T03:18:00.953953Z, seed=13923, theme=research utilities, extras=dark/light auto theme, share via URL hash, offline-first with localStorage, kind=html)
