@@ -20,3 +20,5 @@ Expense Ledger Pro
 - Styling: modern neumorphic design (soft shadows, rounded corners); responsive grid (mobile stacks cards vertically); animations for add/delete (fade/slide).
 - Edge cases: handle negative balance styling, invalid inputs (prevent add, shake animation), empty list shows "No transactions - add one above!".
 - Testing: loads with sample data option (checkbox on first load), console-free (no logs), PWA-like manifest in <head> for offline install hint.
+
+(Generated: 2026-02-17T16:06:34.258834Z, seed=77998, theme=finance & budgeting, extras=ARIA-compliant components, dark/light auto theme, offline-first with localStorage, kind=html)
