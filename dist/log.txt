@@ -956,3 +956,6 @@
 [2026-02-17] Proceeding with run #1 of target 3.
 [2026-02-17T16:06:34.258834Z] Prompt OK  seed=77998  theme=finance & budgeting  extras=ARIA-compliant components, dark/light auto theme, offline-first with localStorage  title='Expense Ledger Pro'  slug=expense-ledger-pro  kind=html
 [2026-02-17T16:06:34.258834Z] Build OK  file=expense-ledger-pro.html  kind=html  required_kind=html  
+[2026-02-17] Proceeding with run #2 of target 3.
+[2026-02-17T19:13:38.574399Z] Prompt OK  seed=97979  theme=research utilities  extras=export/import JSON, drag-and-drop, offline-first with localStorage  title='Research Paper Tracker'  slug=research-paper-tracker  kind=py
+[2026-02-17T19:13:38.574399Z] Build OK  file=research-paper-tracker.py  kind=py  required_kind=py  

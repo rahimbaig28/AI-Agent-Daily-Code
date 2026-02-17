@@ -15,3 +15,5 @@ Research Paper Tracker
 • Sortable output by date added, publication date, or title
 • Batch operations: delete papers by tag or date range
 • Statistics: count total papers, read count, papers per tag, most-used authors
+
+(Generated: 2026-02-17T19:13:38.574399Z, seed=97979, theme=research utilities, extras=export/import JSON, drag-and-drop, offline-first with localStorage, kind=py)
