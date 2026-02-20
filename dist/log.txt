@@ -1000,3 +1000,25 @@
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d08f82569a1c9db',t:'MTc3MTUzNzcxNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
 [2026-02-19] Skipping run: daily quota reached (count=4, target=4).
 [2026-02-19] Skipping run: daily quota reached (count=4, target=4).
+[2026-02-20] New day: target_runs=3
+[2026-02-20] Proceeding with run #1 of target 3.
+[2026-02-20T10:57:16.651705Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d7b6ffc5a3875',t:'MTc3MTU4NTAzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
+[2026-02-20] Proceeding with run #2 of target 3.
+[2026-02-20T10:57:26.959881Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d7baff9e23875',t:'MTc3MTU4NTA0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
+[2026-02-20] Proceeding with run #3 of target 3.
+[2026-02-20T10:57:37.193828Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d0d7befeb953875',t:'MTc3MTU4NTA1Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
