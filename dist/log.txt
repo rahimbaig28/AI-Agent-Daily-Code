@@ -1149,3 +1149,25 @@
 [2026-02-24] Skipping run: daily quota reached (count=5, target=5).
 [2026-02-24] Skipping run: daily quota reached (count=5, target=5).
 [2026-02-24] Skipping run: daily quota reached (count=5, target=5).
+[2026-02-25] New day: target_runs=3
+[2026-02-25] Proceeding with run #1 of target 3.
+[2026-02-25T09:06:09.341091Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d360b88db8fe63b',t:'MTc3MjAxMDM2OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
+[2026-02-25] Proceeding with run #2 of target 3.
+[2026-02-25T09:06:19.568043Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d360bc8987def68',t:'MTc3MjAxMDM3OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
+[2026-02-25] Proceeding with run #3 of target 3.
+[2026-02-25T09:06:29.747793Z] Prompt generation FAILED: RuntimeError: HTTP 401: <html>
+<head><title>401 Authorization Required</title></head>
+<body>
+<center><h1>401 Authorization Required</h1></center>
+<hr><center>openresty/1.27.4</center>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d360c083d22e63b',t:'MTc3MjAxMDM4OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.b
