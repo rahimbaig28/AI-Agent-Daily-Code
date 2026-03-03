@@ -1272,3 +1272,10 @@
 [2026-03-03] Proceeding with run #3 of target 5.
 [2026-03-03T07:09:55.609495Z] Prompt generation FAILED: RuntimeError: HTTP 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
 
+[2026-03-03] Proceeding with run #4 of target 5.
+[2026-03-03T17:04:20.476368Z] Prompt generation FAILED: RuntimeError: HTTP 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+[2026-03-03] Proceeding with run #5 of target 5.
+[2026-03-03T17:04:30.709341Z] Prompt generation FAILED: RuntimeError: HTTP 401: {"error":{"message":"Invalid API key or insufficient credits. Please verify your API key at https://www.perplexity.ai/settings/api.","type":"invalid_api_key","code":401}}
+
+[2026-03-03] Skipping run: daily quota reached (count=5, target=5).
